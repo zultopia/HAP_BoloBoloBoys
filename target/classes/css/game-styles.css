@@ -1,0 +1,251 @@
+* {
+    -fx-font-family: "Monospace";
+    font-family: "Monospace"; 
+}
+
+.tab-pane *.tab-header-background {
+    -fx-background-color: -fx-gray-200;
+    background-color: -fx-gray-200; 
+}
+
+.tab-pane *.tab-content-area {
+    -fx-padding: 5px 0 0 0;
+    padding: 5px 0 0 0; 
+}
+
+.tab-pane *.tab {
+    -fx-background-color: "white";
+    background-color: "white"; 
+    -fx-border-style: hidden hidden solid hidden;
+    border-style: hidden hidden solid hidden; 
+    -fx-border-color: transparent;
+    border-color: transparent; 
+    -fx-border-width: 2px;
+    border-width: 2px; 
+}
+
+.tab-pane *.add-tab {
+    -fx-border-style: solid;
+    border-style: solid; 
+    -fx-border-width: 1px;
+    border-width: 1px; 
+    -fx-border-color: -fx-gray-400;
+    border-color: -fx-gray-400; 
+    -fx-border-radius: 5px;
+    border-radius: 5px; 
+    -fx-end-margin: 1px;
+    margin-right: 1px; 
+    -fx-font-size: 16px;
+    font-size: 16px; 
+}
+
+.tab-pane *.tab:selected {
+    -fx-border-color: -fx-gray-600;
+    border-color: -fx-gray-600; 
+}
+
+.tab-pane *.tab:selected .focus-indicator {
+    -fx-border-style: hidden;
+    border-style: hidden; 
+}
+
+.settings-pane *.tab {
+    -fx-background-color: -fx-blue-50;
+    background-color: -fx-blue-50; 
+    -fx-cursor: hand;
+    cursor: pointer; 
+}
+
+.settings-pane *.tab-header-background {
+    -fx-background-color: -fx-blue-400;
+    background-color: -fx-blue-400; 
+}
+
+.settings-pane *.tab:selected {
+    -fx-border-color: -fx-blue-600;
+    border-color: -fx-blue-600; 
+    -fx-background-color: -fx-blue-200;
+    background-color: -fx-blue-200; 
+}
+
+.settings-tab {
+    -fx-padding: 30px 70px;
+    padding: 30px 70px; 
+    -fx-font-size: 16px;
+    font-size: 16px; 
+}
+
+.settings-tab .settings-side {
+    -fx-padding: 10px 30px;
+    padding: 10px 30px; 
+}
+
+.settings-tab *.title {
+    -fx-font-size: 24px;
+    font-size: 24px; 
+    -fx-font-weight: bold;
+    font-weight: bold; 
+    -fx-text-alignment: center;
+    text-align: center; 
+}
+
+.settings-tab .settings-left {
+    -fx-border-style: hidden solid hidden hidden;
+    border-style: hidden solid hidden hidden; 
+    -fx-border-width: 2px;
+    border-width: 2px; 
+    -fx-border-color: -fx-gray-600;
+    border-color: -fx-gray-600; 
+}
+
+#split-page *.left-side .title {
+    -fx-font-size: 24px;
+    font-size: 24px; 
+    -fx-font-weight: bold;
+    font-weight: bold; 
+}
+
+#split-page *.left-side {
+    -fx-border-style: hidden solid hidden hidden;
+    border-style: hidden solid hidden hidden; 
+    -fx-border-width: 2px;
+    border-width: 2px; 
+    -fx-border-color: -fx-gray-300;
+    border-color: -fx-gray-300; 
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    background-color: transparent; 
+    -fx-border-style: solid;
+    border-style: solid; 
+    -fx-border-width: 2px;
+    border-width: 2px; 
+    -fx-border-color: -fx-gray-300;
+    border-color: -fx-gray-300; 
+    -fx-border-radius: 8px;
+    border-radius: 8px; 
+}
+
+#split-page *.left-side *.container > * {
+    -fx-border-style: hidden hidden solid hidden;
+    border-style: hidden hidden solid hidden; 
+    -fx-border-width: 2px;
+    border-width: 2px; 
+    -fx-border-color: -fx-gray-300;
+    border-color: -fx-gray-300; 
+    -fx-padding: 0 0 4px 0;
+    padding: 0 0 4px 0; 
+}
+
+.text-field, .combo-box {
+    -fx-background-color: white;
+    background-color: white; 
+    -fx-border-style: solid;
+    border-style: solid; 
+    -fx-border-radius: 3px;
+    border-radius: 3px; 
+    -fx-border-color: -fx-gray-500;
+    border-color: -fx-gray-500; 
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: -fx-gray-800;
+    border-color: -fx-gray-800; 
+}
+
+.text-field {
+    -fx-display-caret: true;
+    display: caret; 
+}
+
+.text-field.normal-disabled:disabled {
+    -fx-text-fill: black;
+    color: black; 
+}
+
+.form-group-label {
+    -fx-font-weight: bold;
+    font-weight: bold; 
+}
+
+.form-group {
+    -fx-padding: 8px 0;
+    padding: 8px 0; 
+}
+
+.label.history-title {
+    -fx-font-weight: bold;
+    font-weight: bold; 
+    -fx-font-size: 24px;
+    font-size: 24px; 
+}
+
+.label.info-user-history {
+    -fx-font-size: 12px;
+    font-size: 12px; 
+    -fx-background-color: #4CAF50;
+    background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.button {
+    -fx-cursor: hand;
+    cursor: pointer; 
+}
+
+.btn-primary {
+    -fx-background-color: -fx-blue-600;
+    background-color: -fx-blue-600; 
+}
+
+.btn-primary:hover {
+    -fx-background-color: -fx-blue-400;
+    background-color: -fx-blue-400; 
+}
+
+.btn-primary:pressed {
+    -fx-background-color: -fx-blue-700;
+    background-color: -fx-blue-700; 
+}
+
+.btn-success {
+    -fx-background-color: -fx-green-600;
+    background-color: -fx-green-600; 
+    -fx-text-fill: white;
+    color: white; 
+}
+
+.btn-success:hover {
+    -fx-background-color: -fx-green-500;
+    background-color: -fx-green-500; 
+}
+
+.btn-success:pressed {
+    -fx-background-color: -fx-green-700;
+    background-color: -fx-green-700; 
+}
+
+.label {
+    -fx-font-size: 16px;
+    font-size: 16px;
+    -fx-text-fill: #333;
+}
+
+.menu-bar {
+    -fx-background-color: #ffffff;
+    background-color: #ffffff;
+}
+
+.menu {
+    -fx-text-fill: white;
+}
+
+.root {
+    -fx-background-image: url("../assets/Wallpaper-2.png");
+    background-image: url("../assets/Wallpaper-2.png");
+    -fx-background-size: cover;
+    background-size: cover;
+}

@@ -1,0 +1,35 @@
+/* Root selector for defining color variables */
+:root {
+    --fx-gray-50: #f9fafb;
+    --fx-gray-100: #f3f4f6;
+    --fx-gray-200: #e5e7eb;
+    --fx-gray-300: #d1d5db;
+    --fx-gray-400: #9ca3af;
+    --fx-gray-500: #6b7280;
+    --fx-gray-600: #4b5563;
+    --fx-gray-700: #374151;
+    --fx-gray-800: #1f2937;
+    --fx-gray-900: #111827;
+
+    --fx-blue-50: #eef2ff;
+    --fx-blue-100: #e0e7ff;
+    --fx-blue-200: #c7d2fe;
+    --fx-blue-300: #a5b4fc;
+    --fx-blue-400: #818cf8;
+    --fx-blue-500: #6366f1;
+    --fx-blue-600: #6366f1;
+    --fx-blue-700: #6366f1;
+    --fx-blue-800: #6366f1;
+    --fx-blue-900: #6366f1;
+
+    --fx-green-50: #f0fdf4;
+    --fx-green-100: #dcfce7;
+    --fx-green-200: #bbf7d0;
+    --fx-green-300: #86efac;
+    --fx-green-400: #4ade80;
+    --fx-green-500: #22c55e;
+    --fx-green-600: #16a34a;
+    --fx-green-700: #15803d;
+    --fx-green-800: #15803d;
+    --fx-green-900: #14532d;
+}

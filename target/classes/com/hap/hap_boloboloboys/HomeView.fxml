@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Pos?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.hap.hap_boloboloboys.HomeViewController">
+    <!-- MenuBar at the top -->
+    <MenuBar VBox.vgrow="NEVER">
+        <Menu text="Menu">
+            <MenuItem text="Home" onAction="#onHomeMenuClick"/>
+            <MenuItem text="Settings" onAction="#onSettingMenuClick"/>
+            <MenuItem text="Game" onAction="#onGameMenuClick"/>
+        </Menu>
+    </MenuBar>
+
+    <!-- Button to toggle sound -->
+    <Button fx:id="toggleSoundButton" text="Toggle Sound" style="-fx-background-color: transparent;" />
+    
+    <!-- Label untuk menampilkan tanggal dan jam -->
+    <VBox alignment="CENTER" spacing="10" style="-fx-padding: 200;">
+        <Label fx:id="timeLabel" text="Time" style="-fx-font-size: 60px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Label fx:id="dateLabel" text="Date" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+    </VBox>
+</VBox>
