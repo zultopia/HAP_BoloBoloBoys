@@ -48,7 +48,7 @@ public class HomeViewController {
             Parent gameRoot = loader.load();
         
             Scene scene = new Scene(gameRoot, 1000, 800);
-            scene.getStylesheets().add(getClass().getResource("/css/main-styles.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/css/game-styles.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/css/colors.css").toExternalForm());
         
             Stage stage = new Stage();
@@ -86,7 +86,7 @@ public class HomeViewController {
             Parent settingRoot = loader.load();
         
             Scene scene = new Scene(settingRoot, 1000, 800);
-            scene.getStylesheets().add(getClass().getResource("/css/main-styles.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/css/setting-styles.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/css/colors.css").toExternalForm());
         
             Stage stage = new Stage();
