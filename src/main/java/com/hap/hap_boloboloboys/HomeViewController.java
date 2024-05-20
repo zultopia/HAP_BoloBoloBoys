@@ -37,11 +37,6 @@ public class HomeViewController {
     }
 
     @FXML
-    protected void onHelloButtonClick() {
-        // Handle
-    }
-
-    @FXML
     protected void onGameMenuClick() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hap/hap_boloboloboys/GameView.fxml"));

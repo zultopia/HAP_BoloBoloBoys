@@ -11,7 +11,7 @@
 <?import javafx.geometry.Pos?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.hap.hap_boloboloboys.HomeViewController">
+      fx:controller="com.hap.hap_boloboloboys.GameViewController">
     <!-- MenuBar at the top -->
     <MenuBar VBox.vgrow="NEVER">
         <Menu text="Menu">
@@ -20,4 +20,16 @@
             <MenuItem text="Game" onAction="#onGameMenuClick"/>
         </Menu>
     </MenuBar>
+    
+    <!-- Buttons -->
+    <HBox alignment="CENTER_RIGHT" styleClass="button-box" VBox.vgrow="ALWAYS">
+        <VBox spacing="47">
+            <Button fx:id="buttonLadangku" onAction="#handleButtonLadangkuClick" text="" />
+            <Button fx:id="buttonLadangmu" onAction="#handleButtonLadangmuClick" text="" />
+            <Button fx:id="buttonToko" onAction="#handleButtonTokoClick" text="" />
+            <Button fx:id="buttonSave" onAction="#handleButtonSaveClick" text="" />
+            <Button fx:id="buttonLoad" onAction="#handleButtonLoadClick" text="" />
+            <Button fx:id="buttonPlugin" onAction="#handleButtonPluginClick" text="" />
+        </VBox>
+    </HBox>
 </VBox>

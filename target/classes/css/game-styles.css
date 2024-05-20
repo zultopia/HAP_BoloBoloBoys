@@ -249,3 +249,31 @@
     -fx-background-size: cover;
     background-size: cover;
 }
+
+.button-box {
+    -fx-padding: 130 50 20 20; 
+    padding: 130 50 20 20;
+}
+
+.button-box .button {
+    -fx-background-color: white;
+    background-color: white;
+    -fx-padding: 10px 20px;
+    padding: 10px 20px;
+    -fx-border-color: white;
+    border-color: white;
+    -fx-border-width: 2;
+    border-width: 2;
+    -fx-border-radius: 5;
+    border-radius: 5;
+}
+
+.button-box .button:hover {
+    -fx-background-color: #DDD;
+    background-color: #DDD;
+}
+
+.button-box .button.active {
+    -fx-background-color: #ED8930;
+    background-color: #ED8930;
+}
