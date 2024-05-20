@@ -1,7 +1,6 @@
-com/hap/hap_boloboloboys/GameViewController.class
-com/hap/hap_boloboloboys/GameView.class
-com/hap/hap_boloboloboys/SettingViewController.class
-com/hap/hap_boloboloboys/HomeView.class
-com/hap/hap_boloboloboys/HomeViewController.class
-com/hap/hap_boloboloboys/SettingView.class
+com\hap\hap_boloboloboys\GameViewController.class
+com\hap\hap_boloboloboys\SettingViewController.class
+com\hap\hap_boloboloboys\GameView.class
 module-info.class
+com\hap\hap_boloboloboys\HomeViewController.class
+com\hap\hap_boloboloboys\HomeView.class
