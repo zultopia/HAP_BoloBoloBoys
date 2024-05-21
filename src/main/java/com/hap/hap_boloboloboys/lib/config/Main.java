@@ -11,8 +11,17 @@ public class Main {
             System.out.println("Current Turn: " + Load.getCurrentTurn());
             System.out.println("Jumlah item di shop: " + Load.getItemCount());
             System.out.println("Shop Items: " + Load.getShopItems());
+
+            Load.loadPlayer("game1");
+            System.out.println("Jumlah Gulden: " + Load.getWealth());
+            System.out.println("Jumlah Deck: " + Load.getCurrentSizeInventory());
+            System.out.println("Jumlah Deck Aktif: " + Load.getCurrentSizeDeck());
+            System.out.println("Deck: " + Load.getDeck());
+            System.out.println("Jumlah Kartu Ladang: " + Load.getCardLadangCount());
+            System.out.println("Content: " + Load.getContent());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
     }
 }
