@@ -2,11 +2,40 @@ package com.hap.hap_boloboloboys.lib.card;
 
 public abstract class Creature extends Card {
     private int harvestTarget;
-    private boolean[] appliedEffects = new boolean[6]; // 6 effects
+    private int[] appliedEffects = new int[6]; // 6 effects, default to 0
 
-    public Creature(String cardName, String imgPath, int harvestTarget) {
-        super(cardName, imgPath);
-        this.harvestTarget = harvestTarget;
+    public Creature(String cardName) {
+        super(cardName, determineImgPath(cardName));
+        this.harvestTarget = determineHarvestTarget(cardName);
+    }
+
+    private static String determineImgPath(String cardName) {
+        return "path/to/" + cardName.replace(" ", "") + ".png";
+    }
+
+    private int determineHarvestTarget(String cardName) {
+        switch (cardName) {
+            case "Hiu Darat":
+                return 20;
+            case "Sapi":
+                return 10;
+            case "Domba":
+                return 12;
+            case "Kuda":
+                return 14;
+            case "Ayam":
+                return 5;
+            case "Beruang":
+                return 25;
+            case "Biji Jagung":
+                return 3;
+            case "Biji Labu":
+                return 5;
+            case "Biji Stroberi":
+                return 4;
+            default:
+                throw new IllegalArgumentException("Unknown creature: " + cardName);
+        }
     }
 
     public int getHarvestTarget() {
@@ -19,16 +48,51 @@ public abstract class Creature extends Card {
 
     public void useEffect(int effectIndex) {
         if (effectIndex >= 0 && effectIndex < appliedEffects.length) {
-            appliedEffects[effectIndex] = true;
+            appliedEffects[effectIndex]++;
         }
     }
 
-    public boolean isEffectApplied(int effectIndex) {
+    public int getEffectValue(int effectIndex) {
         if (effectIndex >= 0 && effectIndex < appliedEffects.length) {
             return appliedEffects[effectIndex];
         }
-        return false;
+        return 0;
     }
 
     public abstract boolean canHarvest();
+
+    public Product harvest() {
+        if (!canHarvest()) {
+            System.out.println(getCardName() + " cannot be harvested yet.");
+            return null;
+        }
+
+        String productName = determineProductName(getCardName());
+        return new Product(productName);
+    }
+
+    private String determineProductName(String cardName) {
+        switch (cardName) {
+            case "Hiu Darat":
+                return "Sirip Hiu";
+            case "Sapi":
+                return "Susu";
+            case "Domba":
+                return "Daging Domba";
+            case "Kuda":
+                return "Daging Kuda";
+            case "Ayam":
+                return "Telur";
+            case "Beruang":
+                return "Daging Beruang";
+            case "Biji Jagung":
+                return "Jagung";
+            case "Biji Labu":
+                return "Labu";
+            case "Biji Stroberi":
+                return "Stroberi";
+            default:
+                throw new IllegalArgumentException("No harvestable product for " + cardName);
+        }
+    }
 }

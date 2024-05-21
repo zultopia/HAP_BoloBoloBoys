@@ -15,9 +15,13 @@ public abstract class Item extends Card {
 
     private Effect effect;
 
-    public Item(String cardName, String imgPath, Effect effect) {
-        super(cardName, imgPath);
+    public Item(String cardName, Effect effect) {
+        super(cardName, determineImgPath(cardName));
         this.effect = effect;
+    }
+
+    private static String determineImgPath(String cardName) {
+        return "path/to/" + cardName.replace(" ", "") + ".png";
     }
 
     public Effect getEffect() {

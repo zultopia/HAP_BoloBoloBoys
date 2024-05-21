@@ -16,4 +16,9 @@ public abstract class Card {
     public String getImgPath() {
         return imgPath;
     }
+
+    // setImgPath
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
 }

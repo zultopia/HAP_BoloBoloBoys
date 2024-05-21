@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public class Destroy extends Item {
-    public Destroy(String cardName, String imgPath) {
-        super(cardName, imgPath, Effect.DESTROY);
+    public Destroy(String cardName) {
+        super(cardName, Effect.DESTROY);
     }
 
     @Override

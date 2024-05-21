@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public class Protect extends Item {
-    public Protect(String cardName, String imgPath) {
-        super(cardName, imgPath, Effect.PROTECT);
+    public Protect(String cardName) {
+        super(cardName, Effect.PROTECT);
     }
 
     @Override
