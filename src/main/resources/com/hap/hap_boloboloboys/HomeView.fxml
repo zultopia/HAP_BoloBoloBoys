@@ -6,12 +6,15 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Pos?>
 
+<!-- Root VBox -->
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.hap.hap_boloboloboys.HomeViewController">
+
     <!-- MenuBar at the top -->
     <MenuBar VBox.vgrow="NEVER">
         <Menu text="Menu">
@@ -21,11 +24,13 @@
         </Menu>
     </MenuBar>
 
-    <!-- Button to toggle sound -->
-    <Button fx:id="toggleSoundButton" text="Toggle Sound" style="-fx-background-color: transparent;" />
-    
-    <!-- Label untuk menampilkan tanggal dan jam -->
-    <VBox alignment="CENTER" spacing="10" style="-fx-padding: 200;">
+    <!-- StackPane for sound button -->
+    <StackPane alignment="TOP_LEFT" VBox.vgrow="NEVER" fx:id="buttonContainer">
+        <Button fx:id="toggleSoundButton" style="-fx-background-color: transparent;" />
+    </StackPane>
+
+    <!-- VBox for date and time labels -->
+    <VBox alignment="CENTER" spacing="10" style="-fx-margin-top: 200;">
         <Label fx:id="timeLabel" text="Time" style="-fx-font-size: 60px; -fx-font-weight: bold; -fx-text-fill: white;"/>
         <Label fx:id="dateLabel" text="Date" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;"/>
     </VBox>

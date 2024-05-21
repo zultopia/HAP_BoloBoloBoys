@@ -11,7 +11,7 @@
 <?import javafx.geometry.Pos?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.hap.hap_boloboloboys.HomeViewController">
+      fx:controller="com.hap.hap_boloboloboys.SettingViewController">
     <!-- MenuBar at the top -->
     <MenuBar VBox.vgrow="NEVER">
         <Menu text="Menu">

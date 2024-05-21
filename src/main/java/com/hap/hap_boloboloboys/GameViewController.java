@@ -1,18 +1,30 @@
 package com.hap.hap_boloboloboys;
 
 import java.io.IOException;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class GameViewController {
 
     @FXML
     private MenuBar menuBar;
+
+    @FXML
+    private Button nextButton;
+
+    @FXML
+    private ImageView nextImageView;
 
     private boolean isButtonLadangkuActive = false;
     private boolean isButtonLadangmuActive = false;
@@ -29,7 +41,21 @@ public class GameViewController {
     private Button buttonPlugin;
 
     @FXML
+    private void initialize() {
+        Image nextImage = new Image(getClass().getResourceAsStream("/assets/Next.png"));
+        nextImageView.setImage(nextImage);
+        nextImageView.setFitWidth(100);
+        nextImageView.setFitHeight(100);
+        nextButton.setGraphic(nextImageView);
+        nextButton.setOnMouseClicked(event -> handleButtonNextClick());
+
+        StackPane.setMargin(nextButton, new Insets(10, 10, 10, 10));
+        StackPane.setAlignment(nextButton, Pos.TOP_LEFT);
+    }
+
+    @FXML
     private void handleButtonLadangkuClick() {
+        System.out.println("APA JING");
         isButtonLadangkuActive = !isButtonLadangkuActive;
         updateButtonState(buttonLadangku, isButtonLadangkuActive);
         if (isButtonLadangkuActive) {
@@ -154,8 +180,8 @@ public class GameViewController {
 
     @FXML
     private void handleButtonNextClick() {
-        // Implementasi
         System.out.println("Button Next clicked");
+        // Implementasi logika untuk button Next
     }
 
     @FXML
@@ -163,11 +189,11 @@ public class GameViewController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hap/hap_boloboloboys/GameView.fxml"));
             Parent gameRoot = loader.load();
-        
+
             Scene scene = new Scene(gameRoot, 1000, 800);
             scene.getStylesheets().add(getClass().getResource("/css/game-styles.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/css/colors.css").toExternalForm());
-        
+
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Game Page");
@@ -182,11 +208,11 @@ public class GameViewController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hap/hap_boloboloboys/HomeView.fxml"));
             Parent homeRoot = loader.load();
-        
+
             Scene scene = new Scene(homeRoot, 1000, 800);
             scene.getStylesheets().add(getClass().getResource("/css/main-styles.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/css/colors.css").toExternalForm());
-        
+
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Home Page");
@@ -201,11 +227,11 @@ public class GameViewController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hap/hap_boloboloboys/SettingView.fxml"));
             Parent settingRoot = loader.load();
-        
+
             Scene scene = new Scene(settingRoot, 1000, 800);
             scene.getStylesheets().add(getClass().getResource("/css/setting-styles.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/css/colors.css").toExternalForm());
-        
+
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Setting Page");
