@@ -24,7 +24,14 @@ public class Main {
         System.out.println("Hiu Darat's weight before Accelerate: " + HiuDarat.getWeight());
         System.out.println("Applying Accelerate to Hiu Darat:");
         accelerate.applyEffect(HiuDarat);
+        protect.applyEffect(HiuDarat);
         System.out.println("Hiu Darat's weight after Accelerate: " + HiuDarat.getWeight());
+        // print effect name applied on hiu darat
+        for (int i = 0; i < 6; i++) {
+            if (HiuDarat.getEffectValue(i) > 0) {
+                System.out.println("Effect applied: " + HiuDarat.getEffectName(i));
+            }
+        }
         System.out.println("Hiu Darat's image path: " + HiuDarat.getImgPath());
 
         System.out.println("\nSapi's weight before Delay: " + Sapi.getWeight());
