@@ -59,6 +59,26 @@ public abstract class Creature extends Card {
         return 0;
     }
 
+    public String getEffectName(int effectIndex) {
+        if (effectIndex >= 0 && effectIndex < appliedEffects.length) {
+            switch (effectIndex) {
+                case 0:
+                    return "Accelerate";
+                case 1:
+                    return "Delay";
+                case 2:
+                    return "Instant Harvest";
+                case 3:
+                    return "Destroy";
+                case 4:
+                    return "Protect";
+                case 5:
+                    return "Trap";
+            }
+        }
+        return "No such effect";
+    }
+
     public abstract boolean canHarvest();
 
     public Product harvest() {
