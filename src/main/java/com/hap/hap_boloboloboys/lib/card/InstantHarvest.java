@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public class InstantHarvest extends Item {
-    public InstantHarvest(String cardName, String imgPath) {
-        super(cardName, imgPath, Effect.INSTANT_HARVEST);
+    public InstantHarvest(String cardName) {
+        super(cardName, Effect.INSTANT_HARVEST);
     }
 
     @Override
