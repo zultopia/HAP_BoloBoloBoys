@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public class Delay extends Item {
-    public Delay(String cardName, String imgPath) {
-        super(cardName, imgPath, Effect.DELAY);
+    public Delay(String cardName) {
+        super(cardName, Effect.DELAY);
     }
 
     @Override

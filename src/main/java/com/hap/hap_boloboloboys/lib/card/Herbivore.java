@@ -5,8 +5,8 @@ import java.util.Set;
 public class Herbivore extends Animal {
     private static final Set<String> ALLOWED_FOODS = Set.of("Jagung", "Labu", "Stroberi");
 
-    public Herbivore(String cardName, String imgPath, int harvestTarget) {
-        super(cardName, imgPath, harvestTarget);
+    public Herbivore(String cardName) {
+        super(cardName);
     }
 
     @Override

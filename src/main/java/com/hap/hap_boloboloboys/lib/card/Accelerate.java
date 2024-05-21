@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public class Accelerate extends Item {
-    public Accelerate(String cardName, String imgPath) {
-        super(cardName, imgPath, Effect.ACCELERATE);
+    public Accelerate(String cardName) {
+        super(cardName, Effect.ACCELERATE);
     }
 
     @Override

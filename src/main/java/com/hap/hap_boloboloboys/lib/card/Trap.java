@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public class Trap extends Item {
-    public Trap(String cardName, String imgPath) {
-        super(cardName, imgPath, Effect.TRAP);
+    public Trap(String cardName) {
+        super(cardName, Effect.TRAP);
     }
 
     @Override
