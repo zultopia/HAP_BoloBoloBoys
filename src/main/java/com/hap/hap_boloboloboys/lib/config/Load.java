@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Load {
+    // game state
     private static int currentTurn;
+    private static int itemCount;
     private static Map<String, Integer> shopItems = new HashMap<>();
 
     // getter
@@ -15,13 +17,21 @@ public class Load {
         return currentTurn;
     }
 
+    public static int getItemCount() {
+        return currentTurn;
+    }
+    
     public static Map<String, Integer> getShopItems() {
         return shopItems;
     }
-
+    
     // setter
     public static void setCurrentTurn(int currentTurn) {
         Load.currentTurn = currentTurn;
+    }
+    
+    public static void setItemCount(int itemCount) {
+        Load.itemCount = itemCount;
     }
 
     public static void setShopItems(Map<String, Integer> shopItems) {
@@ -36,16 +46,16 @@ public class Load {
         if (file.exists()) {
             Scanner scanner = new Scanner(new FileInputStream(file));
             if (scanner.hasNextLine()) {
-                currentTurn = Integer.parseInt(scanner.nextLine().trim());
+                Load.setCurrentTurn(Integer.parseInt(scanner.nextLine().trim()));
             } else {
                 scanner.close();
                 throw new Exception("Error: Current Turn not found in file gamestate.txt!");
             }
 
             if (scanner.hasNextLine()) {
-                int itemCount = Integer.parseInt(scanner.nextLine().trim());
+                setItemCount(Integer.parseInt(scanner.nextLine().trim()));
                 shopItems.clear();
-                for (int i = 0; i < itemCount; i++) {
+                for (int i = 0; i < Load.itemCount; i++) {
                     if (scanner.hasNext()) {
                         String itemName = scanner.next();
                         if (scanner.hasNextInt()) {

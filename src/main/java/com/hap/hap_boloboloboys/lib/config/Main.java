@@ -9,6 +9,7 @@ public class Main {
         try {
             Load.loadGameState("game1");
             System.out.println("Current Turn: " + Load.getCurrentTurn());
+            System.out.println("Jumlah item di shop: " + Load.getItemCount());
             System.out.println("Shop Items: " + Load.getShopItems());
         } catch (Exception e) {
             System.out.println(e.getMessage());
