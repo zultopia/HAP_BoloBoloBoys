@@ -19,6 +19,8 @@ public class Main {
             System.out.println("Deck: " + Load.getDeck());
             System.out.println("Jumlah Kartu Ladang: " + Load.getCardLadangCount());
             System.out.println("Content: " + Load.getContent());
+
+            Save.saveGameState("game1", Load.getCurrentTurn(), Load.getShopItems());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
