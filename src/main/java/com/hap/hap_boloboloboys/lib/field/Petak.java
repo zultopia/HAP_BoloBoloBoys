@@ -58,13 +58,9 @@ public class Petak {
                 System.out.println("Umur: " + ((Plant) kartu).getAge() + "/" + ((Plant) kartu).getHarvestTarget());
             }
             System.out.println("Active Items: ");
-            // for (boolean bool : kartu.getAppliedEffects()) {
-            //     if (bool) {
-            //         System.out.println("Active");
-            //     } else {
-            //         System.out.println("Inactive");
-            //     }
-            // }
+            for (int i = 0; i < 6; i++) {
+                System.out.println(i + ". " + kartu.getEffectName(i) + " : " + kartu.getEffectValue(i));
+            }
         } else {
             System.out.println("Petak kosong");
         }
