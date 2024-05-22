@@ -6,9 +6,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class GameViewController {
@@ -19,6 +21,8 @@ public class GameViewController {
     private Button nextButton;
     @FXML
     private ImageView nextImageView;
+    @FXML
+    private GridPane gridPane;
 
     private Button activeButton = null;
 
@@ -36,6 +40,18 @@ public class GameViewController {
     private Button buttonPlugin;
 
     @FXML
+    private Label turnLabel;
+    @FXML
+    private Label player1MoneyLabel;
+    @FXML
+    private Label player2MoneyLabel;
+    @FXML
+    private Label deckCountLabel;
+
+    private int numRows = 4; 
+    private int numCols = 5;
+
+    @FXML
     private void initialize() {
         // Set initial styles for buttons
         setButtonStyle(buttonLadangku, false);
@@ -51,6 +67,51 @@ public class GameViewController {
         nextImageView.setFitHeight(100);
         nextButton.setGraphic(nextImageView);
         nextButton.setOnMouseClicked(event -> handleButtonNextClick());
+
+        turnLabel.setText("1");
+        turnLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20px;");
+
+        player1MoneyLabel.setText("2");
+        player1MoneyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 32px;");
+
+        player2MoneyLabel.setText("3");
+        player2MoneyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 32px;");
+
+        deckCountLabel.setText("40/40");
+        deckCountLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
+
+        populateGridPane();
+    }
+
+    private void populateGridPane() {
+        gridPane.getChildren().clear(); // Clear existing content
+
+        Image petakImage = new Image(getClass().getResourceAsStream("/assets/Petak.png"));
+
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                ImageView imageView = new ImageView(petakImage);
+                imageView.setFitWidth(95); 
+                imageView.setFitHeight(110);
+                imageView.getStyleClass().add("image-view");
+                gridPane.add(imageView, col, row);
+            }
+        }
+    }
+
+    @FXML
+    private void handleButtonLadangClick() {
+        // Handle actions when any ladang button is clicked
+    }
+
+    public void setNumRows(int numRows) {
+        this.numRows = numRows;
+        populateGridPane(); 
+    }
+
+    public void setNumCols(int numCols) {
+        this.numCols = numCols;
+        populateGridPane(); 
     }
 
     @FXML
@@ -245,5 +306,22 @@ public class GameViewController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Methods to update labels
+    public void updateTurnLabel(int turn) {
+        turnLabel.setText("Turn: " + turn);
+    }
+
+    public void updatePlayer1MoneyLabel(int money) {
+        player1MoneyLabel.setText("Player 1 Money: " + money);
+    }
+
+    public void updatePlayer2MoneyLabel(int money) {
+        player2MoneyLabel.setText("Player 2 Money: " + money);
+    }
+
+    public void updateDeckCountLabel(int currentDeck, int totalDeck) {
+        deckCountLabel.setText("Deck: " + currentDeck + "/" + totalDeck);
     }
 }

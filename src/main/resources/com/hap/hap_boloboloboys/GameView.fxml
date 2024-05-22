@@ -12,13 +12,14 @@
 <?import javafx.geometry.Pos?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.hap.hap_boloboloboys.GameViewController">
     <children>
         <!-- MenuBar at the top -->
-        <MenuBar layoutX="0" layoutY="0" prefWidth="1500.0">
+        <MenuBar layoutX="0" layoutY="0" prefWidth="1500.0" styleClass="menu-bar">
             <menus>
-                <Menu text="Menu">
+                <Menu text="Menu" styleClass="menu">
                     <items>
                         <MenuItem text="Home" onAction="#onHomeMenuClick"/>
                         <MenuItem text="Settings" onAction="#onSettingMenuClick"/>
@@ -27,7 +28,7 @@
                 </Menu>
             </menus>
         </MenuBar>
-        
+
         <StackPane layoutX="180" layoutY="130">
             <Button fx:id="nextButton" style="background-color: transparent;">
                 <ImageView fx:id="nextImageView"/>
@@ -40,5 +41,14 @@
         <Button fx:id="buttonSave" layoutX="1270" layoutY="430" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonSaveClick" styleClass="button"/>
         <Button fx:id="buttonLoad" layoutX="1270" layoutY="510" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLoadClick" styleClass="button"/>
         <Button fx:id="buttonPlugin" layoutX="1270" layoutY="600" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonPluginClick" styleClass="button"/>
+
+        <!-- GridPane for Ladang Matriks -->
+        <GridPane fx:id="gridPane" layoutX="510" layoutY="165" hgap="10" vgap="10"/>
+
+        <!-- Labels for displaying game information -->
+        <Label fx:id="turnLabel" layoutX="125" layoutY="190" text=""/>
+        <Label fx:id="player1MoneyLabel" layoutX="175" layoutY="370" text=""/>
+        <Label fx:id="player2MoneyLabel" layoutX="175" layoutY="580" text=""/>
+        <Label fx:id="deckCountLabel" layoutX="1245" layoutY="760" text=""/>
     </children>
 </AnchorPane>

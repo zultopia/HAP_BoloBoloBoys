@@ -103,11 +103,11 @@ public class HomeViewController {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Game Page");
-            stage.show();
-            currentStage.close(); // Close current stage
+            stage.show(); 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        currentStage.close(); 
     }
 
     @FXML
@@ -126,10 +126,10 @@ public class HomeViewController {
             stage.setScene(scene);
             stage.setTitle("Home Page");
             stage.show();
-            currentStage.close(); // Close current stage
         } catch (IOException e) {
             e.printStackTrace();
         }
+        currentStage.close(); 
     }
 
     @FXML
@@ -148,9 +148,9 @@ public class HomeViewController {
             stage.setScene(scene);
             stage.setTitle("Setting Page");
             stage.show();
-            currentStage.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        currentStage.close(); 
     }
 }
