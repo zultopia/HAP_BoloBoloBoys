@@ -54,8 +54,8 @@ public class HomeViewController {
     private void createToggleSoundButton() {
         Image soundImage = new Image(getClass().getResourceAsStream("/assets/Sound.png"));
         ImageView soundImageView = new ImageView(soundImage);
-        soundImageView.setFitWidth(180);
-        soundImageView.setFitHeight(300);
+        soundImageView.setFitWidth(120);
+        soundImageView.setFitHeight(120);
 
         toggleSoundButton.setGraphic(soundImageView);
         toggleSoundButton.setOnAction(event -> toggleSound());

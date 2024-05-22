@@ -1,7 +1,6 @@
 package com.hap.hap_boloboloboys;
 
 import java.io.IOException;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,12 +20,7 @@ public class GameViewController {
     @FXML
     private ImageView nextImageView;
 
-    private boolean isButtonLadangkuActive = false;
-    private boolean isButtonLadangmuActive = false;
-    private boolean isButtonTokoActive = false;
-    private boolean isButtonSaveActive = false;
-    private boolean isButtonLoadActive = false;
-    private boolean isButtonPluginActive = false;
+    private Button activeButton = null;
 
     @FXML
     private Button buttonLadangku;
@@ -43,6 +37,14 @@ public class GameViewController {
 
     @FXML
     private void initialize() {
+        // Set initial styles for buttons
+        setButtonStyle(buttonLadangku, false);
+        setButtonStyle(buttonLadangmu, false);
+        setButtonStyle(buttonToko, false);
+        setButtonStyle(buttonSave, false);
+        setButtonStyle(buttonLoad, false);
+        setButtonStyle(buttonPlugin, false);
+
         Image nextImage = new Image(getClass().getResourceAsStream("/assets/Next.png"));
         nextImageView.setImage(nextImage);
         nextImageView.setFitWidth(100);
@@ -53,10 +55,8 @@ public class GameViewController {
 
     @FXML
     private void handleButtonLadangkuClick() {
-        System.out.println("APA JING");
-        isButtonLadangkuActive = !isButtonLadangkuActive;
-        updateButtonState(buttonLadangku, isButtonLadangkuActive);
-        if (isButtonLadangkuActive) {
+        toggleButtonState(buttonLadangku);
+        if (activeButton == buttonLadangku) {
             runMethodLadangku();
         } else {
             stopMethodLadangku();
@@ -65,9 +65,8 @@ public class GameViewController {
 
     @FXML
     private void handleButtonLadangmuClick() {
-        isButtonLadangmuActive = !isButtonLadangmuActive;
-        updateButtonState(buttonLadangmu, isButtonLadangmuActive);
-        if (isButtonLadangmuActive) {
+        toggleButtonState(buttonLadangmu);
+        if (activeButton == buttonLadangmu) {
             runMethodLadangmu();
         } else {
             stopMethodLadangmu();
@@ -76,9 +75,8 @@ public class GameViewController {
 
     @FXML
     private void handleButtonTokoClick() {
-        isButtonTokoActive = !isButtonTokoActive;
-        updateButtonState(buttonToko, isButtonTokoActive);
-        if (isButtonTokoActive) {
+        toggleButtonState(buttonToko);
+        if (activeButton == buttonToko) {
             runMethodToko();
         } else {
             stopMethodToko();
@@ -87,9 +85,8 @@ public class GameViewController {
 
     @FXML
     private void handleButtonSaveClick() {
-        isButtonSaveActive = !isButtonSaveActive;
-        updateButtonState(buttonSave, isButtonSaveActive);
-        if (isButtonSaveActive) {
+        toggleButtonState(buttonSave);
+        if (activeButton == buttonSave) {
             runMethodSave();
         } else {
             stopMethodSave();
@@ -98,9 +95,8 @@ public class GameViewController {
 
     @FXML
     private void handleButtonLoadClick() {
-        isButtonLoadActive = !isButtonLoadActive;
-        updateButtonState(buttonLoad, isButtonLoadActive);
-        if (isButtonLoadActive) {
+        toggleButtonState(buttonLoad);
+        if (activeButton == buttonLoad) {
             runMethodLoad();
         } else {
             stopMethodLoad();
@@ -109,22 +105,34 @@ public class GameViewController {
 
     @FXML
     private void handleButtonPluginClick() {
-        isButtonPluginActive = !isButtonPluginActive;
-        updateButtonState(buttonPlugin, isButtonPluginActive);
-        if (isButtonPluginActive) {
+        toggleButtonState(buttonPlugin);
+        if (activeButton == buttonPlugin) {
             runMethodPlugin();
         } else {
             stopMethodPlugin();
         }
     }
 
-    private void updateButtonState(Button button, boolean isActive) {
-        if (isActive) {
-            button.getStyleClass().remove("active");
-            button.setStyle("-fx-background-color: white;");
+    private void toggleButtonState(Button button) {
+        if (activeButton != null) {
+            setButtonStyle(activeButton, false);
+        }
+
+        if (activeButton != button) {
+            setButtonStyle(button, true);
+            activeButton = button;
         } else {
+            activeButton = null;
+        }
+    }
+
+    private void setButtonStyle(Button button, boolean isActive) {
+        if (isActive) {
             button.getStyleClass().add("active");
             button.setStyle("-fx-background-color: #ED8930;");
+        } else {
+            button.getStyleClass().remove("active");
+            button.setStyle("-fx-background-color: white;");
         }
     }
 
