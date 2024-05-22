@@ -57,13 +57,13 @@ public class Store {
         return true;
     }
 
-    public static void main(String[] args) {
-        Store store = new Store();
-        store.sellProduct(new Product("Apple", "apple.png", 10, 5));
-        store.sellProduct(new Product("Apple", "apple.png", 10, 5));
-        store.sellProduct(new Product("Banana", "banana.png", 5, 3));
-        store.displayInventory();
-        store.buyProduct(new Product("Apple", "apple.png", 10, 5));
-        store.displayInventory();
-    }
+    // public static void main(String[] args) {
+    //     Store store = new Store();
+    //     store.sellProduct(new Product("Apple", "apple.png", 10, 5));
+    //     store.sellProduct(new Product("Apple", "apple.png", 10, 5));
+    //     store.sellProduct(new Product("Banana", "banana.png", 5, 3));
+    //     store.displayInventory();
+    //     store.buyProduct(new Product("Apple", "apple.png", 10, 5));
+    //     store.displayInventory();
+    // }
 }

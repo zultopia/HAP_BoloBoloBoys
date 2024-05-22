@@ -10,35 +10,35 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.geometry.Pos?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.image.ImageView?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.hap.hap_boloboloboys.GameViewController">
-    <!-- MenuBar at the top -->
-    <MenuBar VBox.vgrow="NEVER">
-        <Menu text="Menu">
-            <MenuItem text="Home" onAction="#onHomeMenuClick"/>
-            <MenuItem text="Settings" onAction="#onSettingMenuClick"/>
-            <MenuItem text="Game" onAction="#onGameMenuClick"/>
-        </Menu>
-    </MenuBar>
-    
-    <!-- Buttons -->
-    <HBox alignment="CENTER_RIGHT" styleClass="button-box" VBox.vgrow="ALWAYS">
-        <VBox spacing="47">
-            <Button fx:id="buttonLadangku" onAction="#handleButtonLadangkuClick" text="" />
-            <Button fx:id="buttonLadangmu" onAction="#handleButtonLadangmuClick" text="" />
-            <Button fx:id="buttonToko" onAction="#handleButtonTokoClick" text="" />
-            <Button fx:id="buttonSave" onAction="#handleButtonSaveClick" text="" />
-            <Button fx:id="buttonLoad" onAction="#handleButtonLoadClick" text="" />
-            <Button fx:id="buttonPlugin" onAction="#handleButtonPluginClick" text="" />
-        </VBox>
-    </HBox>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.hap.hap_boloboloboys.GameViewController">
+    <children>
+        <!-- MenuBar at the top -->
+        <MenuBar layoutX="0" layoutY="0" prefWidth="1500.0">
+            <menus>
+                <Menu text="Menu">
+                    <items>
+                        <MenuItem text="Home" onAction="#onHomeMenuClick"/>
+                        <MenuItem text="Settings" onAction="#onSettingMenuClick"/>
+                        <MenuItem text="Game" onAction="#onGameMenuClick"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        
+        <StackPane layoutX="180" layoutY="130">
+            <Button fx:id="nextButton" style="background-color: transparent;">
+                <ImageView fx:id="nextImageView"/>
+            </Button>
+        </StackPane>
 
-     <!-- StackPane for Next button -->
-    <StackPane alignment="TOP_LEFT">
-        <Button fx:id="nextButton" styleClass="next-button" style="background-color: transparent;">
-            <ImageView fx:id="nextImageView"/>
-        </Button>
-    </StackPane>
-</VBox>
+        <Button fx:id="buttonLadangku" layoutX="1270" layoutY="160" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLadangkuClick" styleClass="button"/>
+        <Button fx:id="buttonLadangmu" layoutX="1270" layoutY="255" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLadangmuClick" styleClass="button"/>
+        <Button fx:id="buttonToko" layoutX="1270" layoutY="340" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonTokoClick" styleClass="button"/>
+        <Button fx:id="buttonSave" layoutX="1270" layoutY="430" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonSaveClick" styleClass="button"/>
+        <Button fx:id="buttonLoad" layoutX="1270" layoutY="510" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLoadClick" styleClass="button"/>
+        <Button fx:id="buttonPlugin" layoutX="1270" layoutY="600" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonPluginClick" styleClass="button"/>
+    </children>
+</AnchorPane>

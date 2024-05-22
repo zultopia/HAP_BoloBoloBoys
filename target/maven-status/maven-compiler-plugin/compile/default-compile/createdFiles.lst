@@ -1,8 +1,10 @@
 com/hap/hap_boloboloboys/lib/card/InstantHarvest.class
 com/hap/hap_boloboloboys/lib/card/Creature.class
+com/hap/hap_boloboloboys/lib/field/Petak.class
 com/hap/hap_boloboloboys/HomeView.class
 com/hap/hap_boloboloboys/HomeViewController.class
 com/hap/hap_boloboloboys/lib/card/Product.class
+com/hap/hap_boloboloboys/lib/card/Main.class
 com/hap/hap_boloboloboys/lib/card/Delay.class
 com/hap/hap_boloboloboys/lib/person/Person.class
 com/hap/hap_boloboloboys/lib/card/Carnivore.class
@@ -15,12 +17,16 @@ com/hap/hap_boloboloboys/lib/person/Deck.class
 com/hap/hap_boloboloboys/lib/card/Accelerate.class
 com/hap/hap_boloboloboys/GameViewController.class
 com/hap/hap_boloboloboys/lib/card/Trap.class
+com/hap/hap_boloboloboys/lib/config/Load.class
 module-info.class
 com/hap/hap_boloboloboys/lib/card/Animal.class
 com/hap/hap_boloboloboys/lib/card/Herbivore.class
+com/hap/hap_boloboloboys/lib/field/Ladang.class
 com/hap/hap_boloboloboys/lib/card/Protect.class
 com/hap/hap_boloboloboys/lib/card/Item$Effect.class
 com/hap/hap_boloboloboys/lib/card/Destroy.class
 com/hap/hap_boloboloboys/lib/card/Item.class
+com/hap/hap_boloboloboys/lib/store/Store.class
 com/hap/hap_boloboloboys/lib/card/Omnivore.class
 com/hap/hap_boloboloboys/lib/person/Inventory.class
+com/hap/hap_boloboloboys/lib/config/Main.class

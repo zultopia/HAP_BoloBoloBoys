@@ -1,7 +1,6 @@
 package com.hap.hap_boloboloboys.lib.field;
 
 import com.hap.hap_boloboloboys.lib.card.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,13 +58,13 @@ public class Petak {
                 System.out.println("Umur: " + ((Plant) kartu).getAge() + "/" + ((Plant) kartu).getHarvestTarget());
             }
             System.out.println("Active Items: ");
-            for (boolean bool : kartu.getAppliedEffects()) {
-                if (bool) {
-                    System.out.println("Active");
-                } else {
-                    System.out.println("Inactive");
-                }
-            }
+            // for (boolean bool : kartu.getAppliedEffects()) {
+            //     if (bool) {
+            //         System.out.println("Active");
+            //     } else {
+            //         System.out.println("Inactive");
+            //     }
+            // }
         } else {
             System.out.println("Petak kosong");
         }

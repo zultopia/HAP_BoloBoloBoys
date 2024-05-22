@@ -4,25 +4,20 @@ import java.io.IOException;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class GameViewController {
 
     @FXML
     private MenuBar menuBar;
-
     @FXML
     private Button nextButton;
-
     @FXML
     private ImageView nextImageView;
 
@@ -33,11 +28,17 @@ public class GameViewController {
     private boolean isButtonLoadActive = false;
     private boolean isButtonPluginActive = false;
 
+    @FXML
     private Button buttonLadangku;
+    @FXML
     private Button buttonLadangmu;
+    @FXML
     private Button buttonToko;
+    @FXML
     private Button buttonSave;
+    @FXML
     private Button buttonLoad;
+    @FXML
     private Button buttonPlugin;
 
     @FXML
@@ -48,9 +49,6 @@ public class GameViewController {
         nextImageView.setFitHeight(100);
         nextButton.setGraphic(nextImageView);
         nextButton.setOnMouseClicked(event -> handleButtonNextClick());
-
-        StackPane.setMargin(nextButton, new Insets(10, 10, 10, 10));
-        StackPane.setAlignment(nextButton, Pos.TOP_LEFT);
     }
 
     @FXML
