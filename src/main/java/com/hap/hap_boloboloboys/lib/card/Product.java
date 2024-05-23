@@ -4,13 +4,13 @@ public class Product extends Card {
     private int price;
     private int addedWeight;
 
-    public Product(String cardName) {
-        super(cardName, "");
-        setProductDetails(cardName);
+    public Product(String code) {
+        super(code);
+        setProductDetails(code);
     }
 
-    private void setProductDetails(String cardName) {
-        switch (cardName) {
+    private void setProductDetails(String code) {
+        switch (code) {
             case "SIRIP_HIU":
                 setCardName("Sirip Hiu");
                 this.price = 500;
@@ -57,9 +57,9 @@ public class Product extends Card {
                 this.addedWeight = 5;
                 break;
             default:
-                throw new IllegalArgumentException("Unknown product: " + cardName);
+                throw new IllegalArgumentException("Unknown product: " + getCardName());
         }
-        this.setImgPath("path/to/" + cardName.replace(" ", "") + ".png");
+        this.setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
     }
 
     public int getPrice() {

@@ -1,12 +1,16 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public abstract class Card {
+    private String code;
     private String cardName;
     private String imgPath;
 
-    public Card(String cardName, String imgPath) {
-        this.cardName = cardName;
-        this.imgPath = imgPath;
+    public Card(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
     }
 
     public String getCardName() {
@@ -17,7 +21,6 @@ public abstract class Card {
         return imgPath;
     }
 
-    // setImgPath
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }

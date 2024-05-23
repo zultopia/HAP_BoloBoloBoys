@@ -1,13 +1,5 @@
 package com.hap.hap_boloboloboys.lib.card;
 
-// index:
-// 0 - accelerate
-// 1 - delay
-// 2 - instant harvest
-// 3 - destroy
-// 4 - protect
-// 5 - trap
-
 public abstract class Item extends Card {
     public enum Effect {
         ACCELERATE, DELAY, INSTANT_HARVEST, DESTROY, PROTECT, TRAP
@@ -15,13 +7,41 @@ public abstract class Item extends Card {
 
     private Effect effect;
 
-    public Item(String cardName, Effect effect) {
-        super(cardName, determineImgPath(cardName));
-        this.effect = effect;
+    public Item(String code) {
+        super(code);
+        setItemDetails(code);
     }
 
-    private static String determineImgPath(String cardName) {
-        return "path/to/" + cardName.replace(" ", "") + ".png";
+    private void setItemDetails(String code) {
+        switch (code) {
+            case "ACCELERATE":
+                setCardName("Accelerate");
+                effect = Effect.ACCELERATE;
+                break;
+            case "DELAY":
+                setCardName("Delay");
+                effect = Effect.DELAY;
+                break;
+            case "INSTANT_HARVEST":
+                setCardName("Instant Harvest");
+                effect = Effect.INSTANT_HARVEST;
+                break;
+            case "DESTROY":
+                setCardName("Destroy");
+                effect = Effect.DESTROY;
+                break;
+            case "PROTECT":
+                setCardName("Protect");
+                effect = Effect.PROTECT;
+                break;
+            case "TRAP":
+                setCardName("Trap");
+                effect = Effect.TRAP;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown item code: " + code);
+        }
+        setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
     }
 
     public Effect getEffect() {
