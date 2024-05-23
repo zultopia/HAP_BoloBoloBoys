@@ -41,8 +41,15 @@ public class Storage {
      * @throws InventoryException if index is invalid, or the index of inventory is null
      * @return Card of the index in the Inventory array */
     public Card getCard(int index) throws InventoryException {
-        if (index < 0 || index >= this.getSize() || this.cards[index] == null) throw new InventoryException("Indeks invalid");
+        if (index < 0 || index >= this.capacity || this.cards[index] == null) throw new InventoryException("Indeks invalid");
         else return this.cards[index];
+    }
+    public int calculateSize() {
+        int size = 0;
+        for (int i = 0; i < this.capacity; i++) {
+            if (this.cards[i] != null) size++;
+        }
+        return size;
     }
 
 
@@ -51,14 +58,15 @@ public class Storage {
     public void setCurrentSize(int currentSize) {this.currentSize = currentSize;}
     public void setCards(Card[] cards) {
         this.cards = cards;
-        this.currentSize = this.getSize();
+        if (this instanceof Deck) this.currentSize = this.calculateSize();
+        else this.currentSize = this.getSize();
     }
 
     /*CHECKER*/
-    public boolean isFull() {return this.getSize() == this.capacity;}
-    public boolean isEmpty() {return this.getSize() == 0;}
+    public boolean isFull() {return this.calculateSize() == this.capacity;}
+    public boolean isEmpty() {return this.calculateSize() == 0;}
     public Card findCard(Card card) {
-        for (int i = 0; i < this.getSize(); i++) {
+        for (int i = 0; i < this.calculateSize(); i++) {
             if (this.cards[i].equals(card)) return this.cards[i];
         }
         return null;
@@ -83,7 +91,8 @@ public class Storage {
                 break;
             }
         }
-        this.currentSize = this.getSize();
+        if (this instanceof Deck) this.currentSize = this.calculateSize();
+        else this.currentSize = this.getSize();
     }
 
     /**
@@ -92,9 +101,10 @@ public class Storage {
      * @throws InventoryException if index is invalid, or the index of inventory is null
      */
     public void delete(int index) throws InventoryException {
-        if (index < 0 || index >= this.getSize() || this.cards[index] == null) throw new InventoryException("Indeks invalid");
+        if (index < 0 || index >= this.calculateSize() || this.cards[index] == null) throw new InventoryException("Indeks invalid");
         this.cards[index] = null;
-        this.currentSize = this.getSize();
+        if (this instanceof Deck) this.currentSize = this.calculateSize();
+        else this.currentSize = this.getSize();
     }
 
     /**
@@ -102,14 +112,15 @@ public class Storage {
      * @param card card to be removed
      */
     public void delete(Card card) {
-        for (int i = 0; i < this.getSize(); i++) {
+        for (int i = 0; i < this.calculateSize(); i++) {
             if (this.cards[i] == card) {
                 this.cards[i] = null;
                 break;
             }
         }
         this.currentSize--;
-        this.currentSize = this.getSize();
+        if (this instanceof Deck) this.currentSize = this.calculateSize();
+        else this.currentSize = this.getSize();
     }
 
     /**
@@ -119,10 +130,11 @@ public class Storage {
      * @return card of the index in the Inventory array
      */
     public Card pop(int index) throws InventoryException {
-        if (index < 0 || index >= this.getSize() || this.cards[index] == null) throw new InventoryException("Indeks invalid");
+        if (index < 0 || index >= this.capacity || this.cards[index] == null) throw new InventoryException("Indeks invalid");
         Card card = this.cards[index];
         this.cards[index] = null;
-        this.currentSize = this.getSize();
+        if (this instanceof Deck) this.currentSize = this.calculateSize();
+        else this.currentSize = this.getSize();
         return card;
     }
 

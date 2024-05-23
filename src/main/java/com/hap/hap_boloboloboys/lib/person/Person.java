@@ -86,7 +86,7 @@ public class Person {
      * Call this function again to reshuffle
      */
     public void shuffleCard() {
-        int neededCard = this.deck.getCapacity() - this.deck.getSize(); // Empty slots of deck
+        int neededCard = this.deck.getCapacity() - this.deck.calculateSize(); // Empty slots of deck
         int inventorySize = this.inventory.getSize(); // How many card in inventory
         // Check if inventory size is sufficient, use minimum between inventory size and needed card
         neededCard = min(min(neededCard, 4), inventorySize);// Maximum 4 cards or the empty slots of deck, or the inventory size

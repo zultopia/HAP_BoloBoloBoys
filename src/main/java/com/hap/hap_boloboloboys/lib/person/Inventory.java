@@ -26,6 +26,10 @@ public class Inventory extends Storage {
         super(capacity <= 0 ? DEFAULT_CAPACITY : capacity);
     }
 
+    public void initiateFromScratch() {
+        initiateFromScratch(DEFAULT_CAPACITY);
+    }
+
     /* GAME MODIFIER */
 
     /**

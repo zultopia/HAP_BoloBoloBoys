@@ -1,6 +1,8 @@
 package com.hap.hap_boloboloboys.lib.person;
 import com.hap.hap_boloboloboys.lib.card.*;
 
+import java.util.List;
+
 public class Deck extends Storage {
     private final static int DEFAULT_CAPACITY = 6;
 
@@ -16,11 +18,13 @@ public class Deck extends Storage {
      * Put the cards from inventory to deck. The size of empty slots is already checked to be sufficient before called
      * @param shuffledCard array of shuffled cards
      */
-    public void putToDeck(Card[] shuffledCard) {
-        for (int i = 0; i < this.capacity - this.getSize(); i++) {
+    public void putToDeck(List<Card> shuffledCard) {
+        int size = Math.min(this.capacity - this.calculateSize(), shuffledCard.size());
+        for (int i = 0; i < size; i++) {
             try {
-                this.add(shuffledCard[i]);
+                this.add(shuffledCard.get(i));
             } catch (InventoryException e) {
+                System.out.println(e.getMessage());
                 break;
             }
         }
@@ -30,7 +34,7 @@ public class Deck extends Storage {
         for (int i = 0; i < this.capacity; i++) {
             if (this.cards[i] == null) {
                 this.cards[i] = card;
-                this.getSize();
+                this.currentSize++;
                 break;
             }
         }
@@ -39,7 +43,18 @@ public class Deck extends Storage {
     public void putToDeck(Card card, int index) {
         if (index >= 0 && index < this.capacity) {
             this.cards[index] = card;
-            this.getSize();
+            this.currentSize++;
+        }
+    }
+
+    @Override
+    public Card pop(int index) throws InventoryException {
+        if (index < 0 || index >= this.capacity || this.cards[index] == null) throw new InventoryException("Indeks invalid");
+        else {
+            Card card = this.cards[index];
+            this.cards[index] = null;
+            this.currentSize--;
+            return card;
         }
     }
 }
