@@ -10,12 +10,12 @@ public abstract class Animal extends Creature {
 
     public abstract boolean canEat(Product productCard);
 
-    public void feed(Product productCard) {
+    public void feed(Product productCard) throws CardException {
         if (canEat(productCard)) {
             this.weight += productCard.getAddedWeight();
             System.out.println(getCardName() + " has eaten " + productCard.getCardName() + " and gained " + productCard.getAddedWeight() + " weight.");
         } else {
-            System.out.println(getCardName() + " cannot eat " + productCard.getCardName());
+            throw new CardException("This animal cannot eat this product.");
         }
     }
 

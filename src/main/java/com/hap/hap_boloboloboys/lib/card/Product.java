@@ -56,8 +56,6 @@ public class Product extends Card {
                 this.price = 350;
                 this.addedWeight = 5;
                 break;
-            default:
-                throw new IllegalArgumentException("Unknown product: " + getCardName());
         }
         this.setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
     }

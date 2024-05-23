@@ -1,172 +1,75 @@
 package com.hap.hap_boloboloboys.lib.card;
 
-// public class Main {
-//     public static void main(String[] args) {
-//         /////////////// Test effect ///////////////
-//         // Create some animal objects
-//         Animal HiuDarat = new Carnivore("Hiu Darat");
-//         Animal Sapi = new Herbivore("Sapi");
-//         Sapi.setWeight(40);
-//         Animal bear = new Omnivore("Beruang");
+public class Main {
+    public static void main(String[] args) {
+        // Test harvesting creatures into products
+        Animal creature1 = new Carnivore("HIU_DARAT");
+        Animal creature2 = new Herbivore("SAPI");
+        Animal creature3 = new Herbivore("DOMBA");
+        Animal creature4 = new Herbivore("KUDA");
+        Animal creature5 = new Omnivore("AYAM");
+        Animal creature6 = new Omnivore("BERUANG");
+        Plant creature7 = new Plant("BIJI_JAGUNG");
+        Plant creature8 = new Plant("BIJI_LABU");
+        Plant creature9 = new Plant("BIJI_STROBERI");
 
-//         // Create plant object
-//         Plant BijiJagung = new Plant("Biji Jagung");
-//         BijiJagung.setAge(10); // Set initial age for demonstration
+        // set creature untill harvestable
+        creature1.setWeight(20);
+        creature2.setWeight(10);
+        creature3.setWeight(12);
+        creature4.setWeight(14);
+        creature5.setWeight(5);
+        creature6.setWeight(25);
+        creature7.setAge(3);
+        creature8.setAge(5);
+        creature9.setAge(4);
 
-//         // Create some item objects
-//         Item accelerate = new Accelerate("Accelerate");
-//         Item delay = new Delay("Delay");
-//         Item instantHarvest = new InstantHarvest("Instant Harvest");
-//         Item protect = new Protect("Protect");
-//         Item trap = new Trap("Trap");
+        // Harvest creatures
+        Product product1 = creature1.harvest();
+        Product product2 = creature2.harvest();
+        Product product3 = creature3.harvest();
+        Product product4 = creature4.harvest();
+        Product product5 = creature5.harvest();
+        Product product6 = creature6.harvest();
+        Product product7 = creature7.harvest();
+        Product product8 = creature8.harvest();
+        Product product9 = creature9.harvest();
 
-//         // Apply effects to the animals
-//         System.out.println("Hiu Darat's weight before Accelerate: " + HiuDarat.getWeight());
-//         System.out.println("Applying Accelerate to Hiu Darat:");
-//         accelerate.applyEffect(HiuDarat);
-//         protect.applyEffect(HiuDarat);
-//         System.out.println("Hiu Darat's weight after Accelerate: " + HiuDarat.getWeight());
-//         // print effect name applied on hiu darat
-//         for (int i = 0; i < 6; i++) {
-//             if (HiuDarat.getEffectValue(i) > 0) {
-//                 System.out.println("Effect applied: " + HiuDarat.getEffectName(i));
-//             }
-//         }
-//         System.out.println("Hiu Darat's image path: " + HiuDarat.getImgPath());
+        // Display harvested products
+        System.out.println("Harvested Product 1: " + product1.getCardName());
+        System.out.println("Price: " + product1.getPrice());
+        System.out.println("Added Weight: " + product1.getAddedWeight());
 
-//         System.out.println("\nSapi's weight before Delay: " + Sapi.getWeight());
-//         System.out.println("Applying Delay to Sapi:");
-//         delay.applyEffect(Sapi);
-//         System.out.println("Sapi's weight after Delay: " + Sapi.getWeight());
-//         System.out.println("Sapi's image path: " + Sapi.getImgPath());
+        System.out.println("Harvested Product 2: " + product2.getCardName());
+        System.out.println("Price: " + product2.getPrice());
+        System.out.println("Added Weight: " + product2.getAddedWeight());
 
-//         System.out.println("\nApplying Instant Harvest to Biji Jagung:");
-//         instantHarvest.applyEffect(BijiJagung);
-//         System.out.println("Biji Jagung's age after Instant Harvest: " + BijiJagung.getAge());
-//         System.out.println("Biji Jagung's image path: " + BijiJagung.getImgPath());
+        System.out.println("Harvested Product 3: " + product3.getCardName());
+        System.out.println("Price: " + product3.getPrice());
+        System.out.println("Added Weight: " + product3.getAddedWeight());
 
-//         System.out.println("\nApplying Protect to Hiu Darat:");
-//         protect.applyEffect(HiuDarat);
-//         System.out.println("Is Hiu Darat protected? " + (HiuDarat.getEffectValue(4) > 0));
+        System.out.println("Harvested Product 4: " + product4.getCardName());
+        System.out.println("Price: " + product4.getPrice());
+        System.out.println("Added Weight: " + product4.getAddedWeight());
 
-//         System.out.println("\nApplying Trap to Beruang:");
-//         trap.applyEffect(bear);
-//         System.out.println("Is Beruang trapped? " + (bear.getEffectValue(5) > 0));
+        System.out.println("Harvested Product 5: " + product5.getCardName());
+        System.out.println("Price: " + product5.getPrice());
+        System.out.println("Added Weight: " + product5.getAddedWeight());
 
-//         // Test harvesting
-//         HiuDarat.setWeight(20); // Set weight to meet harvest target
-//         Product hiuDaratProduct = HiuDarat.harvest();
-//         printProductDetails(hiuDaratProduct);
+        System.out.println("Harvested Product 6: " + product6.getCardName());
+        System.out.println("Price: " + product6.getPrice());
+        System.out.println("Added Weight: " + product6.getAddedWeight());
 
-//         Sapi.setWeight(10); // Set weight to meet harvest target
-//         Product sapiProduct = Sapi.harvest();
-//         printProductDetails(sapiProduct);
+        System.out.println("Harvested Product 7: " + product7.getCardName());
+        System.out.println("Price: " + product7.getPrice());
+        System.out.println("Added Weight: " + product7.getAddedWeight());
 
-//         BijiJagung.setAge(3); // Set age to meet harvest target
-//         Product jagungProduct = BijiJagung.harvest();
-//         printProductDetails(jagungProduct);
-//     }
+        System.out.println("Harvested Product 8: " + product8.getCardName());
+        System.out.println("Price: " + product8.getPrice());
+        System.out.println("Added Weight: " + product8.getAddedWeight());
 
-//     private static void printProductDetails(Product product) {
-//         if (product != null) {
-//             System.out.println("Product: " + product.getCardName());
-//             System.out.println("Price: " + product.getPrice());
-//             System.out.println("Added Weight: " + product.getAddedWeight());
-//             System.out.println("Image Path: " + product.getImgPath());
-//             System.out.println();
-//         } else {
-//             System.out.println("No product harvested.");
-//         }
-//     }
-// }
-
-
-//         // /////////////// Test harvest ///////////////
-//         // // Test Carnivore
-//         // Carnivore carnivore = new Carnivore("Hiu Darat");
-//         // // set weight until harvestable
-//         // carnivore.setWeight(20);
-//         // printCreatureDetails(carnivore);
-//         // Product carnivoreProduct = carnivore.harvest();
-//         // printProductDetails(carnivoreProduct);
-
-//         // // Test Herbivore
-//         // Herbivore herbivore = new Herbivore("Sapi");
-//         // // set weight until harvestable
-//         // herbivore.setWeight(10);
-//         // printCreatureDetails(herbivore);
-//         // Product herbivoreProduct = herbivore.harvest();
-//         // printProductDetails(herbivoreProduct);
-
-//         // // Test Omnivore
-//         // Omnivore omnivore = new Omnivore("Domba");
-//         // // set weight until harvestable
-//         // omnivore.setWeight(12);
-//         // printCreatureDetails(omnivore);
-//         // Product omnivoreProduct = omnivore.harvest();
-//         // printProductDetails(omnivoreProduct);
-
-//         // // Kuda
-//         // Herbivore kuda = new Herbivore("Kuda");
-//         // // set weight until harvestable
-//         // kuda.setWeight(14);
-//         // printCreatureDetails(kuda);
-//         // Product kudaProduct = kuda.harvest();
-//         // printProductDetails(kudaProduct);
-
-//         // // Ayam
-//         // Omnivore ayam = new Omnivore("Ayam");
-//         // // set weight until harvestable
-//         // ayam.setWeight(5);
-//         // printCreatureDetails(ayam);
-//         // Product ayamProduct = ayam.harvest();
-//         // printProductDetails(ayamProduct);
-
-//         // // Beruang
-//         // Carnivore beruang = new Carnivore("Beruang");
-//         // // set weight until harvestable
-//         // beruang.setWeight(25);
-//         // printCreatureDetails(beruang);
-//         // Product beruangProduct = beruang.harvest();
-//         // printProductDetails(beruangProduct);
-
-//         // // Test Plant
-//         // Plant jagung = new Plant("Biji Jagung");
-//         // // set age until harvestable
-//         // jagung.setAge(3);
-//         // printCreatureDetails(jagung);
-//         // Product jagungProduct = jagung.harvest();
-//         // printProductDetails(jagungProduct);
-
-//         // Plant labu = new Plant("Biji Labu");
-//         // // set age until harvestable
-//         // labu.setAge(5);
-//         // printCreatureDetails(labu);
-//         // Product labuProduct = labu.harvest();
-//         // printProductDetails(labuProduct);
-
-//         // Plant stroberi = new Plant("Biji Stroberi");
-//         // // set age until harvestable
-//         // stroberi.setAge(4);
-//         // printCreatureDetails(stroberi);
-//         // Product stroberiProduct = stroberi.harvest();
-//         // printProductDetails(stroberiProduct);
-// //     }
-
-// //     private static void printCreatureDetails(Creature creature) {
-// //         System.out.println("Creature: " + creature.getCardName());
-// //         System.out.println("Image Path: " + creature.getImgPath());
-// //     }
-
-// //     private static void printProductDetails(Product product) {
-// //         if (product != null) {
-// //             System.out.println("Product: " + product.getCardName());
-// //             System.out.println("Price: " + product.getPrice());
-// //             System.out.println("Added Weight: " + product.getAddedWeight());
-// //             System.out.println("Image Path: " + product.getImgPath());
-// //             System.out.println();
-// //         } else {
-// //             System.out.println("No product harvested.");
-// //         }
-// //     }
-// // }
+        System.out.println("Harvested Product 9: " + product9.getCardName());
+        System.out.println("Price: " + product9.getPrice());
+        System.out.println("Added Weight: " + product9.getAddedWeight());
+    }
+}
