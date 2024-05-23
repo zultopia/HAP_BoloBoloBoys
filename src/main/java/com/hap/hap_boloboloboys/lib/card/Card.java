@@ -21,4 +21,8 @@ public abstract class Card {
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }
+
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
 }
