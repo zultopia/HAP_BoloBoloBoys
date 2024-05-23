@@ -1,5 +1,6 @@
 package com.hap.hap_boloboloboys;
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.event.ActionEvent;
@@ -10,8 +11,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,7 +26,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -71,6 +76,7 @@ public class GameViewController {
     private int playerMoney = 200000;
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
+    private Stage popupStage;
 
     @FXML
     private void initialize() { // Inisialisasi
@@ -652,26 +658,247 @@ public class GameViewController {
 
     private void runMethodSave() {
         System.out.println("Button Save clicked and method executed");
+        Label saveLabel = new Label("Save Game State");
+        saveLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
+    
+        // Create Format ComboBox
+        ComboBox<String> formatComboBox = new ComboBox<>();
+        formatComboBox.getItems().addAll("TXT", "XML", "YAML", "JSON");
+        formatComboBox.getSelectionModel().selectFirst();
+    
+        // Create Folder TextField
+        TextField folderTextField = new TextField();
+        folderTextField.setPromptText("Enter folder name");
+    
+        // Create Save Button
+        Button saveButton = new Button("Save");
+        saveButton.setOnAction(event -> {
+            String selectedFormat = formatComboBox.getValue();
+            String folderName = folderTextField.getText().trim();
+            if (!folderName.isEmpty()) {
+                // Perform saving action here, you can save to a folder with the provided name
+                System.out.println("Save to: " + folderName + ", Format: " + selectedFormat);
+                stopMethodSave();
+            } else {
+                System.out.println("Folder name cannot be empty!");
+            }
+        });
+    
+        // Create Back Button
+        Button backButton = new Button("Kembali");
+        backButton.setOnAction(event -> {
+            popupStage.close();
+            toggleButtonState(buttonSave); 
+            stopMethodSave(); 
+        });
+    
+        HBox buttonBox = new HBox(20, saveButton, backButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        VBox vbox = new VBox(10, saveLabel, formatComboBox, folderTextField, buttonBox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
+        vbox.setEffect(new DropShadow());
+    
+        Scene scene = new Scene(vbox, 400, 300);
+        popupStage = new Stage();
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(gridPane.getScene().getWindow()); 
+        popupStage.setTitle("Save State");
+        popupStage.setScene(scene);
+        popupStage.setResizable(false);
+        popupStage.show();
     }
 
     private void stopMethodSave() {
         System.out.println("Stopping method for Button Save");
+        if (popupStage != null) {
+            popupStage.close();
+            popupStage = null;
+        }
+    }
+
+    public void loadPlayer(String folderName, String selectedFormat) {
+        // Perform loading action here with the provided folderName and selectedFormat
+        System.out.println("Load from: " + folderName + ", Format: " + selectedFormat);
     }
 
     private void runMethodLoad() {
         System.out.println("Button Load clicked and method executed");
+        Label loadLabel = new Label("Load Game State");
+        loadLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
+
+        // Create Format ComboBox
+        ComboBox<String> formatComboBox = new ComboBox<>();
+        formatComboBox.getItems().addAll("TXT", "XML", "YAML", "JSON");
+        formatComboBox.getSelectionModel().selectFirst(); 
+
+        // Create Folder TextField
+        TextField folderTextField = new TextField();
+        folderTextField.setPromptText("Enter folder name");
+
+        // Create Load Button
+        Button loadButton = new Button("Load");
+        loadButton.setOnAction(event -> {
+            String selectedFormat = formatComboBox.getValue();
+            String folderName = folderTextField.getText().trim();
+            if (!folderName.isEmpty()) {
+                // Perform loading action here, you can load from a folder with the provided name
+                System.out.println("Load from: " + folderName + ", Format: " + selectedFormat);
+                stopMethodLoad();
+            } else {
+                System.out.println("Folder name cannot be empty!");
+            }
+        });
+
+        // Create Back Button
+        Button backButton = new Button("Kembali");
+        backButton.setOnAction(event -> {
+            popupStage.close();
+            toggleButtonState(buttonLoad); 
+            stopMethodLoad(); 
+        });
+    
+        HBox buttonBox = new HBox(20, loadButton, backButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        VBox vbox = new VBox(10, loadLabel, formatComboBox, folderTextField, buttonBox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
+        vbox.setEffect(new DropShadow());
+
+        Scene scene = new Scene(vbox, 400, 300);
+        popupStage = new Stage();
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(gridPane.getScene().getWindow());
+        popupStage.setTitle("Load State");
+        popupStage.setScene(scene);
+        popupStage.setResizable(false);
+        popupStage.show();
     }
 
     private void stopMethodLoad() {
         System.out.println("Stopping method for Button Load");
+        if (popupStage != null) {
+            popupStage.close();
+            popupStage = null;
+        }
     }
 
     private void runMethodPlugin() {
         System.out.println("Button Plugin clicked and method executed");
+    
+        // Create label for file plugin
+        Label nameLabel = new Label("Plugin");
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
+        Label fileLabel = new Label("File Plugin: ");
+        fileLabel.setStyle("-fx-font-weight: bold;");
+    
+        // Create label to display selected file name
+        Label fileNameLabel = new Label("");
+        fileNameLabel.setStyle("-fx-font-weight: bold;");
+    
+        // Create Choose File button
+        Button chooseFileButton = new Button("Choose File");
+        chooseFileButton.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JAR files", "*.jar"));
+            File selectedFile = fileChooser.showOpenDialog(gridPane.getScene().getWindow());
+            if (selectedFile != null) {
+                fileNameLabel.setText(selectedFile.getName());
+            }
+        });
+    
+        // Create Upload button
+        Button uploadButton = new Button("Upload");
+        uploadButton.setOnAction(event -> {
+            String fileName = fileNameLabel.getText();
+            if (!fileName.isEmpty()) {
+                // Perform plugin loading action here
+                boolean isSuccess = runPlugin(fileName);
+                if (isSuccess) {
+                    displayPluginStatus("Plugin Loaded Successfully", true);
+                } else {
+                    displayPluginStatus("Error: File is not a valid JAR", false);
+                }
+            } else {
+                displayPluginStatus("Error: No file selected", false);
+            }
+        });
+    
+        // Create Back Button
+        Button backButton = new Button("Kembali");
+        backButton.setOnAction(event -> {
+            popupStage.close();
+            toggleButtonState(buttonPlugin);
+            stopMethodPlugin();
+        });
+    
+        // Create an HBox to hold file label and file name label horizontally
+        HBox fileBox = new HBox(5, fileLabel, fileNameLabel);
+        fileBox.setAlignment(Pos.CENTER_LEFT);
+    
+        // Create an HBox to hold buttons horizontally
+        HBox buttonBox = new HBox(10, chooseFileButton, uploadButton, backButton);
+        buttonBox.setAlignment(Pos.CENTER);
+    
+        // Create VBox to hold all components vertically
+        VBox vbox = new VBox(10, nameLabel, fileBox, buttonBox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: white; -fx-border-width: 1px;");
+    
+        // Create a label for displaying the status message
+        Label statusLabel = new Label();
+        statusLabel.setStyle("-fx-font-weight: bold;");
+    
+        // Create another VBox to hold the vbox and status label
+        VBox mainVBox = new VBox(10, vbox, statusLabel);
+        mainVBox.setAlignment(Pos.CENTER);
+        mainVBox.setPadding(new Insets(20));
+        mainVBox.setStyle("-fx-background-color: white; -fx-border-width: 1px;");
+    
+        // Create the scene and stage for the popup
+        Scene scene = new Scene(mainVBox, 400, 250);
+        popupStage = new Stage();
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(gridPane.getScene().getWindow());
+        popupStage.setTitle("Upload Plugin");
+        popupStage.setScene(scene);
+        popupStage.setResizable(false);
+        popupStage.show();
     }
+    
+    private void displayPluginStatus(String message, boolean isSuccess) {
+        Label statusLabel = new Label(message);
+        if (isSuccess) {
+            statusLabel.setTextFill(Color.GREEN);
+        } else {
+            statusLabel.setTextFill(Color.RED);
+        }
+        statusLabel.setStyle("-fx-font-weight: bold;");
+    
+        VBox mainVBox = (VBox) popupStage.getScene().getRoot();
+        Label oldStatusLabel = (Label) mainVBox.getChildren().get(1); // Get the old status label
+        mainVBox.getChildren().remove(oldStatusLabel); // Remove the old status label
+        mainVBox.getChildren().add(statusLabel); // Add the new status label at the end
+    }
+    
+    private boolean runPlugin(String fileName) {
+        // Perform plugin loading action here
+        // Return true if plugin is loaded successfully, false otherwise
+        // Example:
+        return fileName.endsWith(".jar");
+    }    
 
     private void stopMethodPlugin() {
         System.out.println("Stopping method for Button Plugin");
+        if (popupStage != null) {
+            popupStage.close();
+            popupStage = null;
+        }
     }
 
     @FXML
