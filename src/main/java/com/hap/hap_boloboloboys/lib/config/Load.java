@@ -3,12 +3,19 @@ package com.hap.hap_boloboloboys.lib.config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.hap.hap_boloboloboys.lib.store.Store;
-import com.hap.hap_boloboloboys.lib.card.Product;
+import com.hap.hap_boloboloboys.lib.card.*;
+import com.hap.hap_boloboloboys.lib.field.*;
+import com.hap.hap_boloboloboys.lib.person.*;
+// import com.hap.hap_boloboloboys.lib.
 
 public class Load {
     // game state
@@ -21,7 +28,8 @@ public class Load {
     private static int currentSizeDeck; // JUMLAH_DECK_AKTIF
     private static Map<String, String> deck = new HashMap<>(); // <LOKASI, KARTU>
     private static int cardLadangCount; // JUMLAH_KARTU_LADANG
-    private static Map<String, List<String>> content = new HashMap<>(); // <LOKASI, [KARTU, UMUR/BERAT, JUMLAH_ITEM_AKTIF(J), ITEM_1, .., ITEM_J]>
+    private static Map<String, List<String>> content = new HashMap<>(); // <LOKASI, [KARTU, UMUR/BERAT,
+                                                                        // JUMLAH_ITEM_AKTIF(J), ITEM_1, .., ITEM_J]>
 
     // getter
     public static int getCurrentTurn() {
@@ -141,18 +149,18 @@ public class Load {
     // get store
     public static Store getStore() {
         Store store = new Store();
-        for (Map.Entry<String, Integer> entry : shopItems.entrySet()) {
+        for (Map.Entry<String, Integer> entry : Load.shopItems.entrySet()) {
             String itemName = entry.getKey();
             int quantity = entry.getValue();
-            Product product = new Product(itemName); 
-            store.addItem(itemName, product, quantity); 
+            Product product = new Product(itemName);
+            store.addItem(itemName, product, quantity);
         }
         return store;
     }
 
     // load player
-    public static void loadPlayer(String folderPath) throws Exception {
-        String filename = "config/" + folderPath + "/player1.txt";
+    public static void loadPlayer(String folderPath, String player) throws Exception {
+        String filename = "config/" + folderPath + "/" + player + ".txt";
         File file = new File(filename);
 
         if (!file.exists()) {
@@ -261,5 +269,139 @@ public class Load {
 
         scanner.close();
         System.out.println("Player state loaded successfully from " + filename + "!");
+    }
+
+    // get person
+    public static Person getPerson(String name) {
+        Person player = new Person(name);
+        player.setWealth(Load.wealth);
+
+        Inventory inventory = new Inventory();
+        inventory.setCurrentSize(Load.getCurrentSizeInventory());
+        inventory.initiateFromScratch(Load.getCurrentSizeDeck());
+        player.setInventory(inventory);
+
+        Deck deck = loadDeck();
+        player.setDeck(deck);
+
+        Ladang ladang = loadLadang();
+        player.setLadang(ladang);
+
+        return player;
+    }
+
+    public static int getIdxFromLocation(String str) {
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(str);
+        if (matcher.find()) {
+            String numberStr = matcher.group();
+            return Integer.parseInt(numberStr);
+        }
+        return 0;
+    }
+
+    public static Deck loadDeck() {
+        Deck deck = new Deck();
+        for (Map.Entry<String, String> entry : Load.deck.entrySet()) {
+            String code = entry.getValue();
+            Card card = null;
+            if (ListCode.ITEM.contains(code)) {
+                switch (code) {
+                    case "ACCELERATE":
+                        card = new Accelerate();
+                        break;
+
+                    case "DELAY":
+                        card = new Delay();
+                        break;
+
+                    case "INSTANT_HARVEST":
+                        card = new InstantHarvest();
+                        break;
+
+                    case "DESTROY":
+                        card = new Destroy();
+                        break;
+
+                    case "PROTECT":
+                        card = new Protect();
+                        break;
+
+                    case "Trap":
+                        card = new Trap();
+                        break;
+                }
+            } else if (ListCode.PRODUCT.contains(code)) {
+                card = new Product(code);
+            } else if (ListCode.PLANT.contains(code)) {
+                card = new Plant(code);
+            } else if (ListCode.CARNIVORE.contains(code)) {
+                card = new Carnivore(code);
+            } else if (ListCode.HERBIVORE.contains(code)) {
+                card = new Herbivore(code);
+            } else if (ListCode.OMNIVORE.contains(code)) {
+                card = new Omnivore(code);
+            } else {
+                card = null;
+            }
+
+            if (card != null) {
+                String loc = entry.getKey();
+                deck.putToDeck(card, Load.getIdxFromLocation(loc) - 1);
+            }
+        }
+
+        return deck;
+    }
+
+    public static Ladang loadLadang() {
+        List<String> listEffect = Arrays.asList("ACCELERATE", "DELAY", "INSTANT_HARVEST", "DESTROY", "PROTECT", "TRAP");
+        Ladang ladang = new Ladang();
+        for (Map.Entry<String, List<String>> entry : Load.content.entrySet()) {
+            String loc = entry.getKey();
+            List<String> content = entry.getValue();
+            String code = content.get(0);
+            int props = Integer.parseInt(content.get(1)); // BERAT/UMUR
+
+            Card creature = null; // Initialize creature as null
+            if (ListCode.PLANT.contains(code)) {
+                Plant plant = new Plant(code);
+                plant.setAge(props);
+                creature = plant;
+            } else if (ListCode.CARNIVORE.contains(code)) {
+                Carnivore carnivore = new Carnivore(code);
+                carnivore.setWeight(props);
+                creature = carnivore;
+            } else if (ListCode.HERBIVORE.contains(code)) {
+                Herbivore herbivore = new Herbivore(code);
+                herbivore.setWeight(props);
+                creature = herbivore;
+            } else if (ListCode.OMNIVORE.contains(code)) {
+                Omnivore omnivore = new Omnivore(code);
+                omnivore.setWeight(props);
+                creature = omnivore;
+            } else {
+                System.out.println("Unknown card type: " + code);
+            }
+
+            if (creature != null) {
+                int countItem = Integer.parseInt(content.get(2));
+                for (int i = 0; i < countItem; i++) {
+                    int idx = listEffect.indexOf(content.get(i + 3));
+                    if (idx != -1) {
+                        ((Creature) creature).useEffect(idx);
+                    }
+                }
+
+                int row = loc.charAt(0) - 'A';
+                int col = getIdxFromLocation(loc);
+                try {
+                    ladang.plantKartu(row, col, creature);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        return ladang;
     }
 }

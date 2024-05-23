@@ -1,6 +1,8 @@
 package com.hap.hap_boloboloboys;
 
 import java.io.IOException;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -18,8 +20,10 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -28,13 +32,11 @@ public class GameViewController {
     @FXML
     private MenuBar menuBar;
     @FXML
-    private Button nextButton;
-    @FXML
-    private ImageView nextImageView;
-    @FXML
     private GridPane gridPane;
     @FXML
     private GridPane gridPane2;
+    @FXML
+    private Button nextButton;
 
     private Button activeButton = null;
 
@@ -53,6 +55,8 @@ public class GameViewController {
 
     @FXML
     private Label turnLabel;
+    private int currentPlayer = 1; 
+    private int currentTurn = 1;
     @FXML
     private Label player1MoneyLabel;
     @FXML
@@ -62,10 +66,14 @@ public class GameViewController {
 
     private int numRows = 4; 
     private int numCols = 5;
+    private int[] prices = {50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000};
+    private int[] amounts = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+    private int playerMoney = 200000;
+    Label[] hargaLabels = new Label[9];
+    Label[] jumlahLabels = new Label[9];
 
     @FXML
-    private void initialize() {
-        // Set initial styles for buttons
+    private void initialize() { // Inisialisasi
         setButtonStyle(buttonLadangku, false);
         setButtonStyle(buttonLadangmu, false);
         setButtonStyle(buttonToko, false);
@@ -73,27 +81,96 @@ public class GameViewController {
         setButtonStyle(buttonLoad, false);
         setButtonStyle(buttonPlugin, false);
 
-        Image nextImage = new Image(getClass().getResourceAsStream("/assets/Next.png"));
-        nextImageView.setImage(nextImage);
-        nextImageView.setFitWidth(100);
-        nextImageView.setFitHeight(100);
+        // Load the image for the Next button
+        Image nextImage = loadImage("/assets/Next.png");
+        ImageView nextImageView = new ImageView(nextImage);
+        nextImageView.setFitWidth(100); 
+        nextImageView.setFitHeight(100); 
         nextButton.setGraphic(nextImageView);
-        nextButton.setOnMouseClicked(event -> handleButtonNextClick());
+        nextButton.setOnAction(this::handleNextButtonClick);
 
-        turnLabel.setText("1");
+        updateTurnLabel(currentPlayer);
         turnLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20px;");
 
-        player1MoneyLabel.setText("2");
+        updatePlayer1MoneyLabel(0);
         player1MoneyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 32px;");
 
-        player2MoneyLabel.setText("3");
+        updatePlayer2MoneyLabel(0);
         player2MoneyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 32px;");
 
-        deckCountLabel.setText("40/40");
+        updateDeckCountLabel(0, 40);
         deckCountLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
 
         populateLadang();
         deckAktif();
+    }
+
+    @FXML
+    private void handleNextButtonClick(ActionEvent event) { 
+        System.out.println("Button Next Clicked!");
+        currentPlayer = (currentPlayer == 1) ? 2 : 1;   // Change turn
+        currentTurn++;
+        updateTurnLabel(currentTurn);
+        if (currentTurn > 20) {
+            turnLabel.setText("-");
+            determineWinner();
+            disableNextButton();
+        }
+    }
+
+    private void determineWinner() {
+        int player1Money = Integer.parseInt(player1MoneyLabel.getText());
+        int player2Money = Integer.parseInt(player2MoneyLabel.getText());
+
+        String winner;
+        if (player1Money > player2Money) {
+            winner = "Player 1 Wins!";
+        } else if (player2Money > player1Money) {
+            winner = "Player 2 Wins!";
+        } else {
+            winner = "It's a tie!";
+        }
+
+        showWinnerDialog(winner);
+    }
+
+    private void showWinnerDialog(String winner) {
+        Label winnerLabel = new Label(winner);
+        winnerLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
+    
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(event -> {
+            ((Stage) winnerLabel.getScene().getWindow()).close();
+        });
+    
+        VBox vbox = new VBox(winnerLabel, closeButton);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(20);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
+        vbox.setEffect(new DropShadow());
+    
+        Scene scene = new Scene(vbox, 300, 200);
+    
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(gridPane.getScene().getWindow());
+        popupStage.setTitle("Game Over");
+        popupStage.setScene(scene);
+    
+        Stage gameViewControllerStage = (Stage) gridPane.getScene().getWindow();
+        double centerXPosition = gameViewControllerStage.getX() + gameViewControllerStage.getWidth() / 2d;
+        double centerYPosition = gameViewControllerStage.getY() + gameViewControllerStage.getHeight() / 2d;
+    
+        popupStage.setX(centerXPosition - scene.getWidth() / 2d);
+        popupStage.setY(centerYPosition - scene.getHeight() / 2d);
+    
+        popupStage.setResizable(false); 
+        popupStage.show();
+    }    
+
+    private void disableNextButton() {
+        nextButton.setDisable(true);
     }
 
     private void populateLadang() {
@@ -108,17 +185,14 @@ public class GameViewController {
                 petakImageView.setFitHeight(110);
                 petakImageView.getStyleClass().add("image-view");
 
-                // Add an overlay ImageView for card image
                 ImageView cardImageView = new ImageView();
                 cardImageView.setFitWidth(75);
                 cardImageView.setFitHeight(90);
                 cardImageView.getStyleClass().add("image-view");
 
-                // Use a StackPane to hold both ImageViews
                 StackPane stackPane = new StackPane();
                 stackPane.getChildren().addAll(petakImageView, cardImageView);
 
-                // Show card details on right-click
                 cardImageView.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.SECONDARY) {
                         showCardDetails(cardImageView);
@@ -126,8 +200,6 @@ public class GameViewController {
                 });
 
                 gridPane.add(stackPane, col, row);
-
-                // Setup drag and drop
                 setupDragAndDropInLadang(cardImageView, petakImageView);
             }
         }
@@ -135,7 +207,6 @@ public class GameViewController {
 
     private void deckAktif() {
         gridPane2.getChildren().clear();
-    
         String[] cardImages = {
             "/card/hewan/Ayam.png",
             "/card/hewan/Beruang.png",
@@ -158,14 +229,12 @@ public class GameViewController {
             petakImageView.setFitHeight(110);
             petakImageView.getStyleClass().add("image-view");
     
-            // Add an overlay ImageView for card image
             ImageView cardImageView = new ImageView(cardImage);
             cardImageView.setFitWidth(75);
             cardImageView.setFitHeight(90);
             cardImageView.getStyleClass().add("image-view");
-            setupDragAndDropFromDeckAktif(cardImageView, petakImageView); // <-- Panggil metode ini
+            setupDragAndDropFromDeckAktif(cardImageView, petakImageView); 
     
-            // Use a StackPane to hold both ImageViews
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(petakImageView, cardImageView);
     
@@ -181,29 +250,29 @@ public class GameViewController {
             db.setContent(content);
             event.consume();
         });
-
+    
         petakImageView.setOnDragOver(event -> {
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-
+    
         petakImageView.setOnDragEntered(event -> {
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 petakImageView.setOpacity(0.3);
             }
         });
-
+    
         petakImageView.setOnDragExited(event -> {
             petakImageView.setOpacity(1);
         });
-
+    
         petakImageView.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasImage()) {
-                // Check if card is already in populateLadang
+                // Check if card is already in ladang
                 boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
                 if (!isInLadang) {
                     cardImageView.setImage(db.getImage());
@@ -214,23 +283,25 @@ public class GameViewController {
             event.setDropCompleted(success);
             event.consume();
         });
-
+    
         cardImageView.setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 cardImageView.setImage(null);
-                cardImageView.getProperties().put("isInLadang", false);
             }
             event.consume();
         });
     }
-
+    
     private void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView) {
         cardImageView.setOnDragDetected(event -> {
-            Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent content = new ClipboardContent();
-            content.putImage(cardImageView.getImage());
-            db.setContent(content);
-            event.consume();
+            boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
+            if (isInLadang) {
+                Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(cardImageView.getImage());
+                db.setContent(content);
+                event.consume();
+            }
         });
     
         petakImageView.setOnDragOver(event -> {
@@ -254,13 +325,9 @@ public class GameViewController {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasImage()) {
-                // Check if card is already in populateLadang
-                boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
-                if (!isInLadang) {
-                    cardImageView.setImage(db.getImage());
-                    cardImageView.getProperties().put("isInLadang", true);
-                    success = true;
-                }
+                cardImageView.setImage(db.getImage());
+                cardImageView.getProperties().put("isInLadang", true);
+                success = true;
             }
             event.setDropCompleted(success);
             event.consume();
@@ -269,11 +336,10 @@ public class GameViewController {
         cardImageView.setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 cardImageView.setImage(null);
-                cardImageView.getProperties().put("isInLadang", false);
             }
             event.consume();
         });
-    }    
+    }      
 
     private Image loadImage(String path) {
         try {
@@ -286,15 +352,16 @@ public class GameViewController {
 
     private void showCardDetails(ImageView cardImageView) {
         String cardName = getCardNameFromImagePath(cardImageView.getImage());
+        
+        // Create Labels
+        Label nameLabel = new Label(cardName);
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
+        Label infoLabel = new Label("Berat: 5 (8)");
+        Label activeItemsLabel = new Label("Item aktif: Accelerate (1), Delay (1), Protect (1)");
     
-        Label nameLabel = new Label("Nama Kartu: " + cardName);
-        Label infoLabel = new Label("Umur/Berat: ...");
-        Label activeItemsLabel = new Label("Item Aktif: ...");
-    
+        // Create Buttons
         Button closeButton = new Button("Kembali");
-        closeButton.setOnAction(event -> {
-            ((Stage) nameLabel.getScene().getWindow()).close();
-        });
+        closeButton.setOnAction(event -> ((Stage) nameLabel.getScene().getWindow()).close());
     
         Button harvestButton = new Button("Panen");
         harvestButton.setOnAction(event -> {
@@ -306,36 +373,41 @@ public class GameViewController {
             }
         });
     
-        harvestButton.setDisable(!checkHarvestConditions(cardImageView));
+        // Image View for Card
+        ImageView cardImage = new ImageView(cardImageView.getImage());
+        cardImage.setFitWidth(140);
+        cardImage.setFitHeight(160);
     
+        // Layouts
+        VBox infoBox = new VBox(10, infoLabel, activeItemsLabel);
+        infoBox.setAlignment(Pos.CENTER_LEFT);
+
+        HBox cardAndInfoBox = new HBox(40, infoBox, cardImage);
+        cardAndInfoBox.setAlignment(Pos.CENTER);
+
+        HBox buttonBox = new HBox(10, harvestButton, closeButton);
+        buttonBox.setAlignment(Pos.CENTER);
+    
+        VBox mainBox = new VBox(45, nameLabel, cardAndInfoBox, buttonBox);
+        mainBox.setAlignment(Pos.TOP_CENTER);
+        mainBox.setPadding(new Insets(20));
+        mainBox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
+        mainBox.setEffect(new DropShadow());
+    
+        // Scene and Stage
+        Scene scene = new Scene(mainBox, 600, 400);
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.WINDOW_MODAL);
         popupStage.initOwner(gridPane.getScene().getWindow());
         popupStage.setTitle("Detail Kartu");
-    
-        ImageView cardImage = new ImageView(cardImageView.getImage());
-        cardImage.setFitWidth(200);
-        cardImage.setFitHeight(250);
-    
-        VBox vbox = new VBox(nameLabel, infoLabel, activeItemsLabel, cardImage, harvestButton, closeButton);
-        vbox.setAlignment(Pos.CENTER);
-        vbox.setSpacing(10);
-        vbox.setPadding(new Insets(10));
-        vbox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
-        vbox.setEffect(new DropShadow());
-    
-        Scene scene = new Scene(vbox, 600, 500);
         popupStage.setScene(scene);
+        
+        // Position the popup stage at the center of the parent stage
+        Stage parentStage = (Stage) gridPane.getScene().getWindow();
+        popupStage.setX(parentStage.getX() + parentStage.getWidth() / 2 - scene.getWidth() / 2);
+        popupStage.setY(parentStage.getY() + parentStage.getHeight() / 2 - scene.getHeight() / 2);
     
-        // Calculate position to center popup relative to the main window
-        Stage gameViewControllerStage = (Stage) gridPane.getScene().getWindow();
-        double centerXPosition = gameViewControllerStage.getX() + gameViewControllerStage.getWidth() / 2d;
-        double centerYPosition = gameViewControllerStage.getY() + gameViewControllerStage.getHeight() / 2d;
-    
-        popupStage.setX(centerXPosition - scene.getWidth() / 2d);
-        popupStage.setY(centerYPosition - scene.getHeight() / 2d);
-    
-        popupStage.setResizable(false);  // Fixed size
+        popupStage.setResizable(false);  
         popupStage.show();
     }          
 
@@ -435,12 +507,13 @@ public class GameViewController {
         if (activeButton != null) {
             setButtonStyle(activeButton, false);
         }
-
+    
         if (activeButton != button) {
             setButtonStyle(button, true);
             activeButton = button;
         } else {
             activeButton = null;
+            setButtonStyle(button, false); 
         }
     }
 
@@ -470,8 +543,107 @@ public class GameViewController {
         System.out.println("Stopping method for Button Ladangmu");
     }
 
+    @FXML
     private void runMethodToko() {
         System.out.println("Button Toko clicked and method executed");
+
+        // Create Labels
+        Label nameLabel = new Label("Toko");
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
+
+        // Create GridPane to arrange the products and their info
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(20); // Increased horizontal gap
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(10));
+        gridPane.setAlignment(Pos.CENTER); // Center align gridPane
+
+        // Create ImageViews for the products
+        ImageView[] productImageViews = new ImageView[9];
+        for (int i = 0; i < 9; i++) {
+            final int index = i;
+            productImageViews[i] = new ImageView();
+            productImageViews[i].setFitWidth(100);
+            productImageViews[i].setFitHeight(100);
+            Image productImage = loadImage("/card/produk/Produk" + (i + 1) + ".png");
+            if (productImage != null) {
+                productImageViews[i].setImage(productImage);
+                productImageViews[i].setOnMouseClicked(event -> buyProduct(index));
+            } else {
+                System.err.println("Error loading product image: Produk" + (i + 1) + ".png");
+            }
+        }
+
+        for (int i = 0; i < 9; i++) {
+            hargaLabels[i] = new Label("Harga: Rp " + prices[i]);
+            hargaLabels[i].setFont(Font.font(14));
+            jumlahLabels[i] = new Label("Jumlah: " + amounts[i]);
+            jumlahLabels[i].setFont(Font.font(14));
+        }
+
+        // Add products to GridPane
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                VBox productBox = new VBox(10);
+                productBox.setAlignment(Pos.CENTER); // Center align each product box
+                productBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
+                productBox.setPadding(new Insets(5));
+                productBox.getChildren().addAll(productImageViews[i * 3 + j], hargaLabels[i * 3 + j], jumlahLabels[i * 3 + j]);
+                gridPane.add(productBox, j, i);
+            }
+        }
+
+        // Layouts
+        VBox mainBox = new VBox(20, nameLabel, gridPane, new Button("Kembali"));
+        mainBox.setAlignment(Pos.TOP_CENTER);
+        mainBox.setPadding(new Insets(20));
+        mainBox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
+        mainBox.setEffect(new DropShadow());
+
+        // Scene and Stage
+        Scene scene = new Scene(mainBox, 800, 700);
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(buttonToko.getScene().getWindow());
+        popupStage.setTitle("Detail Barang");
+        popupStage.setScene(scene);
+        popupStage.setResizable(false); // Set resizable to false to lock the size
+        popupStage.show();
+
+        // Close the popup and reset the button state when "Kembali" is clicked
+        Button backButton = (Button) mainBox.getChildren().get(mainBox.getChildren().size() - 1);
+        backButton.setOnAction(event -> {
+            popupStage.close();
+            toggleButtonState(buttonToko); // Reset button state
+            stopMethodToko(); // Stop method toko
+        });
+    }
+
+    private void buyProduct(int index) {
+        if (amounts[index] > 0 && playerMoney >= prices[index]) {
+            playerMoney -= prices[index];
+            amounts[index]--;
+            updateHargaProduk(index, prices[index]);
+            updateJumlahProduk(index, amounts[index]);
+            System.out.println("Anda baru saja membeli Produk " + (index + 1));
+            System.out.println("Sisa uang Anda: Rp " + playerMoney);
+    
+            // Update related labels after purchase
+            hargaLabels[index].setText("Harga: Rp " + prices[index]);
+            jumlahLabels[index].setText("Jumlah: " + amounts[index]);
+        } else if (amounts[index] == 0) {
+            System.out.println("Produk " + (index + 1) + " sudah habis.");
+        } else {
+            System.out.println("Uang Anda tidak cukup untuk membeli Produk " + (index + 1));
+        }
+    }    
+
+    private void updateHargaProduk(int index, int newPrice) {
+        prices[index] = newPrice;
+    }
+
+    private void updateJumlahProduk(int index, int newAmount) {
+        amounts[index] = newAmount;
     }
 
     private void stopMethodToko() {
@@ -500,12 +672,6 @@ public class GameViewController {
 
     private void stopMethodPlugin() {
         System.out.println("Stopping method for Button Plugin");
-    }
-
-    @FXML
-    private void handleButtonNextClick() {
-        System.out.println("Button Next clicked");
-        // Implementasi logika untuk button Next
     }
 
     @FXML
@@ -567,18 +733,18 @@ public class GameViewController {
 
     // Methods to update labels
     public void updateTurnLabel(int turn) {
-        turnLabel.setText("Turn: " + turn);
+        turnLabel.setText("" + turn);
     }
 
     public void updatePlayer1MoneyLabel(int money) {
-        player1MoneyLabel.setText("Player 1 Money: " + money);
+        player1MoneyLabel.setText("" + money);
     }
 
     public void updatePlayer2MoneyLabel(int money) {
-        player2MoneyLabel.setText("Player 2 Money: " + money);
+        player2MoneyLabel.setText("" + money);
     }
 
     public void updateDeckCountLabel(int currentDeck, int totalDeck) {
-        deckCountLabel.setText("Deck: " + currentDeck + "/" + totalDeck);
+        deckCountLabel.setText(currentDeck + "/" + totalDeck);
     }
 }

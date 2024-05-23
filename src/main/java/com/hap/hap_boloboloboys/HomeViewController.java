@@ -51,6 +51,7 @@ public class HomeViewController {
         playSound();
     }
 
+    @FXML
     private void createToggleSoundButton() {
         Image soundImage = new Image(getClass().getResourceAsStream("/assets/Sound.png"));
         ImageView soundImageView = new ImageView(soundImage);
@@ -62,7 +63,7 @@ public class HomeViewController {
     }
 
     private void playSound() {
-        URL soundURL = getClass().getResource("/sounds/fine.mp3");
+        URL soundURL = getClass().getResource("/sounds/Tangled.mp3");
         if (soundURL != null) {
             Media sound = new Media(soundURL.toString());
             mediaPlayer = new MediaPlayer(sound);
