@@ -2,68 +2,78 @@ package com.hap.hap_boloboloboys.lib.store;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.hap.hap_boloboloboys.lib.card.Product;
+import com.hap.hap_boloboloboys.lib.util.Pair;
 
 public class Store {
-    private Map<String, Integer> inventory; // cardName -> quantity
-    private Map<String, Integer> prices;    // cardName -> price
+    private Map<String, Pair<Product, Integer>> items; // <Product name, Pair<Product, quantity>>
 
     public Store() {
-        inventory = new HashMap<>();
-        prices = new HashMap<>();
+        this.items = new HashMap<>();
     }
 
-    public Map<String, Integer> getInventory() {
-        return inventory;
+    // getter
+    public Map<String, Pair<Product, Integer>> getItems() {
+        return items;
     }
 
-    public Map<String, Integer> getPrices() {
-        return prices;
+    public Integer getItemQuantity(String cardName) {
+        Pair<Product, Integer> item = items.get(cardName);
+        return item != null ? item.getValue() : 0;
     }
 
-    public void sellProduct(Product product) {
-        String cardName = product.getCardName();
-        inventory.put(cardName, inventory.getOrDefault(cardName, 0) + 1);
-        prices.put(cardName, product.getPrice());
+    public Integer getItemPrice(String cardName) {
+        Pair<Product, Integer> item = items.get(cardName);
+        return item != null ? item.getKey().getPrice() : 0;
     }
 
-    public void buyProduct(Product product) {
-        String cardName = product.getCardName();
-        if (inventory.containsKey(cardName) && inventory.get(cardName) > 0) {
-            inventory.put(cardName, inventory.get(cardName) - 1);
+    // setter
+    public void setItems(Map<String, Pair<Product, Integer>> items) {
+        this.items = items;
+    }
+
+    // validator
+    public boolean canBuyProduct(Product product) {
+        return getItemQuantity(product.getCardName()) > 0;
+    }
+
+    /* remove item from store
+        1. Menambah jumlah produk di store sebanyak quantity
+        2. Jika produk belum ada di store, tambahkan produk baru dengan jumlah sebanyak quantity
+    */
+    public void addItem(String cardName, Product product, int quantity) {
+        Pair<Product, Integer> existingItem = items.get(cardName);
+        if (existingItem == null) {
+            items.put(cardName, new Pair<>(product, quantity));
+        } else {
+            items.put(cardName, new Pair<>(product, existingItem.getValue() + quantity));
         }
     }
 
-    public int getProductPrice(Product product) {
-        return prices.getOrDefault(product.getCardName(), 0);
+    /* remove item from store
+        1. Mengurangi jumlah produk di store sebanyak quantity
+        2. Jika quantitynya menjadi 0 maka dihapus dari store
+        3. Tidak akan terjadi apa apa jika produk tidak ada di store
+    */
+    public void removeItem(String cardName, int quantity) {
+        Pair<Product, Integer> existingItem = items.get(cardName);
+        if (existingItem != null) {
+            int currentQuantity = existingItem.getValue();
+            if (currentQuantity > quantity) {
+                items.put(cardName, new Pair<>(existingItem.getKey(), currentQuantity - quantity));
+            } else {
+                items.remove(cardName);
+            }
+        }
     }
 
     public void displayInventory() {
         System.out.println("Store Inventory:");
-        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
-            String cardName = entry.getKey();
-            int quantity = entry.getValue();
-            int price = prices.getOrDefault(cardName, 0);
-            System.out.println(cardName + ": " + price + " (" + quantity + ")");
+        for (Map.Entry<String, Pair<Product, Integer>> entry : items.entrySet()) {
+            String productName = entry.getKey();
+            int quantity = entry.getValue().getValue();
+            int price = entry.getValue().getKey().getPrice();
+            System.out.println(productName + ": " + price + " (" + quantity + ")");
         }
     }
-
-    public boolean canBuyProduct(Product product) {
-        return inventory.getOrDefault(product.getCardName(), 0) > 0;
-    }
-
-    public boolean canSellProduct(Product product) {
-        return true;
-    }
-
-    // public static void main(String[] args) {
-    //     Store store = new Store();
-    //     store.sellProduct(new Product("Apple", "apple.png", 10, 5));
-    //     store.sellProduct(new Product("Apple", "apple.png", 10, 5));
-    //     store.sellProduct(new Product("Banana", "banana.png", 5, 3));
-    //     store.displayInventory();
-    //     store.buyProduct(new Product("Apple", "apple.png", 10, 5));
-    //     store.displayInventory();
-    // }
 }
