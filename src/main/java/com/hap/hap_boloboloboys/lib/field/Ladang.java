@@ -146,6 +146,32 @@ public class Ladang {
         }
     }
 
+    public void resizeLadang(int row, int col) {
+        Petak[][] newGrid = new Petak[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (i < 4 && j < 5) {
+                    newGrid[i][j] = grid[i][j];
+                } else {
+                    newGrid[i][j] = new Petak();
+                }
+            }
+        }
+        grid = newGrid;
+    }
+
+    public int countCard() {
+        int count = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (!grid[i][j].isEmptyCard()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     public void cetakInfo() {
         System.out.println("   ==========[ Ladang ]===========");
 
