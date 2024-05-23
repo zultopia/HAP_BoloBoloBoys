@@ -29,11 +29,10 @@
             </menus>
         </MenuBar>
 
-        <StackPane layoutX="180" layoutY="130">
-            <Button fx:id="nextButton" style="background-color: transparent;">
-                <ImageView fx:id="nextImageView"/>
-            </Button>
-        </StackPane>
+        <!-- Next button -->
+       <GridPane fx:id="gridPane" layoutX="180" layoutY="112" hgap="15" vgap="10">
+            <Button fx:id="nextButton" onAction="#handleNextButtonClick" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        </GridPane>
 
         <Button fx:id="buttonLadangku" layoutX="1270" layoutY="160" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLadangkuClick" styleClass="button"/>
         <Button fx:id="buttonLadangmu" layoutX="1270" layoutY="255" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLadangmuClick" styleClass="button"/>
@@ -52,6 +51,6 @@
         <Label fx:id="turnLabel" layoutX="125" layoutY="190" text=""/>
         <Label fx:id="player1MoneyLabel" layoutX="175" layoutY="370" text=""/>
         <Label fx:id="player2MoneyLabel" layoutX="175" layoutY="580" text=""/>
-        <Label fx:id="deckCountLabel" layoutX="1245" layoutY="760" text=""/>
+        <Label fx:id="deckCountLabel" layoutX="1250" layoutY="760" text=""/>
     </children>
 </AnchorPane>
