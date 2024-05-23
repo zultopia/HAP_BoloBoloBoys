@@ -38,8 +38,6 @@ public abstract class Item extends Card {
                 setCardName("Trap");
                 effect = Effect.TRAP;
                 break;
-            default:
-                throw new IllegalArgumentException("Unknown item code: " + code);
         }
         setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
     }
