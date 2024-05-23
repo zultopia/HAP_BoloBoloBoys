@@ -4,36 +4,12 @@ import com.hap.hap_boloboloboys.lib.card.*;
 
 public class Ladang {
     private Petak[][] grid;
-    private int turn;
 
     public Ladang() {
         this.grid = new Petak[4][5];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                 grid[i][j] = new Petak();
-            }
-        }
-        this.turn = 0;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public void nextTurn() {
-        turn++;
-        // Update plants and animals
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
-                Petak petak = grid[i][j];
-                if (!petak.isEmpty()) {
-                    Card kartu = petak.getKartu();
-                    if (kartu instanceof Plant) {
-                        petak.setUmur(((Plant) petak.getKartu()).getAge() + 1);
-                    } else if (kartu instanceof Animal) {
-                        // Handle weight increase or other periodic effects
-                    }
-                }
             }
         }
     }
@@ -45,41 +21,132 @@ public class Ladang {
         return null;
     }
 
-    public void plantKartu(int row, int col, Creature kartu) {
+    public Card takeCard(int row, int col) {
         Petak petak = getPetak(row, col);
-        if (petak != null && petak.isEmpty()) {
-            petak.setKartu(kartu);
-            if (kartu instanceof Plant) {
-                petak.setUmur(((Plant) kartu).getAge());
-            } else if (kartu instanceof Animal) {
-                petak.setBerat(((Animal) kartu).getWeight());
+        if (petak != null) {
+            Card kartu = petak.getKartu();
+            petak.setKartu(null);
+            return kartu;
+        }
+        return null;
+    }
+
+    public void plantKartu(int row, int col, Card kartu) throws Exception {
+        Petak petak = getPetak(row, col);
+        if (petak != null) {
+            if (petak.isEmptyCard()) {
+                if (kartu instanceof Plant) {
+                    petak.setKartu(kartu);
+                    ((Plant) petak.getKartu()).setAge(0);
+                } else if (kartu instanceof Animal) {
+                    petak.setKartu(kartu);
+                    ((Animal) petak.getKartu()).setWeight(0);
+                } else {
+                    // throw new Exception("Kartu yang ditanam bukan tanaman atau hewan");
+                    System.out.println("Kartu yang ditanam bukan tanaman atau hewan");
+                }
+            } else {
+                if (petak.getKartu() instanceof Plant) {
+                    if (kartu instanceof Item) {
+                        ((Item) kartu).applyEffect((Creature) petak.getKartu());
+                    } else {
+                        // throw new Exception("Kartu tidak bisa ditanam");
+                        System.out.println("Kartu tidak bisa ditanam");
+                    }
+                } else if (petak.getKartu() instanceof Animal) {
+                    if (kartu instanceof Item) {
+                        ((Item) kartu).applyEffect((Creature) petak.getKartu());
+                    }  else if (kartu instanceof Product) {
+                        ((Animal) petak.getKartu()).feed((Product) kartu);
+                    } else {
+                        // throw new Exception("Kartu tidak bisa ditanam");
+                        System.out.println("Kartu tidak bisa ditanam");
+                    }
+                } else {
+                    // throw new Exception("Petak sudah terisi");
+                    System.out.println("Petak sudah terisi");
+                }
             }
+        } else {
+            // throw new Exception("Petak tidak valid");
+            System.out.println("Petak tidak valid");
         }
     }
 
-    public void harvestKartu(int row, int col) {
+    public void harvestKartu(int row, int col) throws FieldException {
         Petak petak = getPetak(row, col);
-        if (petak != null && !petak.isEmpty()) {
-            Creature kartu = petak.getKartu();
+        if (petak != null && !petak.isEmptyCard()) {
+            Card kartu = petak.getKartu();
+            String code = kartu.getCode();
+            petak.cetakInfo();
             if (kartu instanceof Plant && ((Plant) kartu).canHarvest()) {
+                Product product = null;
                 // Harvest plant
-                petak.setKartu(null);
+                switch (code) {
+                    case "BIJI_JAGUNG":
+                        product = new Product("JAGUNG");
+                        break;
+                    case "BIJI_LABU":
+                        product = new Product("LABU");
+                        break;
+                    case "BIJI_STROBERI":
+                        product = new Product("STROBERI");
+                        break;
+                    default:
+                        break;
+                }
+                System.out.println("Berhasil memanen " + product.getCardName());
+                petak.setKartu(product);
             } else if (kartu instanceof Animal && ((Animal) kartu).canHarvest()) {
+                Product product = null;
                 // Harvest animal
-                petak.setKartu(null);
+                switch (code) {
+                    case "DOMBA":
+                        product = new Product("DAGING_DOMBA");
+                        break;
+                    case "KUDA":
+                        product = new Product("DAGING_KUDA");
+                        break;
+                    case "BERUANG":
+                        product = new Product("DAGING_BERUANG");
+                        break;
+                    case "HIU_DARAT":
+                        product = new Product("SIRIP_HIU");
+                        break;
+                    case "SAPI":
+                        product = new Product("SUSU");
+                        break;
+                    case "AYAM":
+                        product = new Product("TELUR");
+                        break;
+                    default:
+                        break;
+                }
+                petak.setKartu(product);
+            } else {
+                // throw new FieldException("Kartu belum bisa dipanen");
+                System.out.println("Kartu belum bisa dipanen");
             }
+        } else {
+            throw new FieldException("Tidak dapat memanen");
         }
     }
 
-    public void applyItem(int row, int col, Item item) {
+    // Method ini mirip sama plant Item ke Creature
+    public void applyItem(int row, int col, Item item) throws FieldException {
         Petak petak = getPetak(row, col);
-        if (petak != null && !petak.isEmpty()) {
-            item.applyEffect(petak.getKartu());
+        if (petak != null && !petak.isEmptyCard()) {
+            if (petak.getKartu() instanceof Creature) {
+                item.applyEffect((Creature) petak.getKartu());
+            } else {
+                throw new FieldException("Tidak dapat menggunakan item pada selain hewan dan tanaman");
+            }
+        } else {
+            throw new FieldException("Tidak dapat menggunakan item pada petak kosong");
         }
     }
 
     public void cetakInfo() {
-        // System.out.println("Turn: " + turn);
         System.out.println("   ==========[ Ladang ]===========");
 
         System.out.print("   +");
@@ -92,7 +159,7 @@ public class Ladang {
             System.out.printf("   |");
             for (int j = 0; j < 5; j++) {
                 Petak petak = grid[i][j];
-                if (!petak.isEmpty()) {
+                if (petak != null && !petak.isEmptyCard()) {
                     System.out.print("  " + petak.getKartu().getCardName().charAt(0) + "  |");
                 } else {
                     System.out.print("     |");
