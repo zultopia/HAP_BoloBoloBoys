@@ -1,7 +1,7 @@
 package com.hap.hap_boloboloboys.lib.person;
 
 import com.hap.hap_boloboloboys.lib.card.Card;
-
+import com.hap.hap_boloboloboys.lib.field.Ladang;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +10,18 @@ import static java.lang.Math.min;
 public class Person {
     private String name;
     private int wealth = 0;
-    private Inventory inventory = new Inventory(40);
-    private Deck deck = new Deck(6);
-    public List<Card> shuffledCard = new ArrayList<Card>(0);
+    private Inventory inventory;
+    private Deck deck;
+    public List<Card> shuffledCard;
+    public Ladang ladangku;
 
     public Person(String name) {
         this.name = name;
+        this.wealth = 0;
+        this.inventory = new Inventory(40);
+        this.deck = new Deck(6);
+        this.shuffledCard = new ArrayList<>(0);
+        this.ladangku = new Ladang();
     }
 
     public Person(String name, Inventory inventory) {
@@ -26,6 +32,11 @@ public class Person {
     public Person(String name, Deck deck) {
         this.name = name;
         this.deck = deck;
+    }
+
+    public Person(String name, Ladang ladang) {
+        this.name = name;
+        this.ladangku = ladang;
     }
 
     /*GETTER*/
