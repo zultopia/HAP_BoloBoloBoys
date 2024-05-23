@@ -17,13 +17,13 @@ public class Store {
         return items;
     }
 
-    public Integer getItemQuantity(String cardName) {
-        Pair<Product, Integer> item = items.get(cardName);
+    public Integer getItemQuantity(String code) {
+        Pair<Product, Integer> item = items.get(code);
         return item != null ? item.getValue() : 0;
     }
 
-    public Integer getItemPrice(String cardName) {
-        Pair<Product, Integer> item = items.get(cardName);
+    public Integer getItemPrice(String code) {
+        Pair<Product, Integer> item = items.get(code);
         return item != null ? item.getKey().getPrice() : 0;
     }
 
@@ -34,7 +34,7 @@ public class Store {
 
     // validator
     public boolean canBuyProduct(Product product) {
-        return getItemQuantity(product.getCardName()) > 0;
+        return getItemQuantity(product.getCode()) > 0;
     }
 
     /* remove item from store

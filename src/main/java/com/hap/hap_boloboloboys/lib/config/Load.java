@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.hap.hap_boloboloboys.lib.store.Store;
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.field.*;
@@ -272,7 +269,7 @@ public class Load {
     }
 
     // get person
-    public static Person getPerson(String name) {
+    public static Person getPerson(String name) throws Exception {
         Person player = new Person(name);
         player.setWealth(Load.wealth);
 
@@ -291,17 +288,14 @@ public class Load {
     }
 
     public static int getIdxFromLocation(String str) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(str);
-        if (matcher.find()) {
-            String numberStr = matcher.group();
-            return Integer.parseInt(numberStr);
-        }
-        return 0;
+        String alphabeticPart = str.substring(0, 1).toUpperCase(); // Extract the first character and convert to
+                                                                   // uppercase
+        int rowIndex = alphabeticPart.charAt(0) - 'A'; // Calculate the row index by subtracting the ASCII value of 'A'
+        return rowIndex;
     }
 
-    public static Deck loadDeck() {
-        Deck deck = new Deck();
+    public static Deck loadDeck() throws InventoryException {
+        Deck deck = new Deck(6);
         for (Map.Entry<String, String> entry : Load.deck.entrySet()) {
             String code = entry.getValue();
             Card card = null;
@@ -347,14 +341,18 @@ public class Load {
 
             if (card != null) {
                 String loc = entry.getKey();
-                deck.putToDeck(card, Load.getIdxFromLocation(loc) - 1);
+                try {
+                    deck.putToDeck(card, Load.getIdxFromLocation(loc));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
 
         return deck;
     }
 
-    public static Ladang loadLadang() {
+    public static Ladang loadLadang() throws Exception {
         List<String> listEffect = Arrays.asList("ACCELERATE", "DELAY", "INSTANT_HARVEST", "DESTROY", "PROTECT", "TRAP");
         Ladang ladang = new Ladang();
         for (Map.Entry<String, List<String>> entry : Load.content.entrySet()) {
@@ -383,7 +381,7 @@ public class Load {
             } else {
                 System.out.println("Unknown card type: " + code);
             }
-
+            
             if (creature != null) {
                 int countItem = Integer.parseInt(content.get(2));
                 for (int i = 0; i < countItem; i++) {
@@ -392,15 +390,12 @@ public class Load {
                         ((Creature) creature).useEffect(idx);
                     }
                 }
-
+                
                 int row = loc.charAt(0) - 'A';
                 int col = getIdxFromLocation(loc);
-                try {
-                    ladang.plantKartu(row, col, creature);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+                ladang.plantKartu(row, col, creature);
             }
+            System.out.println(((Animal) creature).getWeight());
         }
         return ladang;
     }

@@ -15,7 +15,7 @@ public class Ladang {
     }
 
     public Petak getPetak(int row, int col) {
-        if (row >= 0 && row < 4 && col >= 0 && col < 5) {
+        if (row >= 0 && row < getLadangRow() && col >= 0 && col < getLadangColumn()) {
             return grid[row][col];
         }
         return null;
@@ -31,16 +31,24 @@ public class Ladang {
         return null;
     }
 
+    public int getLadangRow() {
+        return grid.length;
+    }
+
+    public int getLadangColumn() {
+        return grid[0].length;
+    }
+
     public void plantKartu(int row, int col, Card kartu) throws Exception {
         Petak petak = getPetak(row, col);
         if (petak != null) {
             if (petak.isEmptyCard()) {
                 if (kartu instanceof Plant) {
                     petak.setKartu(kartu);
-                    ((Plant) petak.getKartu()).setAge(0);
+                    // ((Plant) petak.getKartu()).setAge(0);
                 } else if (kartu instanceof Animal) {
                     petak.setKartu(kartu);
-                    ((Animal) petak.getKartu()).setWeight(0);
+                    // ((Animal) petak.getKartu()).setWeight(0);
                 } else {
                     // throw new Exception("Kartu yang ditanam bukan tanaman atau hewan");
                     System.out.println("Kartu yang ditanam bukan tanaman atau hewan");
@@ -162,8 +170,8 @@ public class Ladang {
 
     public int countCard() {
         int count = 0;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < getLadangRow(); i++) {
+            for (int j = 0; j < getLadangColumn(); j++) {
                 if (!grid[i][j].isEmptyCard()) {
                     count++;
                 }
@@ -176,14 +184,14 @@ public class Ladang {
         System.out.println("   ==========[ Ladang ]===========");
 
         System.out.print("   +");
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < getLadangColumn(); i++) {
             System.out.print("-----+");
         }
         System.out.println();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < getLadangRow(); i++) {
             System.out.printf("   |");
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < getLadangColumn(); j++) {
                 Petak petak = grid[i][j];
                 if (petak != null && !petak.isEmptyCard()) {
                     System.out.print("  " + petak.getKartu().getCardName().charAt(0) + "  |");
@@ -193,7 +201,7 @@ public class Ladang {
             }
             System.out.println();
             System.out.print("   +");
-            for (int k = 0; k < 5; k++) {
+            for (int k = 0; k < getLadangColumn(); k++) {
                 System.out.print("-----+");
             }
             System.out.println();

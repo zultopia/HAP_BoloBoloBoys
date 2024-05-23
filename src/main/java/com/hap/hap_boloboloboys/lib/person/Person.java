@@ -3,10 +3,7 @@ package com.hap.hap_boloboloboys.lib.person;
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.field.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import static java.lang.Math.min;
 
 public class Person {
