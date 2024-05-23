@@ -42,8 +42,11 @@
         <Button fx:id="buttonLoad" layoutX="1270" layoutY="510" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLoadClick" styleClass="button"/>
         <Button fx:id="buttonPlugin" layoutX="1270" layoutY="600" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonPluginClick" styleClass="button"/>
 
-        <!-- GridPane for Ladang Matriks -->
-        <GridPane fx:id="gridPane" layoutX="510" layoutY="165" hgap="10" vgap="10"/>
+        <!-- GridPane for Ladang  -->
+        <GridPane fx:id="gridPane" layoutX="505" layoutY="165" hgap="15" vgap="10"/>
+
+        <!-- GridPane for Deck -->
+        <GridPane fx:id="gridPane2" layoutX="400" layoutY="700" hgap="35" vgap="10"/>
 
         <!-- Labels for displaying game information -->
         <Label fx:id="turnLabel" layoutX="125" layoutY="190" text=""/>
