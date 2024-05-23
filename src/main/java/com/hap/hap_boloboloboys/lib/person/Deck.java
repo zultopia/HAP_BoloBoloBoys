@@ -35,4 +35,11 @@ public class Deck extends Storage {
             }
         }
     }
+
+    public void putToDeck(Card card, int index) {
+        if (index >= 0 && index < this.capacity) {
+            this.cards[index] = card;
+            this.getSize();
+        }
+    }
 }
