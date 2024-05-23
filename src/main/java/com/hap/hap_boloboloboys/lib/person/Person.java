@@ -10,10 +10,10 @@ import static java.lang.Math.min;
 public class Person {
     private String name;
     private int wealth = 0;
-    private Inventory inventory;
-    private Deck deck;
-    public List<Card> shuffledCard;
-    public Ladang ladangku;
+    private Inventory inventory = new Inventory(40);
+    private Deck deck = new Deck(6);
+    public List<Card> shuffledCard = new ArrayList<>(0);
+    public Ladang ladangku = new Ladang();
 
     public Person(String name) {
         this.name = name;
@@ -36,6 +36,13 @@ public class Person {
 
     public Person(String name, Ladang ladang) {
         this.name = name;
+        this.ladangku = ladang;
+    }
+
+    public Person(String name, Inventory inventory, Deck deck, Ladang ladang) {
+        this.name = name;
+        this.inventory = inventory;
+        this.deck = deck;
         this.ladangku = ladang;
     }
 
@@ -70,6 +77,7 @@ public class Person {
      * Shuffled card is a list of card that will be shown to player to choose
      * The size of shuffled card is based on the empty slots of deck or if inventory size is less than empty slots of deck,
      * then the size of shuffled card is based on inventory size
+     * Call this function again to reshuffle
      */
     public void shuffleCard() {
         int neededCard = this.deck.getCapacity() - this.deck.getSize(); // Empty slots of deck
