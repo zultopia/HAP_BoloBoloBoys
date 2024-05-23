@@ -1,68 +1,55 @@
 package com.hap.hap_boloboloboys.lib.field;
 
 import com.hap.hap_boloboloboys.lib.card.*;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Petak {
-    private Creature kartu;
-    private List<Item> activeItems;
+public class Petak implements IPetak {
+    private Card kartu;
 
     public Petak() {
         this.kartu = null;
-        this.activeItems = new ArrayList<>();
     }
 
-    public boolean isEmpty() {
+    @Override
+    public boolean isEmptyCard() {
         return kartu == null;
     }
 
-    public Creature getKartu() {
+    @Override
+    public Card getKartu() {
         return kartu;
     }
 
-    public void setKartu(Creature kartu) {
+    @Override
+    public void setKartu(Card kartu) {
         this.kartu = kartu;
     }
 
-    public void addItem(Item item) {
-        activeItems.add(item);
-    }
-
-    public void removeItem(Item item) {
-        activeItems.remove(item);
-    }
-
-    public List<Item> getActiveItems() {
-        return activeItems;
-    }
-
-    public void setUmur(int umur) {
-        if (kartu instanceof Plant) {
-            ((Plant) kartu).setAge(umur);
-        }
-    }
-
-    public void setBerat(int berat) {
-        if (kartu instanceof Animal) {
-            ((Animal) kartu).setWeight(berat);
-        }
-    }
-
-    public void cetakInfo() {
+    @Override
+    public void cetakInfo() throws FieldException {
         if (kartu != null) {
             System.out.println("Nama: " + kartu.getCardName());
             if (kartu instanceof Animal) {
                 System.out.println("Berat: " + ((Animal) kartu).getWeight() + "/" + ((Animal) kartu).getHarvestTarget());
             } else if (kartu instanceof Plant) {
                 System.out.println("Umur: " + ((Plant) kartu).getAge() + "/" + ((Plant) kartu).getHarvestTarget());
+            } else if (kartu instanceof Product) {
+                System.out.println("Menambah " + ((Product) kartu).getAddedWeight() + " berat");
+                return;
+            } else {
+                throw new FieldException("Kartu tidak valid");
             }
-            System.out.println("Active Items: ");
+            System.out.print("Active Items: ");
             for (int i = 0; i < 6; i++) {
-                System.out.println(i + ". " + kartu.getEffectName(i) + " : " + kartu.getEffectValue(i));
+                if (((Creature) kartu).getEffectValue(i) == 0) continue;
+                System.out.print(((Creature) kartu).getEffectName(i) + "(" + ((Creature) kartu).getEffectValue(i) + ")");
+                if (i < 5 && ((Creature) kartu).getEffectValue(i + 1) > 0) {
+                    System.out.print(", ");
+                }
             }
+            System.out.println();
         } else {
-            System.out.println("Petak kosong");
+            throw new FieldException("Petak kosong");
         }
+        System.out.println();
     }
 }
