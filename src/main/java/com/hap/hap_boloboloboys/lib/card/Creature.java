@@ -57,8 +57,6 @@ public abstract class Creature extends Card {
                 harvestTarget = 4;
                 productCode = "STROBERI";
                 break;
-            default:
-                throw new IllegalArgumentException("Unknown creature code: " + code);
         }
         setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
     }
