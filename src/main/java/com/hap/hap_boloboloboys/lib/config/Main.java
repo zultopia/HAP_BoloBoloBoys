@@ -1,29 +1,36 @@
 package com.hap.hap_boloboloboys.lib.config;
 
 // run di root directory gitHub\HAP_BoloBoloBoys
-// javac -d target src/main/java/com/hap/hap_boloboloboys/lib/config/*.java
+// javac -d target src/main/java/com/hap/hap_boloboloboys/lib/util/Pair.java src/main/java/com/hap/hap_boloboloboys/lib/card/*.java src/main/java/com/hap/hap_boloboloboys/lib/store/*.java src/main/java/com/hap/hap_boloboloboys/lib/config/*.java src/main/java/com/hap/hap_boloboloboys/lib/config/Main.java
 // java -cp target com.hap.hap_boloboloboys.lib.config.Main
+
+import com.hap.hap_boloboloboys.lib.store.Store;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            Load.loadGameState("game1");
+            String folderPath = "game1"; 
+
+            Load.loadGameState(folderPath);
             System.out.println("Current Turn: " + Load.getCurrentTurn());
-            System.out.println("Jumlah item di shop: " + Load.getItemCount());
             System.out.println("Shop Items: " + Load.getShopItems());
 
-            Load.loadPlayer("game1");
-            System.out.println("Jumlah Gulden: " + Load.getWealth());
-            System.out.println("Jumlah Deck: " + Load.getCurrentSizeInventory());
-            System.out.println("Jumlah Deck Aktif: " + Load.getCurrentSizeDeck());
+            Store store = Load.getStore();
+            System.out.println();
+            store.displayInventory();
+            System.out.println();
+
+            Load.loadPlayer(folderPath);
+            System.out.println("Player Wealth: " + Load.getWealth());
+            System.out.println("Current Size Inventory: " + Load.getCurrentSizeInventory());
+            System.out.println("Current Size Deck: " + Load.getCurrentSizeDeck());
             System.out.println("Deck: " + Load.getDeck());
-            System.out.println("Jumlah Kartu Ladang: " + Load.getCardLadangCount());
+            System.out.println("Card Ladang Count: " + Load.getCardLadangCount());
             System.out.println("Content: " + Load.getContent());
 
-            Save.saveGameState("game1", Load.getCurrentTurn(), Load.getShopItems());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
         }
-
     }
 }

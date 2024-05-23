@@ -9,33 +9,32 @@ import com.hap.hap_boloboloboys.lib.card.*;;
 
 public class Main {
     public static void main(String[] args) {
-        // Membuat instance store
         Store store = new Store();
 
-        // Membuat beberapa produk
-        Product product1 = new Product("Sirip Hiu");
-        Product product2 = new Product("Susu");
-        Product product3 = new Product("Daging Domba");
+        Product product1 = new Product("SIRIP_HIU");
+        Product product2 = new Product("SUSU");
+        Product product3 = new Product("DAGING_DOMBA");
+        Product product4 = new Product("DAGING_KUDA");
+        Product product5 = new Product("TELUR");
+        Product product6 = new Product("DAGING_BERUANG");
 
-        // Menambahkan produk ke store
-        store.addItem("Sirip Hiu", product1, 10);
-        store.addItem("Susu", product2, 20);
-        store.addItem("Daging Domba", product3, 5);
+        store.addItem("SIRIP_HIU", product1, 10);
+        store.addItem("SUSU", product2, 20);
+        store.addItem("DAGING_DOMBA", product3, 5);
+        store.addItem("DAGING_KUDA", product4, 10);
+        store.addItem("TELUR", product5, 20);
+        store.addItem("DAGING_BERUANG", product6, 5);
 
-        // Menampilkan inventaris toko
         store.displayInventory();
 
-        // Menghapus beberapa produk dari store
-        store.removeItem("Sirip Hiu", 5);
-        store.removeItem("Susu", 20);
-        store.removeItem("Daging Domba", 1);
+        store.removeItem("SIRIP_HIU", 5);
+        store.removeItem("SUSU", 20);
+        store.removeItem("DAGING_DOMBA", 1);
 
-        // Menampilkan inventaris toko setelah penghapusan
         System.out.println("\nAfter removal:");
         store.displayInventory();
 
-        // Menampilkan informasi pembelian dan penjualan produk
-        System.out.println("\nCan buy Sirip Hiu: " + store.canBuyProduct(product1));
-        System.out.println("Can buy Susu: " + store.canBuyProduct(product2));
+        System.out.println("\nCan buy SIRIP_HIU: " + store.canBuyProduct(product1));
+        System.out.println("Can buy SUSU: " + store.canBuyProduct(product2));
     }
 }
