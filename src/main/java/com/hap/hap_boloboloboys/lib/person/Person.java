@@ -90,6 +90,7 @@ public class Person {
         int inventorySize = this.inventory.getSize(); // How many card in inventory
         // Check if inventory size is sufficient, use minimum between inventory size and needed card
         neededCard = min(min(neededCard, 4), inventorySize);// Maximum 4 cards or the empty slots of deck, or the inventory size
+        System.out.println(neededCard);
         this.shuffledCard = List.of(this.inventory.shuffle(neededCard));
     }
 
