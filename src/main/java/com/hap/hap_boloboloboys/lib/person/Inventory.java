@@ -38,22 +38,22 @@ public class Inventory extends Storage {
             int cardType = rand.nextInt(20);
             switch (cardType) {
                 case 1:
-                    this.cards[i] = new Accelerate("ACCELERATE");
+                    this.cards[i] = new Accelerate();
                     break;
                 case 2:
                     this.cards[i] = new Carnivore("");
                     break;
                 case 3:
-                    this.cards[i] = new Delay("");
+                    this.cards[i] = new Delay();
                     break;
                 case 4:
-                    this.cards[i] = new Destroy("");
+                    this.cards[i] = new Destroy();
                     break;
                 case 5:
                     this.cards[i] = new Herbivore("");
                     break;
                 case 6:
-                    this.cards[i] = new InstantHarvest("");
+                    this.cards[i] = new InstantHarvest();
                     break;
                 case 7:
                     this.cards[i] = new Plant("");
@@ -65,10 +65,10 @@ public class Inventory extends Storage {
                     this.cards[i] = new Product("");
                     break;
                 case 10:
-                    this.cards[i] = new Protect("");
+                    this.cards[i] = new Protect();
                     break;
                 case 11:
-                    this.cards[i] = new Trap("");
+                    this.cards[i] = new Trap();
                     break;
                 default:
                     this.cards[i] = new Plant("");
