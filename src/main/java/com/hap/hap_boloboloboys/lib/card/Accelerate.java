@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.card;
 
 public class Accelerate extends Item {
-    public Accelerate(String cardName) {
-        super(cardName, Effect.ACCELERATE);
+    public Accelerate() {
+        super("ACCELERATE");
     }
 
     @Override
@@ -11,11 +11,11 @@ public class Accelerate extends Item {
             Plant plant = (Plant) creature;
             plant.grow();
             plant.grow();
-            plant.useEffect(0); // Set Accelerate effect to true
+            plant.useEffect(0); 
         } else if (creature instanceof Animal) {
             Animal animal = (Animal) creature;
             animal.setWeight(animal.getWeight() + 8);
-            animal.useEffect(0); // Set Accelerate effect to true
+            animal.useEffect(0); 
         }
     }
 }

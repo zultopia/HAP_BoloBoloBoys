@@ -3,8 +3,8 @@ package com.hap.hap_boloboloboys.lib.card;
 public class Plant extends Creature {
     private int age;
 
-    public Plant(String cardName) {
-        super(cardName);
+    public Plant(String code) {
+        super(code);
         this.age = 0;
     }
 

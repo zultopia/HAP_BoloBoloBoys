@@ -3,39 +3,64 @@ package com.hap.hap_boloboloboys.lib.card;
 public abstract class Creature extends Card {
     private int harvestTarget;
     private int[] appliedEffects = new int[6]; // 6 effects, default to 0
+    private String productCode;
 
-    public Creature(String cardName) {
-        super(cardName, determineImgPath(cardName));
-        this.harvestTarget = determineHarvestTarget(cardName);
+    public Creature(String code) {
+        super(code); // Call to the superclass constructor with the code
+        setCreatureDetails(code);
     }
 
-    private static String determineImgPath(String cardName) {
-        return "path/to/" + cardName.replace(" ", "") + ".png";
-    }
-
-    private int determineHarvestTarget(String cardName) {
-        switch (cardName) {
-            case "Hiu Darat":
-                return 20;
-            case "Sapi":
-                return 10;
-            case "Domba":
-                return 12;
-            case "Kuda":
-                return 14;
-            case "Ayam":
-                return 5;
-            case "Beruang":
-                return 25;
-            case "Biji Jagung":
-                return 3;
-            case "Biji Labu":
-                return 5;
-            case "Biji Stroberi":
-                return 4;
+    private void setCreatureDetails(String code) {
+        switch (code) {
+            case "HIU_DARAT":
+                setCardName("Hiu Darat");
+                harvestTarget = 20;
+                productCode = "SIRIP_HIU";
+                break;
+            case "SAPI":
+                setCardName("Sapi");
+                harvestTarget = 10;
+                productCode = "SUSU";
+                break;
+            case "DOMBA":
+                setCardName("Domba");
+                harvestTarget = 12;
+                productCode = "DAGING_DOMBA";
+                break;
+            case "KUDA":
+                setCardName("Kuda");
+                harvestTarget = 14;
+                productCode = "DAGING_KUDA";
+                break;
+            case "AYAM":
+                setCardName("Ayam");
+                harvestTarget = 5;
+                productCode = "TELUR";
+                break;
+            case "BERUANG":
+                setCardName("Beruang");
+                harvestTarget = 25;
+                productCode = "DAGING_BERUANG";
+                break;
+            case "BIJI_JAGUNG":
+                setCardName("Biji Jagung");
+                harvestTarget = 3;
+                productCode = "JAGUNG";
+                break;
+            case "BIJI_LABU":
+                setCardName("Biji Labu");
+                harvestTarget = 5;
+                productCode = "LABU";
+                break;
+            case "BIJI_STROBERI":
+                setCardName("Biji Stroberi");
+                harvestTarget = 4;
+                productCode = "STROBERI";
+                break;
             default:
-                throw new IllegalArgumentException("Unknown creature: " + cardName);
+                throw new IllegalArgumentException("Unknown creature code: " + code);
         }
+        setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
     }
 
     public int getHarvestTarget() {
@@ -86,33 +111,6 @@ public abstract class Creature extends Card {
             System.out.println(getCardName() + " cannot be harvested yet.");
             return null;
         }
-
-        String productName = determineProductName(getCardName());
-        return new Product(productName);
-    }
-
-    private String determineProductName(String cardName) {
-        switch (cardName) {
-            case "Hiu Darat":
-                return "Sirip Hiu";
-            case "Sapi":
-                return "Susu";
-            case "Domba":
-                return "Daging Domba";
-            case "Kuda":
-                return "Daging Kuda";
-            case "Ayam":
-                return "Telur";
-            case "Beruang":
-                return "Daging Beruang";
-            case "Biji Jagung":
-                return "Jagung";
-            case "Biji Labu":
-                return "Labu";
-            case "Biji Stroberi":
-                return "Stroberi";
-            default:
-                throw new IllegalArgumentException("No harvestable product for " + cardName);
-        }
+        return new Product(productCode);
     }
 }

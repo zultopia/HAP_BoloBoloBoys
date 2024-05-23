@@ -3,8 +3,8 @@ package com.hap.hap_boloboloboys.lib.card;
 public abstract class Animal extends Creature {
     private int weight;
 
-    public Animal(String cardName) {
-        super(cardName);
+    public Animal(String code) {
+        super(code);
         this.weight = 0;
     }
 

@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import com.hap.hap_boloboloboys.lib.store.Store;
+import com.hap.hap_boloboloboys.lib.card.Product;
 
 public class Load {
     // game state
     private static int currentTurn; // CURRENT_TURN
-    private static int itemCount; // JUMLAH_ITEM_DI_SHOP
     private static Map<String, Integer> shopItems = new HashMap<>(); // <ITEM, JUMLAH>
 
     // player
@@ -20,16 +21,11 @@ public class Load {
     private static int currentSizeDeck; // JUMLAH_DECK_AKTIF
     private static Map<String, String> deck = new HashMap<>(); // <LOKASI, KARTU>
     private static int cardLadangCount; // JUMLAH_KARTU_LADANG
-    private static Map<String, List<String>> content = new HashMap<>(); // <LOKASI, [KARTU, UMUR/BERAT,
-                                                                        // JUMLAH_ITEM_AKTIF(J), ITEM_1, .., ITEM_J]>
+    private static Map<String, List<String>> content = new HashMap<>(); // <LOKASI, [KARTU, UMUR/BERAT, JUMLAH_ITEM_AKTIF(J), ITEM_1, .., ITEM_J]>
 
     // getter
     public static int getCurrentTurn() {
         return currentTurn;
-    }
-
-    public static int getItemCount() {
-        return itemCount;
     }
 
     public static Map<String, Integer> getShopItems() {
@@ -63,10 +59,6 @@ public class Load {
     // setter
     public static void setCurrentTurn(int currentTurn) {
         Load.currentTurn = currentTurn;
-    }
-
-    public static void setItemCount(int itemCount) {
-        Load.itemCount = itemCount;
     }
 
     public static void setShopItems(Map<String, Integer> shopItems) {
@@ -112,9 +104,9 @@ public class Load {
             }
 
             if (scanner.hasNextLine()) {
-                setItemCount(Integer.parseInt(scanner.nextLine().trim()));
+                int countItem = Integer.parseInt(scanner.nextLine().trim());
                 shopItems.clear();
-                for (int i = 0; i < Load.getItemCount(); i++) {
+                for (int i = 0; i < countItem; i++) {
                     if (scanner.hasNext()) {
                         String itemName = scanner.next();
                         if (scanner.hasNextInt()) {
@@ -144,6 +136,18 @@ public class Load {
         } else {
             throw new Exception("File not found: " + filename + "!");
         }
+    }
+
+    // get store
+    public static Store getStore() {
+        Store store = new Store();
+        for (Map.Entry<String, Integer> entry : shopItems.entrySet()) {
+            String itemName = entry.getKey();
+            int quantity = entry.getValue();
+            Product product = new Product(itemName); 
+            store.addItem(itemName, product, quantity); 
+        }
+        return store;
     }
 
     // load player

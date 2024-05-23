@@ -70,10 +70,11 @@ public class Store {
     public void displayInventory() {
         System.out.println("Store Inventory:");
         for (Map.Entry<String, Pair<Product, Integer>> entry : items.entrySet()) {
-            String productName = entry.getKey();
+            String productCode = entry.getKey();
+            String productName = entry.getValue().getKey().getCardName();
             int quantity = entry.getValue().getValue();
             int price = entry.getValue().getKey().getPrice();
-            System.out.println(productName + ": " + price + " (" + quantity + ")");
+            System.out.println(productCode + " " + productName + ": " + price + " (" + quantity + ")");
         }
     }
 }

@@ -309,7 +309,7 @@
     background-color: #ED8930;
 }
 
-#gridPane {
+#gridPane, #gridPane2 {
     -fx-padding: 10px;
     padding: 10px;
 }
