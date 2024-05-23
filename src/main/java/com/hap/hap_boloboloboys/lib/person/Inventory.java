@@ -1,8 +1,8 @@
 package com.hap.hap_boloboloboys.lib.person;
 import com.hap.hap_boloboloboys.lib.card.*;
+import com.hap.hap_boloboloboys.lib.config.ListCode;
 
-
-import java.util.Random;
+import java.util.*;
 
 /**
  * Inventory is a collection of cards
@@ -35,45 +35,59 @@ public class Inventory extends Storage {
         for (int i = 0; i < maximum; i++) {
             if (this.cards[i] != null) continue;
             Random rand = new Random();
-            int cardType = rand.nextInt(20);
-            switch (cardType) {
+            /* Random nicely
+            * if 0 : plant
+            * if 1 : carnivore
+            * if 2 : herbivore
+            * if 3 : omnivore
+            * if 4 : items
+            * if 5 : product
+            * */
+            switch (i % 6) {
+                case 0:
+                    List<String> plant = new ArrayList<>(ListCode.PLANT);
+                    this.cards[i] = new Plant(plant.get(rand.nextInt(plant.size())));
+                    break;
                 case 1:
-                    this.cards[i] = new Accelerate();
+                    List<String> carnivore = new ArrayList<>(ListCode.CARNIVORE);
+                    this.cards[i] = new Carnivore(carnivore.get(rand.nextInt(carnivore.size())));
                     break;
                 case 2:
-                    this.cards[i] = new Carnivore("");
+                    List<String> herbivore = new ArrayList<>(ListCode.HERBIVORE);
+                    this.cards[i] = new Herbivore(herbivore.get(rand.nextInt(herbivore.size())));
                     break;
                 case 3:
-                    this.cards[i] = new Delay();
+                    List<String> omnivore = new ArrayList<>(ListCode.OMNIVORE);
+                    this.cards[i] = new Omnivore(omnivore.get(rand.nextInt(omnivore.size())));
                     break;
                 case 4:
-                    this.cards[i] = new Destroy();
+                    int itemType = rand.nextInt(7);
+                    switch (itemType) {
+                        case 1:
+                            this.cards[i] = new Accelerate();
+                            break;
+                        case 2:
+                            this.cards[i] = new Delay();
+                            break;
+                        case 3:
+                            this.cards[i] = new Destroy();
+                            break;
+                        case 4:
+                            this.cards[i] = new InstantHarvest();
+                            break;
+                        case 6:
+                            this.cards[i] = new Trap();
+                            break;
+                        default:
+                            this.cards[i] = new Protect();
+                            break;
+                    }
                     break;
                 case 5:
-                    this.cards[i] = new Herbivore("");
+                    List<String> product = new ArrayList<>(ListCode.PRODUCT);
+                    this.cards[i] = new Product(product.get(rand.nextInt(product.size())));
                     break;
-                case 6:
-                    this.cards[i] = new InstantHarvest();
-                    break;
-                case 7:
-                    this.cards[i] = new Plant("");
-                    break;
-                case 8:
-                    this.cards[i] = new Omnivore("");
-                    break;
-                case 9:
-                    this.cards[i] = new Product("");
-                    break;
-                case 10:
-                    this.cards[i] = new Protect();
-                    break;
-                case 11:
-                    this.cards[i] = new Trap();
-                    break;
-                default:
-                    this.cards[i] = new Plant("");
             }
-            // TODO instantiate card based on cardType random
         }
     }
 
@@ -86,7 +100,7 @@ public class Inventory extends Storage {
         Card[] shuffledCards = new Card[neededCard];
         Random rand = new Random();
         for (int i = 0; i < neededCard; i++) {
-            int randomIndex = rand.nextInt(this.capacity);
+            int randomIndex = rand.nextInt(this.getSize());
             try {
                 shuffledCards[i] = this.getCard(randomIndex);
             } catch (InventoryException e) {

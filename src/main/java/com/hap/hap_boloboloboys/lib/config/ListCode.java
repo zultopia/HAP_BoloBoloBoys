@@ -13,7 +13,7 @@ public class ListCode {
 
     static {
         // Initialize EFFECT set
-        ITEM.addAll(Set.of("ACCELERATE", "DELAY", "INSTANT_HARVEST", "DESTROY", "PROTECT", "TRAP"));
+        ITEM.addAll(Set.of("ACCELERATE", "DELAY", "INSTANT_HARVEST", "DESTROY", "PROTECT", "TRAP", "LAYOUT"));
 
         // Initialize PRODUCT set
         PRODUCT.addAll(Set.of("SIRIP_HIU", "SUSU", "DAGING_DOMBA", "DAGING_KUDA", "TELUR", "DAGING_BERUANG", "JAGUNG", "LABU", "STROBERI"));

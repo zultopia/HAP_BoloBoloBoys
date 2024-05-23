@@ -1,9 +1,11 @@
 package com.hap.hap_boloboloboys.lib.person;
 
-import com.hap.hap_boloboloboys.lib.card.Card;
-import com.hap.hap_boloboloboys.lib.field.Ladang;
+import com.hap.hap_boloboloboys.lib.card.*;
+import com.hap.hap_boloboloboys.lib.field.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.Math.min;
 
@@ -52,6 +54,7 @@ public class Person {
     public Inventory getInventory() {return this.inventory;}
     public Deck getDeck() {return this.deck;}
     public List<Card> getShuffledCard() {return this.shuffledCard;}
+    public Ladang getLadang() {return this.ladangku;}
 
     /*SETTER*/
     public void setName(String name) {this.name = name;}
@@ -59,6 +62,9 @@ public class Person {
     public void setInventory(Inventory inventory) {this.inventory = inventory;}
     public void setDeck(Deck deck) {this.deck = deck;}
     public void setShuffledCard(List<Card> shuffledCard) {this.shuffledCard = shuffledCard;}
+    public void addWealth(int wealth) {this.wealth += wealth;}
+    public void reduceWealth(int wealth) {this.wealth -= wealth;}
+    public void setLadang(Ladang ladang) {this.ladangku = ladang;}
 
     /*SHUFFLE CARD*/
     /* Sequence :
@@ -73,17 +79,17 @@ public class Person {
     */
 
     /**
-     * Shuffle the card from inventory to shuffledCard
-     * Shuffled card is a list of card that will be shown to player to choose
+     * Shuffle the card from inventory to shuffledCard.
+     * Shuffled card is a list of card that will be shown to player to choose.
      * The size of shuffled card is based on the empty slots of deck or if inventory size is less than empty slots of deck,
-     * then the size of shuffled card is based on inventory size
+     * then the size of shuffled card is based on inventory size.
      * Call this function again to reshuffle
      */
     public void shuffleCard() {
         int neededCard = this.deck.getCapacity() - this.deck.getSize(); // Empty slots of deck
         int inventorySize = this.inventory.getSize(); // How many card in inventory
         // Check if inventory size is sufficient, use minimum between inventory size and needed card
-        neededCard = min(min(neededCard, 4), inventorySize); // Maximum 4 cards or the empty slots of deck, or the inventory size
+        neededCard = min(min(neededCard, 4), inventorySize);// Maximum 4 cards or the empty slots of deck, or the inventory size
         this.shuffledCard = List.of(this.inventory.shuffle(neededCard));
     }
 
