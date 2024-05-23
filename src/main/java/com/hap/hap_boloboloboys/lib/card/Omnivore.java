@@ -2,8 +2,8 @@ package com.hap.hap_boloboloboys.lib.card;
 
 
 public class Omnivore extends Animal {
-    public Omnivore(String cardName) {
-        super(cardName);
+    public Omnivore(String code) {
+        super(code);
     }
 
     @Override
