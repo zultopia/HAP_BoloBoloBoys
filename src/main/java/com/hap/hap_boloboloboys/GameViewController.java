@@ -86,7 +86,7 @@ public class GameViewController {
     public Person player2;
     public int currentPlayer = 1;
     public Ladang ladang;
-    public Store toko;
+    public Store toko = new Store();
     public Deck deck;
 
     @FXML
@@ -265,30 +265,35 @@ public class GameViewController {
         String[] cardImages = {
             "/card/hewan/Ayam.png",
             "/card/hewan/Beruang.png",
-            "/card/hewan/Domba.png",
-            "/card/hewan/HiuDarat.png",
             "/card/hewan/Kuda.png",
             "/card/item/Layout.png"
         };
     
         Image petakImage = loadImage("/assets/Petak.png");
     
-        for (int col = 0; col < cardImages.length; col++) {
-            Image cardImage = loadImage(cardImages[col]);
-            if (cardImage == null) {
-                System.err.println("Error loading card image: " + cardImages[col]);
-                continue;
-            }
+        for (int col = 0; col < 6; col++) {
             ImageView petakImageView = new ImageView(petakImage);
             petakImageView.setFitWidth(95);
             petakImageView.setFitHeight(110);
             petakImageView.getStyleClass().add("image-view");
     
-            ImageView cardImageView = new ImageView(cardImage);
+            ImageView cardImageView;
+            if (col < cardImages.length) {
+                Image cardImage = loadImage(cardImages[col]);
+                if (cardImage == null) {
+                    System.err.println("Error loading card image: " + cardImages[col]);
+                    cardImageView = new ImageView(); // Create an empty ImageView
+                } else {
+                    cardImageView = new ImageView(cardImage);
+                }
+            } else {
+                cardImageView = new ImageView(); // Create an empty ImageView
+            }
+    
             cardImageView.setFitWidth(75);
             cardImageView.setFitHeight(90);
             cardImageView.getStyleClass().add("image-view");
-            setupDragAndDropFromDeckAktif(cardImageView, petakImageView); 
+            setupDragAndDropFromDeckAktif(cardImageView, petakImageView);
     
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(petakImageView, cardImageView);
@@ -327,13 +332,13 @@ public class GameViewController {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasImage()) {
-                // Check if card is already in ladang
-                boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
-                if (!isInLadang) {
-                    cardImageView.setImage(db.getImage());
-                    cardImageView.getProperties().put("isInLadang", true);
-                    success = true;
-                }
+                // // Check if card is already in ladang
+                // boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
+                // if (!isInLadang) {
+                cardImageView.setImage(db.getImage());
+                cardImageView.getProperties().put("isInLadang", true);
+                success = true;
+                // }
             }
             event.setDropCompleted(success);
             event.consume();
