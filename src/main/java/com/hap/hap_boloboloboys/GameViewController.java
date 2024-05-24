@@ -2,7 +2,6 @@ package com.hap.hap_boloboloboys;
 
 import java.io.File;
 import java.io.IOException;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -74,11 +73,12 @@ public class GameViewController {
     public Label player2MoneyLabel;
     @FXML
     public Label deckCountLabel;
+    private Label outputLabel;
     public int numRows = 4;
     public static int numCols = 5;
     public static int[] prices = {50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000};
     public static int[] amounts = {3, 3, 3, 3, 3, 3, 3, 3, 3};
-    public int playerMoney = 200000;
+    public int playerMoney = 100000;
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
     public Stage popupStage;
@@ -151,7 +151,7 @@ public class GameViewController {
     @FXML
     public void handleNextButtonClick(ActionEvent event) { 
         System.out.println("Button Next Clicked!");
-        currentPlayer = (currentPlayer == 1) ? 2 : 1;   // Change turn
+        currentPlayer = (currentPlayer == 1) ? 2 : 1;   
         currentTurn++;
         updateTurnLabel(currentTurn);
         if (currentTurn > 20) {
@@ -282,17 +282,19 @@ public class GameViewController {
                 Image cardImage = loadImage(cardImages[col]);
                 if (cardImage == null) {
                     System.err.println("Error loading card image: " + cardImages[col]);
-                    cardImageView = new ImageView(); // Create an empty ImageView
+                    cardImageView = new ImageView();
                 } else {
                     cardImageView = new ImageView(cardImage);
                 }
             } else {
-                cardImageView = new ImageView(); // Create an empty ImageView
+                cardImageView = new ImageView();
             }
     
             cardImageView.setFitWidth(75);
             cardImageView.setFitHeight(90);
             cardImageView.getStyleClass().add("image-view");
+    
+            // Setup drag and drop for cardImageView
             setupDragAndDropFromDeckAktif(cardImageView, petakImageView);
     
             StackPane stackPane = new StackPane();
@@ -300,7 +302,7 @@ public class GameViewController {
     
             gridPane2.add(stackPane, col, 0);
         }
-    }    
+    }
 
     public void setupDragAndDropFromDeckAktif(ImageView cardImageView, ImageView petakImageView) {
         cardImageView.setOnDragDetected(event -> {
@@ -611,12 +613,17 @@ public class GameViewController {
         Label nameLabel = new Label("Toko");
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
 
+        // Create output label
+        outputLabel = new Label();
+        outputLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        outputLabel.setTextFill(Color.RED);
+
         // Create GridPane to arrange the products and their info
         GridPane gridPane = new GridPane();
-        gridPane.setHgap(20); // Increased horizontal gap
+        gridPane.setHgap(20);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(10));
-        gridPane.setAlignment(Pos.CENTER); // Center align gridPane
+        gridPane.setAlignment(Pos.CENTER);
 
         // Create ImageViews for the products
         ImageView[] productImageViews = new ImageView[9];
@@ -628,7 +635,9 @@ public class GameViewController {
             Image productImage = loadImage("/card/produk/Produk" + (i + 1) + ".png");
             if (productImage != null) {
                 productImageViews[i].setImage(productImage);
-                productImageViews[i].setOnMouseClicked(event -> buyProduct(index));
+                productImageViews[i].setOnMouseClicked(event -> {
+                    buyProduct(index, productImageViews[index]);
+                });
             } else {
                 System.err.println("Error loading product image: Produk" + (i + 1) + ".png");
             }
@@ -641,11 +650,10 @@ public class GameViewController {
             jumlahLabels[i].setFont(Font.font(14));
         }
 
-        // Add products to GridPane
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 VBox productBox = new VBox(10);
-                productBox.setAlignment(Pos.CENTER); // Center align each product box
+                productBox.setAlignment(Pos.CENTER);
                 productBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
                 productBox.setPadding(new Insets(5));
                 productBox.getChildren().addAll(productImageViews[i * 3 + j], hargaLabels[i * 3 + j], jumlahLabels[i * 3 + j]);
@@ -654,14 +662,14 @@ public class GameViewController {
         }
 
         // Layouts
-        VBox mainBox = new VBox(20, nameLabel, gridPane, new Button("Kembali"));
+        VBox mainBox = new VBox(20, nameLabel, outputLabel, gridPane, new Button("Kembali"));
         mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setPadding(new Insets(20));
         mainBox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
         mainBox.setEffect(new DropShadow());
 
         // Scene and Stage
-        Scene scene = new Scene(mainBox, 800, 700);
+        Scene scene = new Scene(mainBox, 800, 750);
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.WINDOW_MODAL);
         popupStage.initOwner(buttonToko.getScene().getWindow());
@@ -679,24 +687,45 @@ public class GameViewController {
         });
     }
 
-    public void buyProduct(int index) {
+    public void buyProduct(int index, ImageView productImageView) {
         if (amounts[index] > 0 && playerMoney >= prices[index]) {
             playerMoney -= prices[index];
             amounts[index]--;
             updateHargaProduk(index, prices[index]);
             updateJumlahProduk(index, amounts[index]);
-            System.out.println("Anda baru saja membeli Produk " + (index + 1));
-            System.out.println("Sisa uang Anda: Rp " + playerMoney);
-    
-            // Update related labels after purchase
+            displayOutput("Anda baru saja membeli Produk " + (index + 1) + "\nSisa uang Anda: Rp " + playerMoney, Color.GREEN);
+
             hargaLabels[index].setText("Harga: Rp " + prices[index]);
             jumlahLabels[index].setText("Jumlah: " + amounts[index]);
+
+            boolean foundEmptySlot = false;
+            for (int col = 0; col < 6; col++) {
+                StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
+                ImageView petakImageView = (ImageView) stackPane.getChildren().get(0);
+                ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
+                if (cardImageView.getImage() == null) {
+                    cardImageView.setImage(productImageView.getImage());
+                    foundEmptySlot = true;
+                    break;
+                }
+            }
+
+            if (!foundEmptySlot) {
+                // Error message if deckAktif is full
+                displayOutput("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.", Color.RED);
+            }
+
         } else if (amounts[index] == 0) {
-            System.out.println("Produk " + (index + 1) + " sudah habis.");
+            displayOutput("Produk " + (index + 1) + " sudah habis.", Color.RED);
         } else {
-            System.out.println("Uang Anda tidak cukup untuk membeli Produk " + (index + 1));
+            displayOutput("Uang Anda tidak cukup untuk membeli Produk " + (index + 1), Color.RED);
         }
-    }    
+    }
+
+    public void displayOutput(String message, Color color) {
+        outputLabel.setText(message);
+        outputLabel.setTextFill(color);
+    }
 
     public void updateHargaProduk(int index, int newPrice) {
         prices[index] = newPrice;
@@ -1027,5 +1056,40 @@ public class GameViewController {
 
     public void updateDeckCountLabel(int currentDeck, int totalDeck) {
         deckCountLabel.setText(currentDeck + "/" + totalDeck);
+    }
+
+    public void showErrorDialog(String errorMessage) {
+        Label errorLabel = new Label(errorMessage);
+        errorLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
+    
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(event -> {
+            ((Stage) errorLabel.getScene().getWindow()).close();
+        });
+    
+        VBox vbox = new VBox(errorLabel, closeButton);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(20);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: white; -fx-border-color: red; -fx-border-width: 2px;");
+        vbox.setEffect(new DropShadow());
+    
+        Scene scene = new Scene(vbox, 400, 200);
+    
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(gridPane.getScene().getWindow());
+        popupStage.setTitle("Error");
+        popupStage.setScene(scene);
+    
+        Stage gameViewControllerStage = (Stage) gridPane.getScene().getWindow();
+        double centerXPosition = gameViewControllerStage.getX() + gameViewControllerStage.getWidth() / 2d;
+        double centerYPosition = gameViewControllerStage.getY() + gameViewControllerStage.getHeight() / 2d;
+    
+        popupStage.setX(centerXPosition - scene.getWidth() / 2d);
+        popupStage.setY(centerYPosition - scene.getHeight() / 2d);
+    
+        popupStage.setResizable(false);
+        popupStage.show();
     }
 }
