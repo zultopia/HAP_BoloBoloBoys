@@ -2,6 +2,10 @@ package com.hap.hap_boloboloboys;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
+import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,11 +29,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.util.Duration;
 
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.config.*;
@@ -88,6 +95,14 @@ public class GameViewController {
     public Ladang ladang;
     public Store toko = new Store();
     public Deck deck;
+
+    @FXML
+    private GridPane gridPaneBear;
+    @FXML
+    private GridPane gridPaneTime;
+
+    private Timeline bearAttackTimer;
+    private Label bearAttackTimerLabel;
 
     @FXML
     public void initialize() { // Inisialisasi
@@ -154,6 +169,22 @@ public class GameViewController {
     @FXML
     public void handleNextButtonClick(ActionEvent event) {
         System.out.println("Button Next Clicked!");
+        Random random = new Random();
+        // 1/10 chance to trigger bear attack
+        if (random.nextInt(2) == 0) {
+            System.out.println("Bear attack!");
+
+            // Play sound "Rawr.mp3"
+            playSound("Rawr.mp3");
+
+            // Display popup image "Beruang.png" for 5 seconds
+            displayPopupImage("Beruang.png");
+
+            // Randomize timer for bear attack (between 30 to 60 seconds)
+            int bearAttackTime = random.nextInt(31) + 30; 
+            System.out.println("Bear attack in " + bearAttackTime + " seconds.");
+            showBearAttackTimer(bearAttackTime);
+        }
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         currentTurn++;
         updateTurnLabel(currentTurn);
@@ -1180,5 +1211,65 @@ public class GameViewController {
 
         popupStage.setResizable(false);
         popupStage.show();
+    }
+
+    private MediaPlayer playSound(String soundFile) {
+        String soundPath = getClass().getResource("/sounds/" + soundFile).toExternalForm();
+        Media sound = new Media(soundPath);
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+        return mediaPlayer;
+    }    
+
+    private void displayPopupImage(String imageName) {
+        String imagePath = "/assets/" + imageName;
+        Image image = new Image(getClass().getResource(imagePath).toExternalForm());
+        ImageView imageView = new ImageView(image);
+    
+        imageView.setFitWidth(300); 
+        imageView.setFitHeight(300); 
+    
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(imageView);
+    
+        Scene scene = new Scene(stackPane);
+        scene.setFill(Color.TRANSPARENT); 
+    
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initOwner(nextButton.getScene().getWindow());
+        popupStage.setScene(scene);
+        // Menutup popup setelah 3 detik
+        PauseTransition delay = new PauseTransition(Duration.seconds(3));
+        delay.setOnFinished(event -> popupStage.close());
+        delay.play();
+    }
+
+    private void showBearAttackTimer(int timeInSeconds) {
+        ImageView bearImageView = new ImageView(new Image(getClass().getResource("/assets/Beruang.png").toExternalForm()));
+        bearImageView.setFitWidth(130);
+        bearImageView.setFitHeight(130);
+
+        bearAttackTimerLabel = new Label();
+        bearAttackTimerLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
+
+        gridPaneBear.getChildren().add(bearImageView);
+        gridPaneTime.getChildren().add(bearAttackTimerLabel);
+
+        final int[] countdown = {timeInSeconds};
+        bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
+        MediaPlayer mediaPlayer = playSound("Siren.mp3");
+        bearAttackTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            countdown[0]--;
+            bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
+            if (countdown[0] <= 0) {
+                gridPaneBear.getChildren().remove(bearImageView);
+                gridPaneTime.getChildren().remove(bearAttackTimerLabel);
+                bearAttackTimer.stop();
+                mediaPlayer.stop();
+            }
+        }));
+        bearAttackTimer.setCycleCount(timeInSeconds);
+        bearAttackTimer.play();
     }
 }
