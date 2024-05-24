@@ -118,7 +118,6 @@ public class GameViewController {
         player1 = new Person("Player 1");
         player2 = new Person("Player 2");
         Plant pl1 = new Plant("BIJI_STROBERI");
-        pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
         } catch (Exception e) {
@@ -287,7 +286,7 @@ public class GameViewController {
                 });
 
                 gridPane.add(stackPane, col, row);
-                setupDragAndDropInLadang(cardImageView, petakImageView);
+                setupDragAndDropInLadang(cardImageView, petakImageView, row, col);
             }
         }
     }
@@ -385,14 +384,17 @@ public class GameViewController {
             event.consume();
         });
     }
-    
-    public void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView) {
+
+    public void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView, int row, int col) {
         cardImageView.setOnDragDetected(event -> {
 //            boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
 //            if (isInLadang) {
+            System.out.println(row + " " + col);
                 Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
+                String id = "row=" + row + ",col=" + col; // Send the ID instead
                 ClipboardContent content = new ClipboardContent();
                 content.putImage(cardImageView.getImage());
+                content.putString(id);
                 db.setContent(content);
                 event.consume();
 //            }
@@ -414,14 +416,35 @@ public class GameViewController {
         petakImageView.setOnDragExited(event -> {
             petakImageView.setOpacity(1);
         });
-    
+
         petakImageView.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasImage()) {
+                System.out.println(row + " " + col);
                 cardImageView.setImage(db.getImage());
                 cardImageView.getProperties().put("isInLadang", true);
                 success = true;
+                int firstRow = Integer.parseInt(db.getString().split(",")[0].split("=")[1]);
+                int firstCol = Integer.parseInt(db.getString().split(",")[1].split("=")[1]);
+                System.out.println(firstRow + " " + firstCol);
+                Card selected = ladang.takeCard(firstRow, firstCol);
+                try {
+                    if (selected instanceof Plant) {
+                        System.out.println(((Plant) selected).getAge());
+                    } else if (selected == null) {
+                        System.out.println("not plant");
+                    }
+                    ladang.plantKartu(row, col, (Plant) selected);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < numRows; i++) {
+                    for (int j = 0; j < numCols; j++) {
+                        if (ladang.getPetak(i, j) != null) System.out.print(ladang.getPetak(i, j).getKartu() + " ");
+                    }
+                    System.out.println();
+                }
             }
             event.setDropCompleted(success);
             event.consume();

@@ -8,4 +8,11 @@ module com.hap.hap_boloboloboys {
 
     opens com.hap.hap_boloboloboys to javafx.fxml;
     exports com.hap.hap_boloboloboys;
+
+    exports com.hap.hap_boloboloboys.lib.card;
+    exports com.hap.hap_boloboloboys.lib.config;
+    exports com.hap.hap_boloboloboys.lib.field;
+    exports com.hap.hap_boloboloboys.lib.person;
+    exports com.hap.hap_boloboloboys.lib.util;
+    exports com.hap.hap_boloboloboys.lib.store;
 }

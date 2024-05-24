@@ -39,7 +39,7 @@ public abstract class Item extends Card {
                 effect = Effect.TRAP;
                 break;
         }
-        setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
+        setImgPath("/card/Item/" + getCardName().replace(" ", "") + ".png");
     }
 
     public Effect getEffect() {

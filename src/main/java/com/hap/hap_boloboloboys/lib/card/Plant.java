@@ -6,6 +6,7 @@ public class Plant extends Creature {
     public Plant(String code) {
         super(code);
         this.age = 0;
+        this.setImgPath("/card/tumbuhan/" + getCardName().replace(" ", "") + ".png");
     }
 
     public void grow() {
