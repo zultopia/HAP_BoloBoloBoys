@@ -17,7 +17,7 @@ public class ProductTest {
         assertEquals("Sirip Hiu", product.getCardName());
         assertEquals(500, product.getPrice());
         assertEquals(12, product.getAddedWeight());
-        assertEquals("path/to/SiripHiu.png", product.getImgPath());
+        assertEquals("/card/produk/produk6.png", product.getImgPath());
     }
 
     @Test
@@ -26,7 +26,7 @@ public class ProductTest {
         assertEquals("Susu", product.getCardName());
         assertEquals(100, product.getPrice());
         assertEquals(4, product.getAddedWeight());
-        assertEquals("path/to/Susu.png", product.getImgPath());
+        assertEquals("/card/produk/produk8.png", product.getImgPath());
     }
 
     @Test
@@ -35,7 +35,7 @@ public class ProductTest {
         assertEquals("Daging Domba", product.getCardName());
         assertEquals(120, product.getPrice());
         assertEquals(6, product.getAddedWeight());
-        assertEquals("path/to/DagingDomba.png", product.getImgPath());
+        assertEquals("/card/produk/produk2.png", product.getImgPath());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ProductTest {
         assertEquals("Daging Kuda", product.getCardName());
         assertEquals(150, product.getPrice());
         assertEquals(8, product.getAddedWeight());
-        assertEquals("path/to/DagingKuda.png", product.getImgPath());
+        assertEquals("/card/produk/produk3.png", product.getImgPath());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ProductTest {
         assertEquals("Telur", product.getCardName());
         assertEquals(50, product.getPrice());
         assertEquals(2, product.getAddedWeight());
-        assertEquals("path/to/Telur.png", product.getImgPath());
+        assertEquals("/card/produk/produk9.png", product.getImgPath());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ProductTest {
         assertEquals("Daging Beruang", product.getCardName());
         assertEquals(500, product.getPrice());
         assertEquals(12, product.getAddedWeight());
-        assertEquals("path/to/DagingBeruang.png", product.getImgPath());
+        assertEquals("/card/produk/produk1.png", product.getImgPath());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ProductTest {
         assertEquals("Jagung", product.getCardName());
         assertEquals(150, product.getPrice());
         assertEquals(3, product.getAddedWeight());
-        assertEquals("path/to/Jagung.png", product.getImgPath());
+        assertEquals("/card/produk/produk4.png", product.getImgPath());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ProductTest {
         assertEquals("Labu", product.getCardName());
         assertEquals(500, product.getPrice());
         assertEquals(10, product.getAddedWeight());
-        assertEquals("path/to/Labu.png", product.getImgPath());
+        assertEquals("/card/produk/produk5.png", product.getImgPath());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ProductTest {
         assertEquals("Stroberi", product.getCardName());
         assertEquals(350, product.getPrice());
         assertEquals(5, product.getAddedWeight());
-        assertEquals("path/to/Stroberi.png", product.getImgPath());
+        assertEquals("/card/produk/produk7.png", product.getImgPath());
     }
     
     @Test
