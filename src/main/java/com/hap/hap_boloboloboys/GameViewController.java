@@ -120,6 +120,7 @@ public class GameViewController {
         Plant pl1 = new Plant("BIJI_STROBERI");
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
+            player1.putToDeck(pl1);
         } catch (Exception e) {
 
         }
@@ -294,73 +295,70 @@ public class GameViewController {
     public void deckAktif() {
         gridPane2.getChildren().clear();
         String[] cardImages = {
-            "/card/hewan/Ayam.png",
-            "/card/hewan/Beruang.png",
-            "/card/hewan/Kuda.png",
-            "/card/item/Layout.png"
+                "/card/hewan/Ayam.png",
+                "/card/hewan/Beruang.png",
+                "/card/hewan/Kuda.png",
+                "/card/item/Layout.png"
         };
-    
+
+        deck = (currentTurn == 1) ? player1.getDeck() : player2.getDeck();
+
         Image petakImage = loadImage("/assets/Petak.png");
-    
+
         for (int col = 0; col < 6; col++) {
             ImageView petakImageView = new ImageView(petakImage);
             petakImageView.setFitWidth(95);
             petakImageView.setFitHeight(110);
             petakImageView.getStyleClass().add("image-view");
-    
+
             ImageView cardImageView;
-            if (col < cardImages.length) {
-                Image cardImage = loadImage(cardImages[col]);
-                if (cardImage == null) {
-                    System.err.println("Error loading card image: " + cardImages[col]);
-                    cardImageView = new ImageView();
-                } else {
-                    cardImageView = new ImageView(cardImage);
-                }
+            if (deck.getCard(col) != null) {
+                Image cardImage = loadImage(deck.getCard(col).getImgPath());
+                cardImageView = new ImageView(cardImage);
             } else {
                 cardImageView = new ImageView();
             }
-    
             cardImageView.setFitWidth(75);
             cardImageView.setFitHeight(90);
             cardImageView.getStyleClass().add("image-view");
-    
+
             // Setup drag and drop for cardImageView
-            setupDragAndDropFromDeckAktif(cardImageView, petakImageView);
-    
+            setupDragAndDropFromDeckAktif(cardImageView, petakImageView, col);
+
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(petakImageView, cardImageView);
-    
+
             gridPane2.add(stackPane, col, 0);
         }
     }
 
-    public void setupDragAndDropFromDeckAktif(ImageView cardImageView, ImageView petakImageView) {
+    public void setupDragAndDropFromDeckAktif(ImageView cardImageView, ImageView petakImageView, int col) {
         cardImageView.setOnDragDetected(event -> {
             Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putImage(cardImageView.getImage());
+            content.putString(col + "");
             db.setContent(content);
             event.consume();
         });
-    
+
         petakImageView.setOnDragOver(event -> {
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-    
+
         petakImageView.setOnDragEntered(event -> {
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 petakImageView.setOpacity(0.3);
             }
         });
-    
+
         petakImageView.setOnDragExited(event -> {
             petakImageView.setOpacity(1);
         });
-    
+
         petakImageView.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
@@ -371,12 +369,20 @@ public class GameViewController {
                 cardImageView.setImage(db.getImage());
                 cardImageView.getProperties().put("isInLadang", true);
                 success = true;
-                // }
+                int firstCol = Integer.parseInt(db.getString());
+                System.out.println(firstCol + " " + col);
+                System.out.println(deck.getCard(firstCol).getCardName());
+                deck.moveCard(firstCol, col);
+                for (int i = 0; i < deck.getCapacity(); i++) {
+                    if (deck.getCard(i) != null) {
+                        System.out.println(deck.getCard(i).getCardName() + i);
+                    }
+                }
             }
             event.setDropCompleted(success);
             event.consume();
         });
-    
+
         cardImageView.setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 cardImageView.setImage(null);

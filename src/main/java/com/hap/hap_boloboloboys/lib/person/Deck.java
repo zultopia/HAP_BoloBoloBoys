@@ -64,6 +64,9 @@ public class Deck extends Storage {
         if (from >= 0 && from < this.capacity && to >= 0 && to < this.capacity && this.cards[from] != null && this.cards[to] == null) {
             this.cards[to] = this.cards[from];
             this.cards[from] = null;
+            System.out.println("Success");
+        } else {
+            System.out.println("Faild");
         }
     }
 }

@@ -106,11 +106,7 @@ public class Inventory extends Storage {
         Random rand = new Random();
         for (int i = 0; i < neededCard; i++) {
             int randomIndex = rand.nextInt(this.getSize());
-            try {
-                shuffledCards[i] = this.getCard(randomIndex);
-            } catch (InventoryException e) {
-                i--;
-            }
+            shuffledCards[i] = this.getCard(randomIndex);
         }
         return shuffledCards;
     }
@@ -122,10 +118,6 @@ public class Inventory extends Storage {
     public Card shuffle() {
         Random rand = new Random();
         int randomIndex = rand.nextInt(this.getSize());
-        try {
-            return this.getCard(randomIndex);
-        } catch (InventoryException e) {
-            return null;
-        }
+        return this.getCard(randomIndex);
     }
 }

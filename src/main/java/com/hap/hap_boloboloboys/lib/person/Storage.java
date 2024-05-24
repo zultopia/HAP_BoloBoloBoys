@@ -38,11 +38,9 @@ public class Storage {
     }
     /** Get card at specified index
      * @param index index of Card to be get
-     * @throws InventoryException if index is invalid, or the index of inventory is null
      * @return Card of the index in the Inventory array */
-    public Card getCard(int index) throws InventoryException {
-        if (index < 0 || index >= this.capacity) throw new InventoryException("Indeks invalid");
-        else return this.cards[index];
+    public Card getCard(int index) {
+        return this.cards[index];
     }
     public int calculateSize() {
         int size = 0;
