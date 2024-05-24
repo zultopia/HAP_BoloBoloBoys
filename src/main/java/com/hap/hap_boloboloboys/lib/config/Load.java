@@ -69,10 +69,6 @@ public class Load {
         Load.currentTurn = currentTurn;
     }
 
-    public static void setShopItems(Map<String, Integer> shopItems) {
-        Load.shopItems = shopItems;
-    }
-
     public static void setWealth(int wealth) {
         Load.wealth = wealth;
     }
@@ -85,16 +81,8 @@ public class Load {
         Load.currentSizeDeck = currentSizeDeck;
     }
 
-    public static void setDeck(Map<String, String> deck) {
-        Load.deck = deck;
-    }
-
     public static void setCardLadangCount(int cardLadangCount) {
         Load.cardLadangCount = cardLadangCount;
-    }
-
-    public static void setContent(Map<String, List<String>> content) {
-        Load.content = content;
     }
 
     // load game state
