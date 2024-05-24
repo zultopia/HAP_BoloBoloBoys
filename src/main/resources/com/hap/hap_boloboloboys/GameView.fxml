@@ -34,6 +34,9 @@
             <Button fx:id="nextButton" onAction="#handleNextButtonClick" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         </GridPane>
 
+        <GridPane fx:id="gridPaneBear" layoutX="170" layoutY="722" hgap="15" vgap="10" />
+        <GridPane fx:id="gridPaneTime" layoutX="100" layoutY="702" hgap="15" vgap="10" />
+
         <Button fx:id="buttonLadangku" layoutX="1270" layoutY="160" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLadangkuClick" styleClass="button"/>
         <Button fx:id="buttonLadangmu" layoutX="1270" layoutY="255" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonLadangmuClick" styleClass="button"/>
         <Button fx:id="buttonToko" layoutX="1270" layoutY="340" text="" prefWidth="40" prefHeight="40" onAction="#handleButtonTokoClick" styleClass="button"/>
