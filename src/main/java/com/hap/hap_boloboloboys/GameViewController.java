@@ -2,6 +2,7 @@ package com.hap.hap_boloboloboys;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +33,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import com.hap.hap_boloboloboys.lib.card.*;
+import com.hap.hap_boloboloboys.lib.config.*;
+import com.hap.hap_boloboloboys.lib.field.*;
+import com.hap.hap_boloboloboys.lib.person.*;
+import com.hap.hap_boloboloboys.lib.store.*;
+import com.hap.hap_boloboloboys.lib.util.*;
+
 public class GameViewController {
 
     @FXML
@@ -60,7 +68,6 @@ public class GameViewController {
 
     @FXML
     private Label turnLabel;
-    private int currentPlayer = 1; 
     private int currentTurn = 1;
     @FXML
     private Label player1MoneyLabel;
@@ -77,6 +84,12 @@ public class GameViewController {
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
     private Stage popupStage;
+    public static Person player1;
+    public static Person player2;
+    public static int currentPlayer = 1; 
+    public Ladang ladang;
+    public static Store toko;
+    private HashMap<String, Card> ladangCards = new HashMap<>();
 
     @FXML
     private void initialize() { // Inisialisasi
@@ -86,6 +99,19 @@ public class GameViewController {
         setButtonStyle(buttonSave, false);
         setButtonStyle(buttonLoad, false);
         setButtonStyle(buttonPlugin, false);
+
+        // Inisialisasi pemain
+        Person player1 = new Person("Player 1");
+        Person player2 = new Person("Player 2");
+        Plant pl1 = new Plant("BIJI_STROBERI");
+        try {
+            player1.ladangku.plantKartu(0, 0, pl1);
+        } catch (Exception e) {
+
+        }
+
+        currentPlayer = 1;
+        currentTurn = 1;
 
         // Load the image for the Next button
         Image nextImage = loadImage("/assets/Next.png");
@@ -109,6 +135,18 @@ public class GameViewController {
 
         populateLadang();
         deckAktif();
+    }
+
+    public void turn(int currentTurn) {
+        if (currentTurn == 1) {
+            ladang = player1.ladangku;
+        } else {
+            ladang = player2.ladangku;
+        }
+    }
+
+    public void connectLadang(Person player) {
+
     }
 
     @FXML
@@ -181,6 +219,12 @@ public class GameViewController {
 
     private void populateLadang() {
         gridPane.getChildren().clear();
+
+        // if (currentTurn == 1) {
+        //     ladang = player1.ladangku;
+        // } else {
+        //     ladang = player2.ladangku;
+        // }
 
         Image petakImage = loadImage("/assets/Petak.png");
 
