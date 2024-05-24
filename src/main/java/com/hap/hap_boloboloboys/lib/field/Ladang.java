@@ -81,6 +81,51 @@ public class Ladang {
         }
     }
 
+    public void loadplantKartu(int row, int col, Card kartu) throws Exception {
+        Petak petak = getPetak(row, col);
+        if (petak != null) {
+            if (petak.isEmptyCard()) {
+                if (kartu instanceof Plant) {
+                    petak.setKartu(kartu);
+                    // ((Plant) petak.getKartu()).setAge(0);
+                } else if (kartu instanceof Animal) {
+                    petak.setKartu(kartu);
+                    // ((Animal) petak.getKartu()).setWeight(0);
+                } else if (kartu instanceof Product) {
+                    petak.setKartu(kartu);
+                } else {
+                    // throw new Exception("Kartu yang ditanam bukan tanaman atau hewan");
+                    System.out.println("Kartu yang ditanam bukan tanaman atau hewan atau produk dari load!");
+                }
+            } else {
+                if (petak.getKartu() instanceof Plant) {
+                    if (kartu instanceof Item) {
+                        ((Item) kartu).applyEffect((Creature) petak.getKartu());
+                    } else {
+                        // throw new Exception("Kartu tidak bisa ditanam");
+                        System.out.println("Kartu tidak bisa ditanam");
+                    }
+                } else if (petak.getKartu() instanceof Animal) {
+                    if (kartu instanceof Item) {
+                        ((Item) kartu).applyEffect((Creature) petak.getKartu());
+                    }  else if (kartu instanceof Product) {
+                        ((Animal) petak.getKartu()).feed((Product) kartu);
+                    } else {
+                        // throw new Exception("Kartu tidak bisa ditanam");
+                        System.out.println("Kartu tidak bisa ditanam");
+                    }
+                } else {
+                    // throw new Exception("Petak sudah terisi");
+                    System.out.println("Petak sudah terisi");
+                }
+            }
+        } else {
+            // throw new Exception("Petak tidak valid");
+            System.out.println("Petak tidak valid");
+        }
+    }
+
+
     public void harvestKartu(int row, int col) throws FieldException {
         Petak petak = getPetak(row, col);
         if (petak != null && !petak.isEmptyCard()) {

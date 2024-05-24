@@ -266,12 +266,12 @@ public class Load {
 
         Inventory inventory = new Inventory();
         inventory.setCurrentSize(Load.getCurrentSizeInventory());
-        inventory.initiateFromScratch(Load.getCurrentSizeDeck());
+        inventory.initiateFromScratch(Load.getCurrentSizeInventory());
         player.setInventory(inventory);
 
         Deck deck = loadDeck();
         player.setDeck(deck);
-
+        
         Ladang ladang = loadLadang();
         player.setLadang(ladang);
 
@@ -336,7 +336,7 @@ public class Load {
             if (card != null) {
                 String loc = entry.getKey();
                 try {
-                    deck.putToDeck(card, Load.getIdxFromLocation(loc) - 1);
+                    deck.putToDeck(card, loc.charAt(0) - 'A');
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -372,6 +372,9 @@ public class Load {
                 Omnivore omnivore = new Omnivore(code);
                 omnivore.setWeight(props);
                 creature = omnivore;
+            } else if (ListCode.PRODUCT.contains(code)) {
+                Product product = new Product(code);
+                creature = product;
             } else {
                 System.out.println("Unknown card type: " + code);
             }
@@ -385,9 +388,9 @@ public class Load {
                     }
                 }
                 
-                int row = loc.charAt(0) - 'A';
-                int col = getIdxFromLocation(loc) - 1;
-                ladang.plantKartu(row, col, creature);
+                int col = loc.charAt(0) - 'A';
+                int row = getIdxFromLocation(loc) - 1;
+                ladang.loadplantKartu(row, col, creature);
             }
         }
         return ladang;

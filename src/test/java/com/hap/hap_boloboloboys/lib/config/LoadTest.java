@@ -51,10 +51,10 @@ public class LoadTest {
         assertEquals(500, Load.getWealth());
         assertEquals(39, Load.getCurrentSizeInventory());
         assertEquals(6, Load.getCurrentSizeDeck());
-        Map<String, String> expectedDeck = Map.of("A01", "BERUANG", "A02", "BIJI_JAGUNG", "A03", "DAGING_KUDA", "A04", "ACCELERATE", "A05", "DELAY", "A06", "PROTECT");
+        Map<String, String> expectedDeck = Map.of("A01", "BERUANG", "C01", "BIJI_JAGUNG", "D01", "DAGING_KUDA", "E01", "ACCELERATE", "F01", "DELAY", "B01", "PROTECT");
         assertEquals(expectedDeck, Load.getDeck());
         assertEquals(4, Load.getCardLadangCount());
-        Map<String, List<String>> expectedContent = Map.of("A01", List.of("DOMBA", "5", "3", "ACCELERATE", "DELAY", "PROTECT"), "A02", List.of("BIJI_JAGUNG", "5", "0"), "A03", List.of("SIRIP_HIU", "5", "0"), "A04", List.of("AYAM", "5", "0"));
+        Map<String, List<String>> expectedContent = Map.of("A01", List.of("DOMBA", "5", "3", "ACCELERATE", "DELAY", "PROTECT"), "A02", List.of("BIJI_JAGUNG", "5", "0"), "A03", List.of("SIRIP_HIU", "0", "0"), "A04", List.of("AYAM", "5", "0"));
         for (Map.Entry<String, List<String>> entry : expectedContent.entrySet()) {
             String key = entry.getKey();
             List<String> expectedValue = entry.getValue();

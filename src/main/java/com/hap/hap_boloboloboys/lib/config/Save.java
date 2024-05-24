@@ -53,17 +53,18 @@ public class Save {
         FileWriter writer = new FileWriter(filename);
 
         writer.write(player.getWealth() + "\n");
-        writer.write(player.getInventory().getCurrentSize() + "\n");
+        writer.write(player.getInventory().getSize() + "\n");
 
         Deck deck = player.getDeck();
         int countCard = deck.calculateSize();
         writer.write(countCard + "\n");
         for (int i = 0; i < deck.getCapacity(); i++) {
             if (deck.getCard(i) != null) {
-                writer.write("A" + String.format("%02d", (i + 1)) + " ");
+                writer.write((char) ('A' + i) + "01 ");
                 writer.write(deck.getCard(i).getCode() + "\n");
             }
         }
+
 
         List<String> listEffect = Arrays.asList("ACCELERATE", "DELAY", "INSTANT_HARVEST", "DESTROY", "PROTECT", "TRAP");
         Ladang ladang = player.getLadang();
@@ -73,14 +74,17 @@ public class Save {
                 Petak petak = ladang.getPetak(i, j);
                 if ((petak != null && !petak.isEmptyCard())) {
                     writer.write("\n");
-                    writer.write((char) (i + 'A'));
-                    writer.write(String.format("%02d", (j + 1)) + " ");
+                    writer.write((char) (j + 'A'));
+                    writer.write(String.format("%02d", (i + 1)) + " ");
                     Card card = player.getLadang().takeCard(i, j);
                     writer.write(card.getCode() + " ");
                     if (card instanceof Plant) {
                         writer.write(((Plant) card).getAge() + " ");
-                    } else {
+                    } else if (card instanceof Animal) {
                         writer.write(((Animal) card).getWeight() + " ");
+                    } else {
+                        writer.write(0 + " " + 0);
+                        continue;
                     }
 
                     int countItem = 0;

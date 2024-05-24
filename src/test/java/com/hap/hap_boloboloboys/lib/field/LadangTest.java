@@ -146,4 +146,21 @@ public class LadangTest {
 
       ladang.cetakInfo();
     }
+
+    @Test
+    void testLoadPlant() {
+      Animal animal = new Herbivore("DOMBA");
+      animal.setWeight(50); 
+      try {
+          ladang.loadplantKartu(1, 1, animal);
+          ladang.loadplantKartu(1, 1, new Accelerate());
+          assertTrue(ladang.getPetak(1, 1).getKartu() instanceof Animal);
+          ladang.loadplantKartu(2, 1, new Product("SIRIP_HIU"));
+          ladang.loadplantKartu(2, 1, new Protect());
+      } catch (Exception e) {
+          fail("Exception should not be thrown");
+      }
+
+      ladang.cetakInfo();
+    }
 }
