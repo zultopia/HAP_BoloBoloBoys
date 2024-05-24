@@ -44,45 +44,45 @@ public class GameViewController {
     @FXML
     private MenuBar menuBar;
     @FXML
-    private GridPane gridPane;
+    public static GridPane gridPane;
     @FXML
-    private GridPane gridPane2;
+    public static GridPane gridPane2;
     @FXML
-    private Button nextButton;
+    public static Button nextButton;
 
-    private Button activeButton = null;
-
-    @FXML
-    private Button buttonLadangku;
-    @FXML
-    private Button buttonLadangmu;
-    @FXML
-    private Button buttonToko;
-    @FXML
-    private Button buttonSave;
-    @FXML
-    private Button buttonLoad;
-    @FXML
-    private Button buttonPlugin;
+    public static Button activeButton = null;
 
     @FXML
-    private Label turnLabel;
-    private int currentTurn = 1;
+    public static Button buttonLadangku;
     @FXML
-    private Label player1MoneyLabel;
+    public static Button buttonLadangmu;
     @FXML
-    private Label player2MoneyLabel;
+    public static Button buttonToko;
     @FXML
-    private Label deckCountLabel;
+    public static Button buttonSave;
+    @FXML
+    public static Button buttonLoad;
+    @FXML
+    public static Button buttonPlugin;
 
-    private int numRows = 4; 
-    private int numCols = 5;
-    private int[] prices = {50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000};
-    private int[] amounts = {3, 3, 3, 3, 3, 3, 3, 3, 3};
-    private int playerMoney = 200000;
+    @FXML
+    public static Label turnLabel;
+    public static int currentTurn = 1;
+    @FXML
+    public static Label player1MoneyLabel;
+    @FXML
+    public static Label player2MoneyLabel;
+    @FXML
+    public static Label deckCountLabel;
+
+    public static int numRows = 4; 
+    public static int numCols = 5;
+    public static int[] prices = {50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000};
+    public static int[] amounts = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+    public static int playerMoney = 200000;
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
-    private Stage popupStage;
+    public static Stage popupStage;
     public static Person player1;
     public static Person player2;
     public static int currentPlayer = 1; 
