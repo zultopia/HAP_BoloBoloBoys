@@ -44,36 +44,36 @@ public class GameViewController {
     @FXML
     private MenuBar menuBar;
     @FXML
-    public static GridPane gridPane;
+    public GridPane gridPane;
     @FXML
-    public static GridPane gridPane2;
+    public GridPane gridPane2;
     @FXML
-    public static Button nextButton;
+    public Button nextButton;
 
-    public static Button activeButton = null;
-
-    @FXML
-    public static Button buttonLadangku;
-    @FXML
-    public static Button buttonLadangmu;
-    @FXML
-    public static Button buttonToko;
-    @FXML
-    public static Button buttonSave;
-    @FXML
-    public static Button buttonLoad;
-    @FXML
-    public static Button buttonPlugin;
+    public Button activeButton = null;
 
     @FXML
-    public static Label turnLabel;
+    public Button buttonLadangku;
+    @FXML
+    public Button buttonLadangmu;
+    @FXML
+    public Button buttonToko;
+    @FXML
+    public Button buttonSave;
+    @FXML
+    public Button buttonLoad;
+    @FXML
+    public Button buttonPlugin;
+
+    @FXML
+    public Label turnLabel;
     public static int currentTurn = 1;
     @FXML
-    public static Label player1MoneyLabel;
+    public Label player1MoneyLabel;
     @FXML
-    public static Label player2MoneyLabel;
+    public Label player2MoneyLabel;
     @FXML
-    public static Label deckCountLabel;
+    public Label deckCountLabel;
 
     public static int numRows = 4; 
     public static int numCols = 5;
