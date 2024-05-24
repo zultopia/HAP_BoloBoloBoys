@@ -128,6 +128,7 @@ public class GameViewController {
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
             player1.putToDeck(pl1);
+            player1.putToDeck(pl1);
         } catch (Exception e) {
 
         }
@@ -159,17 +160,6 @@ public class GameViewController {
         deckAktif();
     }
 
-    public void turn(int currentTurn) {
-        if (currentTurn == 1) {
-            ladang = player1.ladangku;
-        } else {
-            ladang = player2.ladangku;
-        }
-    }
-
-    public void connectLadang(Person player) {
-
-    }
 
     @FXML
     public void handleNextButtonClick(ActionEvent event) {
@@ -263,6 +253,7 @@ public class GameViewController {
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 ImageView petakImageView = new ImageView(petakImage);
+                petakImageView.getProperties().put("ladang", true);
                 petakImageView.setFitWidth(95);
                 petakImageView.setFitHeight(110);
                 petakImageView.getStyleClass().add("image-view");
@@ -295,19 +286,13 @@ public class GameViewController {
 
     public void deckAktif() {
         gridPane2.getChildren().clear();
-        String[] cardImages = {
-                "/card/hewan/Ayam.png",
-                "/card/hewan/Beruang.png",
-                "/card/hewan/Kuda.png",
-                "/card/item/Layout.png"
-        };
-
         deck = (currentTurn == 1) ? player1.getDeck() : player2.getDeck();
 
         Image petakImage = loadImage("/assets/Petak.png");
 
         for (int col = 0; col < 6; col++) {
             ImageView petakImageView = new ImageView(petakImage);
+            petakImageView.getProperties().put("ladang", false);
             petakImageView.setFitWidth(95);
             petakImageView.setFitHeight(110);
             petakImageView.getStyleClass().add("image-view");
@@ -344,7 +329,7 @@ public class GameViewController {
             Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putImage(cardImageView.getImage());
-            content.putString(col + "");
+            content.putString("row=" + 0 + ",col=" + col + ",isFromLadang=0"); // is from ladang set to false
             db.setContent(content);
             event.consume();
         });
@@ -374,16 +359,20 @@ public class GameViewController {
                 // boolean isInLadang = (boolean)
                 // cardImageView.getProperties().getOrDefault("isInLadang", false);
                 // if (!isInLadang) {
-                cardImageView.setImage(db.getImage());
-                cardImageView.getProperties().put("isInLadang", true);
-                success = true;
-                int firstCol = Integer.parseInt(db.getString());
-                System.out.println(firstCol + " " + col);
-                System.out.println(deck.getCard(firstCol).getCardName());
-                deck.moveCard(firstCol, col);
-                for (int i = 0; i < deck.getCapacity(); i++) {
-                    if (deck.getCard(i) != null) {
-                        System.out.println(deck.getCard(i).getCardName() + i);
+                int isFromLadang = Integer.parseInt(db.getString().split(",")[2].split("=")[1]);
+                if (isFromLadang == 0) {
+                    cardImageView.setImage(db.getImage());
+                    System.out.println("From deck");
+                    cardImageView.getProperties().put("isInLadang", true);
+                    success = true;
+                    int firstCol = Integer.parseInt(db.getString().split(",")[1].split("=")[1]);
+                    System.out.println(firstCol + " " + col);
+                    System.out.println(deck.getCard(firstCol).getCardName());
+                    deck.moveCard(firstCol, col);
+                    for (int i = 0; i < deck.getCapacity(); i++) {
+                        if (deck.getCard(i) != null) {
+                            System.out.println(deck.getCard(i).getCardName() + i);
+                        }
                     }
                 }
             }
@@ -406,7 +395,7 @@ public class GameViewController {
             // if (isInLadang) {
             System.out.println(row + " " + col);
             Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
-            String id = "row=" + row + ",col=" + col; // Send the ID instead
+            String id = "row=" + row + ",col=" + col + ",isFromLadang=1"; // Send the ID instead, is from ladang set to true
             ClipboardContent content = new ClipboardContent();
             content.putImage(cardImageView.getImage());
             content.putString(id);
@@ -438,12 +427,25 @@ public class GameViewController {
             if (db.hasImage()) {
                 System.out.println(row + " " + col);
                 cardImageView.setImage(db.getImage());
-                cardImageView.getProperties().put("isInLadang", true);
                 success = true;
+                System.out.println(db.getString() + "dari deck");
                 int firstRow = Integer.parseInt(db.getString().split(",")[0].split("=")[1]);
                 int firstCol = Integer.parseInt(db.getString().split(",")[1].split("=")[1]);
+                int isFromLadang = Integer.parseInt(db.getString().split(",")[2].split("=")[1]);
                 System.out.println(firstRow + " " + firstCol);
-                Card selected = ladang.takeCard(firstRow, firstCol);
+                System.out.println(row + " " + col);
+                Card selected;
+                if (isFromLadang == 0) {
+                    System.out.println("From deck");
+                    try {
+                        selected = deck.pop(firstCol);
+                    } catch (InventoryException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    System.out.println("From ladang");
+                    selected = ladang.takeCard(firstRow, firstCol);
+                }
                 try {
                     if (selected instanceof Plant) {
                         System.out.println(((Plant) selected).getAge());
