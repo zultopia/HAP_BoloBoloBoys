@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.hap.hap_boloboloboys.lib.store.Store;
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.field.*;
@@ -288,10 +291,13 @@ public class Load {
     }
 
     public static int getIdxFromLocation(String str) {
-        String alphabeticPart = str.substring(0, 1).toUpperCase(); // Extract the first character and convert to
-                                                                   // uppercase
-        int rowIndex = alphabeticPart.charAt(0) - 'A'; // Calculate the row index by subtracting the ASCII value of 'A'
-        return rowIndex;
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(str);
+        if (matcher.find()) {
+            String numberStr = matcher.group();
+            return Integer.parseInt(numberStr);
+        }
+        return 0;
     }
 
     public static Deck loadDeck() throws InventoryException {
@@ -342,7 +348,7 @@ public class Load {
             if (card != null) {
                 String loc = entry.getKey();
                 try {
-                    deck.putToDeck(card, Load.getIdxFromLocation(loc));
+                    deck.putToDeck(card, Load.getIdxFromLocation(loc) - 1);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -392,10 +398,9 @@ public class Load {
                 }
                 
                 int row = loc.charAt(0) - 'A';
-                int col = getIdxFromLocation(loc);
+                int col = getIdxFromLocation(loc) - 1;
                 ladang.plantKartu(row, col, creature);
             }
-            System.out.println(((Animal) creature).getWeight());
         }
         return ladang;
     }
