@@ -140,7 +140,9 @@ public class GameViewController {
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
             player1.putToDeck(pl1);
-            player1.putToDeck(pl1);
+            player1.putToDeck(pr1);
+            player1.putToDeck(new Accelerate());
+            player1.ladangku.plantKartu(0, 1, new Trap());
         } catch (Exception e) {
 
         }
@@ -447,7 +449,6 @@ public class GameViewController {
             boolean success = false;
             if (db.hasImage()) {
                 System.out.println(row + " " + col);
-                cardImageView.setImage(db.getImage());
                 success = true;
                 System.out.println(db.getString() + "dari deck");
                 int firstRow = Integer.parseInt(db.getString().split(",")[0].split("=")[1]);
@@ -460,6 +461,10 @@ public class GameViewController {
                     System.out.println("From deck");
                     try {
                         selected = deck.pop(firstCol);
+                        if (selected instanceof Item || selected instanceof Product) {
+                            deck.putToDeck(selected, firstCol);
+                            return;
+                        }
                     } catch (InventoryException e) {
                         throw new RuntimeException(e);
                     }
@@ -467,6 +472,7 @@ public class GameViewController {
                     System.out.println("From ladang");
                     selected = ladang.takeCard(firstRow, firstCol);
                 }
+                cardImageView.setImage(db.getImage());
                 try {
                     if (selected instanceof Plant) {
                         System.out.println(((Plant) selected).getAge());
