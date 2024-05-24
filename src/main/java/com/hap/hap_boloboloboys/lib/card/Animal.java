@@ -6,6 +6,7 @@ public abstract class Animal extends Creature {
     public Animal(String code) {
         super(code);
         this.weight = 0;
+        this.setImgPath("/card/hewan/" + getCardName().replace(" ", "") + ".png");
     }
 
     public abstract boolean canEat(Product productCard);

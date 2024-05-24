@@ -58,7 +58,6 @@ public abstract class Creature extends Card {
                 productCode = "STROBERI";
                 break;
         }
-        setImgPath("path/to/" + getCardName().replace(" ", "") + ".png");
     }
 
     public int getHarvestTarget() {
