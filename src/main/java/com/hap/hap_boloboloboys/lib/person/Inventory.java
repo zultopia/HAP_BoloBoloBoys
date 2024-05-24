@@ -93,6 +93,7 @@ public class Inventory extends Storage {
                     break;
             }
         }
+        setCurrentSize(maximum);
     }
 
     /**

@@ -67,15 +67,15 @@ public class Storage {
     public boolean isEmpty() {return this.calculateSize() == 0;}
     public Card findCard(Card card) {
         for (int i = 0; i < this.calculateSize(); i++) {
-            if (this.cards[i].equals(card)) return this.cards[i];
+            if (this.cards[i].getCode().equals(card.getCode())) return this.cards[i];
         }
         return null;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
+    // @Override
+    // public boolean equals(Object obj) {
+    //     return super.equals(obj);
+    // }
 
     /*ADD/REMOVE CARD*/
     /**
