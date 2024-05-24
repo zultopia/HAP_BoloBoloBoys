@@ -2,6 +2,8 @@ package com.hap.hap_boloboloboys;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -13,7 +15,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
@@ -173,14 +178,8 @@ public class GameViewController {
         // 1/10 chance to trigger bear attack
         if (random.nextInt(2) == 0) {
             System.out.println("Bear attack!");
-
-            // Play sound "Rawr.mp3"
             playSound("Rawr.mp3");
-
-            // Display popup image "Beruang.png" for 5 seconds
             displayPopupImage("Beruang.png");
-
-            // Randomize timer for bear attack (between 30 to 60 seconds)
             int bearAttackTime = random.nextInt(31) + 30; 
             System.out.println("Bear attack in " + bearAttackTime + " seconds.");
             showBearAttackTimer(bearAttackTime);
@@ -317,6 +316,12 @@ public class GameViewController {
             if (deck.getCard(col) != null) {
                 Image cardImage = loadImage(deck.getCard(col).getImgPath());
                 cardImageView = new ImageView(cardImage);
+                int finalCol = col; // declare effectively final variable
+                cardImageView.setOnMouseClicked(event -> {
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        showSellOption(finalCol); // use finalCol instead of col
+                    }
+                });
             } else {
                 cardImageView = new ImageView();
             }
@@ -1239,6 +1244,7 @@ public class GameViewController {
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.initOwner(nextButton.getScene().getWindow());
         popupStage.setScene(scene);
+        popupStage.show();
         // Menutup popup setelah 3 detik
         PauseTransition delay = new PauseTransition(Duration.seconds(3));
         delay.setOnFinished(event -> popupStage.close());
@@ -1271,5 +1277,60 @@ public class GameViewController {
         }));
         bearAttackTimer.setCycleCount(timeInSeconds);
         bearAttackTimer.play();
+    }
+
+    public void sellProduct(int index) {
+        if (deck.getCard(index) != null && deck.getCard(index) instanceof Product) {
+            Product product = (Product) deck.getCard(index);
+            int sellPrice = product.getPrice();
+            playerMoney += sellPrice;
+            if (currentPlayer == 1) {
+                updatePlayer1MoneyLabel(playerMoney);
+            } else {
+                updatePlayer2MoneyLabel(playerMoney);
+            }
+    
+            // Remove the product from deck aktif
+            try {
+                deck.pop(index);
+            } catch (InventoryException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+    
+            // Add the product to toko
+            toko.addItem(product.getCode(), product, 1);
+    
+            // Update deck aktif display
+            deckAktif();
+    
+            // Update toko display
+            updateStoreDisplay();
+        }
+    }
+    
+    public void updateStoreDisplay() {
+        Map<String, Pair<Product, Integer>> items = toko.getItems();
+        for (int i = 0; i < 9; i++) {
+            Product product = toko.getItems().get(i).getKey();
+            if (product != null) {
+                amounts[i] = items.get(product.getCode()).getValue(); // Get the quantity from toko
+                jumlahLabels[i].setText("Jumlah: " + amounts[i]);
+            }
+        }
+    }    
+
+    public void showSellOption(int index) {
+        // Tampilkan dialog konfirmasi untuk menjual produk
+        Alert sellConfirmation = new Alert(AlertType.CONFIRMATION);
+        sellConfirmation.setTitle("Konfirmasi Penjualan");
+        sellConfirmation.setHeaderText("Anda akan menjual produk ini.");
+        sellConfirmation.setContentText("Apakah Anda yakin ingin menjual produk ini?");
+
+        Optional<ButtonType> result = sellConfirmation.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Panggil metode sellProduct dengan indeks yang sesuai
+            sellProduct(index);
+        }
     }
 }
