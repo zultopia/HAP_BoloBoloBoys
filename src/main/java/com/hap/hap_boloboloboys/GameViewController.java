@@ -5,14 +5,19 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -42,6 +47,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.util.Duration;
+import javafx.stage.WindowEvent;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.config.*;
@@ -100,6 +108,8 @@ public class GameViewController {
     public Ladang ladang;
     public Store toko = new Store();
     public Deck deck;
+    private List<Image> activeDeck = new ArrayList<>();
+    private List<ImageView> shuffledImages = new ArrayList<>();
 
     @FXML
     private GridPane gridPaneBear;
@@ -108,6 +118,7 @@ public class GameViewController {
 
     private Timeline bearAttackTimer;
     private Label bearAttackTimerLabel;
+    private SimpleBooleanProperty popupOpen = new SimpleBooleanProperty(false);
 
     @FXML
     public void initialize() { // Inisialisasi
@@ -125,6 +136,7 @@ public class GameViewController {
         Product pr1 = new Product("STROBERI");
         pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
         pr1.setImgPath("/card/produk/Produk7.png");
+
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
             player1.putToDeck(pl1);
@@ -158,30 +170,39 @@ public class GameViewController {
 
         populateLadang();
         deckAktif();
+        
+        Platform.runLater(() -> showShufflePopup());
     }
-
 
     @FXML
     public void handleNextButtonClick(ActionEvent event) {
         System.out.println("Button Next Clicked!");
-        Random random = new Random();
-        // 1/10 chance to trigger bear attack
-        if (random.nextInt(2) == 0) {
-            System.out.println("Bear attack!");
-            playSound("Rawr.mp3");
-            displayPopupImage("Beruang.png");
-            int bearAttackTime = random.nextInt(31) + 30; 
-            System.out.println("Bear attack in " + bearAttackTime + " seconds.");
-            showBearAttackTimer(bearAttackTime);
-        }
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         currentTurn++;
         updateTurnLabel(currentTurn);
+
         if (currentTurn > 20) {
             turnLabel.setText("-");
             determineWinner();
             disableNextButton();
         }
+
+        popupOpen.set(true); 
+        showShufflePopup();
+
+        popupOpen.addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                Random random = new Random();
+                if (random.nextInt(10) == 0) {
+                    System.out.println("Bear attack!");
+                    playSound("Rawr.mp3");
+                    displayPopupImage("Beruang.png");
+                    int bearAttackTime = random.nextInt(31) + 30;
+                    System.out.println("Bear attack in " + bearAttackTime + " seconds.");
+                    showBearAttackTimer(bearAttackTime);
+                }
+            }
+        });
     }
 
     public void determineWinner() {
@@ -1331,8 +1352,105 @@ public class GameViewController {
 
         Optional<ButtonType> result = sellConfirmation.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Panggil metode sellProduct dengan indeks yang sesuai
             sellProduct(index);
+        }
+    }
+
+    private void showShufflePopup() {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        Scene scene = nextButton.getScene();
+        if (scene != null) {
+            popupStage.initOwner(scene.getWindow());
+        } else {
+            System.err.println("Scene or nextButton is null. Cannot initialize popup.");
+            return;
+        }
+    
+        GridPane gridPane = new GridPane();
+        Button reshuffleButton = new Button("Reshuffle");
+        reshuffleButton.setOnAction(e -> {
+            reshuffleCards(gridPane);
+            popupOpen.set(false);
+        });
+    
+        reshuffleCards(gridPane);
+    
+        gridPane.add(reshuffleButton, 0, 2, 2, 1);
+    
+        Scene popupScene = new Scene(gridPane, 400, 400);
+        popupStage.setScene(popupScene);
+        popupStage.show();
+    
+        popupStage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+            if (activeDeck.size() >= 6) {
+                showErrorDialog("Deck aktif anda sudah penuh");
+                event.consume();
+            }
+            popupOpen.set(false);
+        });
+    
+        popupStage.setOnCloseRequest(event -> {
+            popupOpen.set(false);
+        });
+    }
+
+    private void reshuffleCards(GridPane gridPane) {
+        gridPane.getChildren().clear();
+
+        List<Image> images = loadImagesShuffle();
+
+        for (int i = 0; i < 4; i++) {
+            ImageView imageView = new ImageView(images.get(i));
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(120);
+            imageView.setOnMouseClicked(event -> handleCardSelection(imageView.getImage()));
+
+            GridPane.setHalignment(imageView, HPos.CENTER);
+            GridPane.setValignment(imageView, VPos.CENTER);
+
+            gridPane.add(imageView, i % 2, i / 2);
+            shuffledImages.add(imageView);
+        }
+    }
+
+    private List<Image> loadImagesShuffle() {
+        List<Image> images = new ArrayList<>();
+        File dir = new File(getClass().getResource("/card/hewan").getFile());
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                images.add(new Image(file.toURI().toString()));
+            }
+        }
+
+        dir = new File(getClass().getResource("/card/item").getFile());
+        files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                images.add(new Image(file.toURI().toString()));
+            }
+        }
+
+        dir = new File(getClass().getResource("/card/tumbuhan").getFile());
+        files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                images.add(new Image(file.toURI().toString()));
+            }
+        }
+
+        java.util.Collections.shuffle(images);
+
+        return images;
+    }
+
+    private void handleCardSelection(Image image) {
+        if (activeDeck.size() < 6) {
+            activeDeck.add(image);
+            System.out.println("Card added to active deck.");
+        } else {
+            showErrorDialog("Deck aktif anda sudah penuh");
         }
     }
 }
