@@ -2,7 +2,6 @@ package com.hap.hap_boloboloboys;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -89,10 +88,10 @@ public class GameViewController {
     public static int currentPlayer = 1; 
     public Ladang ladang;
     public static Store toko;
-    private HashMap<String, Card> ladangCards = new HashMap<>();
+    public static Deck deck;
 
     @FXML
-    private void initialize() { // Inisialisasi
+    public void initialize() { // Inisialisasi
         setButtonStyle(buttonLadangku, false);
         setButtonStyle(buttonLadangmu, false);
         setButtonStyle(buttonToko, false);
@@ -150,7 +149,7 @@ public class GameViewController {
     }
 
     @FXML
-    private void handleNextButtonClick(ActionEvent event) { 
+    public void handleNextButtonClick(ActionEvent event) { 
         System.out.println("Button Next Clicked!");
         currentPlayer = (currentPlayer == 1) ? 2 : 1;   // Change turn
         currentTurn++;
@@ -162,7 +161,7 @@ public class GameViewController {
         }
     }
 
-    private void determineWinner() {
+    public void determineWinner() {
         int player1Money = Integer.parseInt(player1MoneyLabel.getText());
         int player2Money = Integer.parseInt(player2MoneyLabel.getText());
 
@@ -178,7 +177,7 @@ public class GameViewController {
         showWinnerDialog(winner);
     }
 
-    private void showWinnerDialog(String winner) {
+    public void showWinnerDialog(String winner) {
         Label winnerLabel = new Label(winner);
         winnerLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
     
@@ -213,11 +212,11 @@ public class GameViewController {
         popupStage.show();
     }    
 
-    private void disableNextButton() {
+    public void disableNextButton() {
         nextButton.setDisable(true);
     }
 
-    private void populateLadang() {
+    public void populateLadang() {
         gridPane.getChildren().clear();
 
         // if (currentTurn == 1) {
@@ -255,7 +254,7 @@ public class GameViewController {
         }
     }
 
-    private void deckAktif() {
+    public void deckAktif() {
         gridPane2.getChildren().clear();
         String[] cardImages = {
             "/card/hewan/Ayam.png",
@@ -292,7 +291,7 @@ public class GameViewController {
         }
     }    
 
-    private void setupDragAndDropFromDeckAktif(ImageView cardImageView, ImageView petakImageView) {
+    public void setupDragAndDropFromDeckAktif(ImageView cardImageView, ImageView petakImageView) {
         cardImageView.setOnDragDetected(event -> {
             Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
@@ -342,7 +341,7 @@ public class GameViewController {
         });
     }
     
-    private void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView) {
+    public void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView) {
         cardImageView.setOnDragDetected(event -> {
             boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
             if (isInLadang) {
@@ -391,7 +390,7 @@ public class GameViewController {
         });
     }      
 
-    private Image loadImage(String path) {
+    public Image loadImage(String path) {
         try {
             return new Image(getClass().getResourceAsStream(path));
         } catch (Exception e) {
@@ -400,7 +399,7 @@ public class GameViewController {
         }
     }   
 
-    private void showCardDetails(ImageView cardImageView) {
+    public void showCardDetails(ImageView cardImageView) {
         String cardName = getCardNameFromImagePath(cardImageView.getImage());
         
         // Create Labels
@@ -461,25 +460,25 @@ public class GameViewController {
         popupStage.show();
     }          
 
-    private boolean checkHarvestConditions(ImageView cardImageView) {
+    public boolean checkHarvestConditions(ImageView cardImageView) {
         // Implement the conditions to check if the card can be harvested
         // For example:
         // return cardImageView.getImage() != null && someOtherCondition;
         return true;  // Replace with actual condition
     }
 
-    private void handleHarvestAction(ImageView cardImageView) {
+    public void handleHarvestAction(ImageView cardImageView) {
         // Implement the logic for harvesting the card
         System.out.println("Harvesting card: " + cardImageView.getImage());
     }
 
-    private String getCardNameFromImagePath(Image image) {
+    public String getCardNameFromImagePath(Image image) {
         // Implement logic to extract card name from image path
         return "Card Name";
     }
 
     @FXML
-    private void handleButtonLadangClick() {
+    public void handleButtonLadangClick() {
         // Handle actions when any ladang button is clicked
     }
 
@@ -494,7 +493,7 @@ public class GameViewController {
     }
 
     @FXML
-    private void handleButtonLadangkuClick() {
+    public void handleButtonLadangkuClick() {
         toggleButtonState(buttonLadangku);
         if (activeButton == buttonLadangku) {
             runMethodLadangku();
@@ -504,7 +503,7 @@ public class GameViewController {
     }
 
     @FXML
-    private void handleButtonLadangmuClick() {
+    public void handleButtonLadangmuClick() {
         toggleButtonState(buttonLadangmu);
         if (activeButton == buttonLadangmu) {
             runMethodLadangmu();
@@ -514,7 +513,7 @@ public class GameViewController {
     }
 
     @FXML
-    private void handleButtonTokoClick() {
+    public void handleButtonTokoClick() {
         toggleButtonState(buttonToko);
         if (activeButton == buttonToko) {
             runMethodToko();
@@ -524,7 +523,7 @@ public class GameViewController {
     }
 
     @FXML
-    private void handleButtonSaveClick() {
+    public void handleButtonSaveClick() {
         toggleButtonState(buttonSave);
         if (activeButton == buttonSave) {
             runMethodSave();
@@ -534,7 +533,7 @@ public class GameViewController {
     }
 
     @FXML
-    private void handleButtonLoadClick() {
+    public void handleButtonLoadClick() {
         toggleButtonState(buttonLoad);
         if (activeButton == buttonLoad) {
             runMethodLoad();
@@ -544,7 +543,7 @@ public class GameViewController {
     }
 
     @FXML
-    private void handleButtonPluginClick() {
+    public void handleButtonPluginClick() {
         toggleButtonState(buttonPlugin);
         if (activeButton == buttonPlugin) {
             runMethodPlugin();
@@ -553,7 +552,7 @@ public class GameViewController {
         }
     }
 
-    private void toggleButtonState(Button button) {
+    public void toggleButtonState(Button button) {
         if (activeButton != null) {
             setButtonStyle(activeButton, false);
         }
@@ -567,7 +566,7 @@ public class GameViewController {
         }
     }
 
-    private void setButtonStyle(Button button, boolean isActive) {
+    public void setButtonStyle(Button button, boolean isActive) {
         if (isActive) {
             button.getStyleClass().add("active");
             button.setStyle("-fx-background-color: #ED8930;");
@@ -577,24 +576,24 @@ public class GameViewController {
         }
     }
 
-    private void runMethodLadangku() {
+    public void runMethodLadangku() {
         System.out.println("Button Ladangku clicked and method executed");
     }
 
-    private void stopMethodLadangku() {
+    public void stopMethodLadangku() {
         System.out.println("Stopping method for Button Ladangku");
     }
 
-    private void runMethodLadangmu() {
+    public void runMethodLadangmu() {
         System.out.println("Button Ladangmu clicked and method executed");
     }
 
-    private void stopMethodLadangmu() {
+    public void stopMethodLadangmu() {
         System.out.println("Stopping method for Button Ladangmu");
     }
 
     @FXML
-    private void runMethodToko() {
+    public void runMethodToko() {
         System.out.println("Button Toko clicked and method executed");
 
         // Create Labels
@@ -669,7 +668,7 @@ public class GameViewController {
         });
     }
 
-    private void buyProduct(int index) {
+    public void buyProduct(int index) {
         if (amounts[index] > 0 && playerMoney >= prices[index]) {
             playerMoney -= prices[index];
             amounts[index]--;
@@ -688,19 +687,19 @@ public class GameViewController {
         }
     }    
 
-    private void updateHargaProduk(int index, int newPrice) {
+    public void updateHargaProduk(int index, int newPrice) {
         prices[index] = newPrice;
     }
 
-    private void updateJumlahProduk(int index, int newAmount) {
+    public void updateJumlahProduk(int index, int newAmount) {
         amounts[index] = newAmount;
     }
 
-    private void stopMethodToko() {
+    public void stopMethodToko() {
         System.out.println("Stopping method for Button Toko");
     }
 
-    private void runMethodSave() {
+    public void runMethodSave() {
         System.out.println("Button Save clicked and method executed");
         Label saveLabel = new Label("Save Game State");
         saveLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
@@ -755,7 +754,7 @@ public class GameViewController {
         popupStage.show();
     }
 
-    private void stopMethodSave() {
+    public void stopMethodSave() {
         System.out.println("Stopping method for Button Save");
         if (popupStage != null) {
             popupStage.close();
@@ -768,7 +767,7 @@ public class GameViewController {
         System.out.println("Load from: " + folderName + ", Format: " + selectedFormat);
     }
 
-    private void runMethodLoad() {
+    public void runMethodLoad() {
         System.out.println("Button Load clicked and method executed");
         Label loadLabel = new Label("Load Game State");
         loadLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
@@ -823,7 +822,7 @@ public class GameViewController {
         popupStage.show();
     }
 
-    private void stopMethodLoad() {
+    public void stopMethodLoad() {
         System.out.println("Stopping method for Button Load");
         if (popupStage != null) {
             popupStage.close();
@@ -831,7 +830,7 @@ public class GameViewController {
         }
     }
 
-    private void runMethodPlugin() {
+    public void runMethodPlugin() {
         System.out.println("Button Plugin clicked and method executed");
     
         // Create label for file plugin
@@ -915,7 +914,7 @@ public class GameViewController {
         popupStage.show();
     }
     
-    private void displayPluginStatus(String message, boolean isSuccess) {
+    public void displayPluginStatus(String message, boolean isSuccess) {
         Label statusLabel = new Label(message);
         if (isSuccess) {
             statusLabel.setTextFill(Color.GREEN);
@@ -930,14 +929,14 @@ public class GameViewController {
         mainVBox.getChildren().add(statusLabel); // Add the new status label at the end
     }
     
-    private boolean runPlugin(String fileName) {
+    public boolean runPlugin(String fileName) {
         // Perform plugin loading action here
         // Return true if plugin is loaded successfully, false otherwise
         // Example:
         return fileName.endsWith(".jar");
     }    
 
-    private void stopMethodPlugin() {
+    public void stopMethodPlugin() {
         System.out.println("Stopping method for Button Plugin");
         if (popupStage != null) {
             popupStage.close();
@@ -946,7 +945,7 @@ public class GameViewController {
     }
 
     @FXML
-    protected void onGameMenuClick() {
+    public void onGameMenuClick() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hap/hap_boloboloboys/GameView.fxml"));
             Parent gameRoot = loader.load();
@@ -965,7 +964,7 @@ public class GameViewController {
     }
 
     @FXML
-    protected void onHomeMenuClick() {
+    public void onHomeMenuClick() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hap/hap_boloboloboys/HomeView.fxml"));
             Parent homeRoot = loader.load();
@@ -984,7 +983,7 @@ public class GameViewController {
     }
 
     @FXML
-    protected void onSettingMenuClick() {
+    public void onSettingMenuClick() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hap/hap_boloboloboys/SettingView.fxml"));
             Parent settingRoot = loader.load();
