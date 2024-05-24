@@ -74,21 +74,20 @@ public class GameViewController {
     public Label player2MoneyLabel;
     @FXML
     public Label deckCountLabel;
-
-    public static int numRows = 4; 
+    public int numRows = 4;
     public static int numCols = 5;
     public static int[] prices = {50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000};
     public static int[] amounts = {3, 3, 3, 3, 3, 3, 3, 3, 3};
-    public static int playerMoney = 200000;
+    public int playerMoney = 200000;
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
-    public static Stage popupStage;
-    public static Person player1;
-    public static Person player2;
-    public static int currentPlayer = 1; 
+    public Stage popupStage;
+    public Person player1;
+    public Person player2;
+    public int currentPlayer = 1;
     public Ladang ladang;
-    public static Store toko;
-    public static Deck deck;
+    public Store toko;
+    public Deck deck;
 
     @FXML
     public void initialize() { // Inisialisasi
@@ -100,9 +99,10 @@ public class GameViewController {
         setButtonStyle(buttonPlugin, false);
 
         // Inisialisasi pemain
-        Person player1 = new Person("Player 1");
-        Person player2 = new Person("Player 2");
+        player1 = new Person("Player 1");
+        player2 = new Person("Player 2");
         Plant pl1 = new Plant("BIJI_STROBERI");
+        pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
         } catch (Exception e) {
@@ -219,11 +219,11 @@ public class GameViewController {
     public void populateLadang() {
         gridPane.getChildren().clear();
 
-        // if (currentTurn == 1) {
-        //     ladang = player1.ladangku;
-        // } else {
-        //     ladang = player2.ladangku;
-        // }
+         if (currentTurn == 1) {
+             ladang = player1.ladangku;
+         } else {
+             ladang = player2.ladangku;
+         }
 
         Image petakImage = loadImage("/assets/Petak.png");
 
@@ -234,7 +234,13 @@ public class GameViewController {
                 petakImageView.setFitHeight(110);
                 petakImageView.getStyleClass().add("image-view");
 
-                ImageView cardImageView = new ImageView();
+                ImageView cardImageView;
+                if (ladang.getPetak(row, col).getKartu() != null) {
+                    Image cardImage = loadImage(ladang.getPetak(row, col).getKartu().getImgPath());
+                    cardImageView = new ImageView(cardImage);
+                } else {
+                    cardImageView = new ImageView();
+                }
                 cardImageView.setFitWidth(75);
                 cardImageView.setFitHeight(90);
                 cardImageView.getStyleClass().add("image-view");
@@ -343,14 +349,14 @@ public class GameViewController {
     
     public void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView) {
         cardImageView.setOnDragDetected(event -> {
-            boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
-            if (isInLadang) {
+//            boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
+//            if (isInLadang) {
                 Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
                 content.putImage(cardImageView.getImage());
                 db.setContent(content);
                 event.consume();
-            }
+//            }
         });
     
         petakImageView.setOnDragOver(event -> {
