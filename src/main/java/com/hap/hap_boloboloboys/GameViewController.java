@@ -2,10 +2,6 @@ package com.hap.hap_boloboloboys;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,20 +21,15 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.config.*;
@@ -85,8 +76,8 @@ public class GameViewController {
     private Label outputLabel;
     public int numRows = 4;
     public static int numCols = 5;
-    public static int[] prices = {50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000};
-    public static int[] amounts = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+    public static int[] prices = { 50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000 };
+    public static int[] amounts = { 3, 3, 3, 3, 3, 3, 3, 3, 3 };
     public int playerMoney = 100000;
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
@@ -97,13 +88,6 @@ public class GameViewController {
     public Ladang ladang;
     public Store toko = new Store();
     public Deck deck;
-    @FXML
-    private GridPane gridPaneBear;
-    @FXML
-    private GridPane gridPaneTime;
-
-    private Timeline bearAttackTimer;
-    private Label bearAttackTimerLabel;
 
     @FXML
     public void initialize() { // Inisialisasi
@@ -118,6 +102,9 @@ public class GameViewController {
         player1 = new Person("Player 1");
         player2 = new Person("Player 2");
         Plant pl1 = new Plant("BIJI_STROBERI");
+        Product pr1 = new Product("STROBERI");
+        pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
+        pr1.setImgPath("/card/produk/Produk7.png");
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
             player1.putToDeck(pl1);
@@ -131,8 +118,8 @@ public class GameViewController {
         // Load the image for the Next button
         Image nextImage = loadImage("/assets/Next.png");
         ImageView nextImageView = new ImageView(nextImage);
-        nextImageView.setFitWidth(100); 
-        nextImageView.setFitHeight(100); 
+        nextImageView.setFitWidth(100);
+        nextImageView.setFitHeight(100);
         nextButton.setGraphic(nextImageView);
         nextButton.setOnAction(this::handleNextButtonClick);
 
@@ -165,25 +152,9 @@ public class GameViewController {
     }
 
     @FXML
-    public void handleNextButtonClick(ActionEvent event) { 
+    public void handleNextButtonClick(ActionEvent event) {
         System.out.println("Button Next Clicked!");
-        Random random = new Random();
-        // 1/10 chance to trigger bear attack
-        if (random.nextInt(2) == 0) {
-            System.out.println("Bear attack!");
-
-            // Play sound "Rawr.mp3"
-            playSound("Rawr.mp3");
-
-            // Display popup image "Beruang.png" for 5 seconds
-            displayPopupImage("Beruang.png");
-
-            // Randomize timer for bear attack (between 30 to 60 seconds)
-            int bearAttackTime = random.nextInt(31) + 30; 
-            System.out.println("Bear attack in " + bearAttackTime + " seconds.");
-            showBearAttackTimer(bearAttackTime);
-        }
-        currentPlayer = (currentPlayer == 1) ? 2 : 1;   
+        currentPlayer = (currentPlayer == 1) ? 2 : 1;
         currentTurn++;
         updateTurnLabel(currentTurn);
         if (currentTurn > 20) {
@@ -212,37 +183,37 @@ public class GameViewController {
     public void showWinnerDialog(String winner) {
         Label winnerLabel = new Label(winner);
         winnerLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
-    
+
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> {
             ((Stage) winnerLabel.getScene().getWindow()).close();
         });
-    
+
         VBox vbox = new VBox(winnerLabel, closeButton);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(20);
         vbox.setPadding(new Insets(20));
         vbox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
         vbox.setEffect(new DropShadow());
-    
+
         Scene scene = new Scene(vbox, 300, 200);
-    
+
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.WINDOW_MODAL);
         popupStage.initOwner(gridPane.getScene().getWindow());
         popupStage.setTitle("Game Over");
         popupStage.setScene(scene);
-    
+
         Stage gameViewControllerStage = (Stage) gridPane.getScene().getWindow();
         double centerXPosition = gameViewControllerStage.getX() + gameViewControllerStage.getWidth() / 2d;
         double centerYPosition = gameViewControllerStage.getY() + gameViewControllerStage.getHeight() / 2d;
-    
+
         popupStage.setX(centerXPosition - scene.getWidth() / 2d);
         popupStage.setY(centerYPosition - scene.getHeight() / 2d);
-    
-        popupStage.setResizable(false); 
+
+        popupStage.setResizable(false);
         popupStage.show();
-    }    
+    }
 
     public void disableNextButton() {
         nextButton.setDisable(true);
@@ -251,11 +222,11 @@ public class GameViewController {
     public void populateLadang() {
         gridPane.getChildren().clear();
 
-         if (currentTurn == 1) {
-             ladang = player1.ladangku;
-         } else {
-             ladang = player2.ladangku;
-         }
+        if (currentTurn == 1) {
+            ladang = player1.ladangku;
+        } else {
+            ladang = player2.ladangku;
+        }
 
         Image petakImage = loadImage("/assets/Petak.png");
 
@@ -364,7 +335,8 @@ public class GameViewController {
             boolean success = false;
             if (db.hasImage()) {
                 // // Check if card is already in ladang
-                // boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
+                // boolean isInLadang = (boolean)
+                // cardImageView.getProperties().getOrDefault("isInLadang", false);
                 // if (!isInLadang) {
                 cardImageView.setImage(db.getImage());
                 cardImageView.getProperties().put("isInLadang", true);
@@ -393,32 +365,33 @@ public class GameViewController {
 
     public void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView, int row, int col) {
         cardImageView.setOnDragDetected(event -> {
-//            boolean isInLadang = (boolean) cardImageView.getProperties().getOrDefault("isInLadang", false);
-//            if (isInLadang) {
+            // boolean isInLadang = (boolean)
+            // cardImageView.getProperties().getOrDefault("isInLadang", false);
+            // if (isInLadang) {
             System.out.println(row + " " + col);
-                Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
-                String id = "row=" + row + ",col=" + col; // Send the ID instead
-                ClipboardContent content = new ClipboardContent();
-                content.putImage(cardImageView.getImage());
-                content.putString(id);
-                db.setContent(content);
-                event.consume();
-//            }
+            Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
+            String id = "row=" + row + ",col=" + col; // Send the ID instead
+            ClipboardContent content = new ClipboardContent();
+            content.putImage(cardImageView.getImage());
+            content.putString(id);
+            db.setContent(content);
+            event.consume();
+            // }
         });
-    
+
         petakImageView.setOnDragOver(event -> {
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-    
+
         petakImageView.setOnDragEntered(event -> {
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 petakImageView.setOpacity(0.3);
             }
         });
-    
+
         petakImageView.setOnDragExited(event -> {
             petakImageView.setOpacity(1);
         });
@@ -447,7 +420,8 @@ public class GameViewController {
                 }
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        if (ladang.getPetak(i, j) != null) System.out.print(ladang.getPetak(i, j).getKartu() + " ");
+                        if (ladang.getPetak(i, j) != null)
+                            System.out.print(ladang.getPetak(i, j).getKartu() + " ");
                     }
                     System.out.println();
                 }
@@ -455,14 +429,14 @@ public class GameViewController {
             event.setDropCompleted(success);
             event.consume();
         });
-    
+
         cardImageView.setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 cardImageView.setImage(null);
             }
             event.consume();
         });
-    }      
+    }
 
     public Image loadImage(String path) {
         try {
@@ -471,21 +445,21 @@ public class GameViewController {
             System.err.println("Error loading image from path: " + path);
             return null;
         }
-    }   
+    }
 
     public void showCardDetails(ImageView cardImageView) {
         String cardName = getCardNameFromImagePath(cardImageView.getImage());
-        
+
         // Create Labels
         Label nameLabel = new Label(cardName);
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
         Label infoLabel = new Label("Berat: 5 (8)");
         Label activeItemsLabel = new Label("Item aktif: Accelerate (1), Delay (1), Protect (1)");
-    
+
         // Create Buttons
         Button closeButton = new Button("Kembali");
         closeButton.setOnAction(event -> ((Stage) nameLabel.getScene().getWindow()).close());
-    
+
         Button harvestButton = new Button("Panen");
         harvestButton.setOnAction(event -> {
             if (checkHarvestConditions(cardImageView)) {
@@ -495,12 +469,12 @@ public class GameViewController {
                 System.out.println("Harvest conditions not met!");
             }
         });
-    
+
         // Image View for Card
         ImageView cardImage = new ImageView(cardImageView.getImage());
         cardImage.setFitWidth(140);
         cardImage.setFitHeight(160);
-    
+
         // Layouts
         VBox infoBox = new VBox(10, infoLabel, activeItemsLabel);
         infoBox.setAlignment(Pos.CENTER_LEFT);
@@ -510,13 +484,13 @@ public class GameViewController {
 
         HBox buttonBox = new HBox(10, harvestButton, closeButton);
         buttonBox.setAlignment(Pos.CENTER);
-    
+
         VBox mainBox = new VBox(45, nameLabel, cardAndInfoBox, buttonBox);
         mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setPadding(new Insets(20));
         mainBox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
         mainBox.setEffect(new DropShadow());
-    
+
         // Scene and Stage
         Scene scene = new Scene(mainBox, 600, 400);
         Stage popupStage = new Stage();
@@ -524,21 +498,21 @@ public class GameViewController {
         popupStage.initOwner(gridPane.getScene().getWindow());
         popupStage.setTitle("Detail Kartu");
         popupStage.setScene(scene);
-        
+
         // Position the popup stage at the center of the parent stage
         Stage parentStage = (Stage) gridPane.getScene().getWindow();
         popupStage.setX(parentStage.getX() + parentStage.getWidth() / 2 - scene.getWidth() / 2);
         popupStage.setY(parentStage.getY() + parentStage.getHeight() / 2 - scene.getHeight() / 2);
-    
-        popupStage.setResizable(false);  
+
+        popupStage.setResizable(false);
         popupStage.show();
-    }          
+    }
 
     public boolean checkHarvestConditions(ImageView cardImageView) {
         // Implement the conditions to check if the card can be harvested
         // For example:
         // return cardImageView.getImage() != null && someOtherCondition;
-        return true;  // Replace with actual condition
+        return true; // Replace with actual condition
     }
 
     public void handleHarvestAction(ImageView cardImageView) {
@@ -558,12 +532,12 @@ public class GameViewController {
 
     public void setNumRows(int numRows) {
         this.numRows = numRows;
-        populateLadang(); 
+        populateLadang();
     }
 
     public void setNumCols(int numCols) {
         this.numCols = numCols;
-        populateLadang(); 
+        populateLadang();
     }
 
     @FXML
@@ -630,13 +604,13 @@ public class GameViewController {
         if (activeButton != null) {
             setButtonStyle(activeButton, false);
         }
-    
+
         if (activeButton != button) {
             setButtonStyle(button, true);
             activeButton = button;
         } else {
             activeButton = null;
-            setButtonStyle(button, false); 
+            setButtonStyle(button, false);
         }
     }
 
@@ -736,29 +710,20 @@ public class GameViewController {
         popupStage.initOwner(buttonToko.getScene().getWindow());
         popupStage.setTitle("Detail Barang");
         popupStage.setScene(scene);
-        popupStage.setResizable(false); 
+        popupStage.setResizable(false); // Set resizable to false to lock the size
         popupStage.show();
 
-        // Popup fot button "Kembali"
+        // Close the popup and reset the button state when "Kembali" is clicked
         Button backButton = (Button) mainBox.getChildren().get(mainBox.getChildren().size() - 1);
         backButton.setOnAction(event -> {
             popupStage.close();
-            toggleButtonState(buttonToko);
-            stopMethodToko(); 
+            toggleButtonState(buttonToko); // Reset button state
+            stopMethodToko(); // Stop method toko
         });
     }
 
     public void buyProduct(int index, ImageView productImageView) {
         if (amounts[index] > 0 && playerMoney >= prices[index]) {
-            playerMoney -= prices[index];
-            amounts[index]--;
-            updateHargaProduk(index, prices[index]);
-            updateJumlahProduk(index, amounts[index]);
-            displayOutput("Anda baru saja membeli Produk " + (index + 1) + "\nSisa uang Anda: Rp " + playerMoney, Color.GREEN);
-
-            hargaLabels[index].setText("Harga: Rp " + prices[index]);
-            jumlahLabels[index].setText("Jumlah: " + amounts[index]);
-
             boolean foundEmptySlot = false;
             for (int col = 0; col < 6; col++) {
                 StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
@@ -767,12 +732,74 @@ public class GameViewController {
                 if (cardImageView.getImage() == null) {
                     cardImageView.setImage(productImageView.getImage());
                     foundEmptySlot = true;
+                    // Buat kartu produk yang sesuai berdasarkan indeks
+                    Product newProduct;
+                    switch (index) {
+                        case 0:
+                            newProduct = new Product("DAGING_BERUANG");
+                            newProduct.setImgPath("/card/produk/Produk1.png");
+                            break;
+                        case 1:
+                            newProduct = new Product("DAGING_DOMBA");
+                            newProduct.setImgPath("/card/produk/Produk2.png");
+                            break;
+                        case 2:
+                            newProduct = new Product("DAGING_KUDA");
+                            newProduct.setImgPath("/card/produk/Produk3.png");
+                            break;
+                        case 3:
+                            newProduct = new Product("JAGUNG");
+                            newProduct.setImgPath("/card/produk/Produk4.png");
+                            break;
+                        case 4:
+                            newProduct = new Product("LABU");
+                            newProduct.setImgPath("/card/produk/Produk5.png");
+                            break;
+                        case 5:
+                            newProduct = new Product("SIRIP_HIU");
+                            newProduct.setImgPath("/card/produk/Produk6.png");
+                            break;
+                        case 6:
+                            newProduct = new Product("STROBERI");
+                            newProduct.setImgPath("/card/produk/Produk7.png");
+                            break;
+                        case 7:
+                            newProduct = new Product("SUSU");
+                            newProduct.setImgPath("/card/produk/Produk8.png");
+                            break;
+                        case 8:
+                            newProduct = new Product("TELUR");
+                            newProduct.setImgPath("/card/produk/Produk9.png");
+                            break;
+                        default:
+                            newProduct = null;
+                            break;
+                    }
+
+                    if (newProduct != null) {
+                        // Tambahkan produk ke deck pemain yang aktif berdasarkan giliran
+                        if (currentPlayer == 1) {
+                            player1.getDeck().putToDeck(newProduct);
+                        } else {
+                            player2.getDeck().putToDeck(newProduct);
+                        }
+                        playerMoney -= prices[index];
+                        amounts[index]--;
+                        updateHargaProduk(index, prices[index]);
+                        updateJumlahProduk(index, amounts[index]);
+                        displayOutput(
+                                "Anda baru saja membeli Produk " + (index + 1) + "\nSisa uang Anda: Rp " + playerMoney,
+                                Color.GREEN);
+
+                        hargaLabels[index].setText("Harga: Rp " + prices[index]);
+                        jumlahLabels[index].setText("Jumlah: " + amounts[index]);
+                    }
                     break;
                 }
             }
 
             if (!foundEmptySlot) {
-                // Error message if deckAktif is full
+                // Pesan error jika deck aktif sudah penuh
                 displayOutput("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.", Color.RED);
             }
 
@@ -804,16 +831,16 @@ public class GameViewController {
         System.out.println("Button Save clicked and method executed");
         Label saveLabel = new Label("Save Game State");
         saveLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
-    
+
         // Create Format ComboBox
         ComboBox<String> formatComboBox = new ComboBox<>();
         formatComboBox.getItems().addAll("TXT", "XML", "YAML", "JSON");
         formatComboBox.getSelectionModel().selectFirst();
-    
+
         // Create Folder TextField
         TextField folderTextField = new TextField();
         folderTextField.setPromptText("Enter folder name");
-    
+
         // Create Save Button
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
@@ -827,15 +854,15 @@ public class GameViewController {
                 System.out.println("Folder name cannot be empty!");
             }
         });
-    
+
         // Create Back Button
         Button backButton = new Button("Kembali");
         backButton.setOnAction(event -> {
             popupStage.close();
-            toggleButtonState(buttonSave); 
-            stopMethodSave(); 
+            toggleButtonState(buttonSave);
+            stopMethodSave();
         });
-    
+
         HBox buttonBox = new HBox(20, saveButton, backButton);
         buttonBox.setAlignment(Pos.CENTER);
 
@@ -844,11 +871,11 @@ public class GameViewController {
         vbox.setPadding(new Insets(20));
         vbox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
         vbox.setEffect(new DropShadow());
-    
+
         Scene scene = new Scene(vbox, 400, 300);
         popupStage = new Stage();
         popupStage.initModality(Modality.WINDOW_MODAL);
-        popupStage.initOwner(gridPane.getScene().getWindow()); 
+        popupStage.initOwner(gridPane.getScene().getWindow());
         popupStage.setTitle("Save State");
         popupStage.setScene(scene);
         popupStage.setResizable(false);
@@ -876,7 +903,7 @@ public class GameViewController {
         // Create Format ComboBox
         ComboBox<String> formatComboBox = new ComboBox<>();
         formatComboBox.getItems().addAll("TXT", "XML", "YAML", "JSON");
-        formatComboBox.getSelectionModel().selectFirst(); 
+        formatComboBox.getSelectionModel().selectFirst();
 
         // Create Folder TextField
         TextField folderTextField = new TextField();
@@ -888,7 +915,8 @@ public class GameViewController {
             String selectedFormat = formatComboBox.getValue();
             String folderName = folderTextField.getText().trim();
             if (!folderName.isEmpty()) {
-                // Perform loading action here, you can load from a folder with the provided name
+                // Perform loading action here, you can load from a folder with the provided
+                // name
                 System.out.println("Load from: " + folderName + ", Format: " + selectedFormat);
                 stopMethodLoad();
             } else {
@@ -900,10 +928,10 @@ public class GameViewController {
         Button backButton = new Button("Kembali");
         backButton.setOnAction(event -> {
             popupStage.close();
-            toggleButtonState(buttonLoad); 
-            stopMethodLoad(); 
+            toggleButtonState(buttonLoad);
+            stopMethodLoad();
         });
-    
+
         HBox buttonBox = new HBox(20, loadButton, backButton);
         buttonBox.setAlignment(Pos.CENTER);
 
@@ -933,17 +961,17 @@ public class GameViewController {
 
     public void runMethodPlugin() {
         System.out.println("Button Plugin clicked and method executed");
-    
+
         // Create label for file plugin
         Label nameLabel = new Label("Plugin");
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
         Label fileLabel = new Label("File Plugin: ");
         fileLabel.setStyle("-fx-font-weight: bold;");
-    
+
         // Create label to display selected file name
         Label fileNameLabel = new Label("");
         fileNameLabel.setStyle("-fx-font-weight: bold;");
-    
+
         // Create Choose File button
         Button chooseFileButton = new Button("Choose File");
         chooseFileButton.setOnAction(event -> {
@@ -954,7 +982,7 @@ public class GameViewController {
                 fileNameLabel.setText(selectedFile.getName());
             }
         });
-    
+
         // Create Upload button
         Button uploadButton = new Button("Upload");
         uploadButton.setOnAction(event -> {
@@ -971,7 +999,7 @@ public class GameViewController {
                 displayPluginStatus("Error: No file selected", false);
             }
         });
-    
+
         // Create Back Button
         Button backButton = new Button("Kembali");
         backButton.setOnAction(event -> {
@@ -979,31 +1007,31 @@ public class GameViewController {
             toggleButtonState(buttonPlugin);
             stopMethodPlugin();
         });
-    
+
         // Create an HBox to hold file label and file name label horizontally
         HBox fileBox = new HBox(5, fileLabel, fileNameLabel);
         fileBox.setAlignment(Pos.CENTER_LEFT);
-    
+
         // Create an HBox to hold buttons horizontally
         HBox buttonBox = new HBox(10, chooseFileButton, uploadButton, backButton);
         buttonBox.setAlignment(Pos.CENTER);
-    
+
         // Create VBox to hold all components vertically
         VBox vbox = new VBox(10, nameLabel, fileBox, buttonBox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
         vbox.setStyle("-fx-background-color: white; -fx-border-width: 1px;");
-    
+
         // Create a label for displaying the status message
         Label statusLabel = new Label();
         statusLabel.setStyle("-fx-font-weight: bold;");
-    
+
         // Create another VBox to hold the vbox and status label
         VBox mainVBox = new VBox(10, vbox, statusLabel);
         mainVBox.setAlignment(Pos.CENTER);
         mainVBox.setPadding(new Insets(20));
         mainVBox.setStyle("-fx-background-color: white; -fx-border-width: 1px;");
-    
+
         // Create the scene and stage for the popup
         Scene scene = new Scene(mainVBox, 400, 250);
         popupStage = new Stage();
@@ -1014,7 +1042,7 @@ public class GameViewController {
         popupStage.setResizable(false);
         popupStage.show();
     }
-    
+
     public void displayPluginStatus(String message, boolean isSuccess) {
         Label statusLabel = new Label(message);
         if (isSuccess) {
@@ -1023,19 +1051,19 @@ public class GameViewController {
             statusLabel.setTextFill(Color.RED);
         }
         statusLabel.setStyle("-fx-font-weight: bold;");
-    
+
         VBox mainVBox = (VBox) popupStage.getScene().getRoot();
         Label oldStatusLabel = (Label) mainVBox.getChildren().get(1); // Get the old status label
         mainVBox.getChildren().remove(oldStatusLabel); // Remove the old status label
         mainVBox.getChildren().add(statusLabel); // Add the new status label at the end
     }
-    
+
     public boolean runPlugin(String fileName) {
         // Perform plugin loading action here
         // Return true if plugin is loaded successfully, false otherwise
         // Example:
         return fileName.endsWith(".jar");
-    }    
+    }
 
     public void stopMethodPlugin() {
         System.out.println("Stopping method for Button Plugin");
@@ -1122,98 +1150,35 @@ public class GameViewController {
     public void showErrorDialog(String errorMessage) {
         Label errorLabel = new Label(errorMessage);
         errorLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
-    
+
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> {
             ((Stage) errorLabel.getScene().getWindow()).close();
         });
-    
+
         VBox vbox = new VBox(errorLabel, closeButton);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(20);
         vbox.setPadding(new Insets(20));
         vbox.setStyle("-fx-background-color: white; -fx-border-color: red; -fx-border-width: 2px;");
         vbox.setEffect(new DropShadow());
-    
+
         Scene scene = new Scene(vbox, 400, 200);
-    
+
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.WINDOW_MODAL);
         popupStage.initOwner(gridPane.getScene().getWindow());
         popupStage.setTitle("Error");
         popupStage.setScene(scene);
-    
+
         Stage gameViewControllerStage = (Stage) gridPane.getScene().getWindow();
         double centerXPosition = gameViewControllerStage.getX() + gameViewControllerStage.getWidth() / 2d;
         double centerYPosition = gameViewControllerStage.getY() + gameViewControllerStage.getHeight() / 2d;
-    
+
         popupStage.setX(centerXPosition - scene.getWidth() / 2d);
         popupStage.setY(centerYPosition - scene.getHeight() / 2d);
-    
+
         popupStage.setResizable(false);
         popupStage.show();
-    }
-
-    private MediaPlayer playSound(String soundFile) {
-        String soundPath = getClass().getResource("/sounds/" + soundFile).toExternalForm();
-        Media sound = new Media(soundPath);
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
-        return mediaPlayer;
-    }    
-
-    private void displayPopupImage(String imageName) {
-        String imagePath = "/assets/" + imageName;
-        Image image = new Image(getClass().getResource(imagePath).toExternalForm());
-        ImageView imageView = new ImageView(image);
-    
-        imageView.setFitWidth(300); 
-        imageView.setFitHeight(300); 
-    
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(imageView);
-    
-        Scene scene = new Scene(stackPane);
-        scene.setFill(Color.TRANSPARENT); 
-    
-        Stage popupStage = new Stage();
-        popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.initOwner(nextButton.getScene().getWindow());
-        popupStage.setScene(scene);
-    
-        popupStage.show();
-    
-        // Menutup popup setelah 3 detik
-        PauseTransition delay = new PauseTransition(Duration.seconds(3));
-        delay.setOnFinished(event -> popupStage.close());
-        delay.play();
-    }
-
-    private void showBearAttackTimer(int timeInSeconds) {
-        ImageView bearImageView = new ImageView(new Image(getClass().getResource("/assets/Beruang.png").toExternalForm()));
-        bearImageView.setFitWidth(130);
-        bearImageView.setFitHeight(130);
-
-        bearAttackTimerLabel = new Label();
-        bearAttackTimerLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
-
-        gridPaneBear.getChildren().add(bearImageView);
-        gridPaneTime.getChildren().add(bearAttackTimerLabel);
-
-        final int[] countdown = {timeInSeconds};
-        bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
-        MediaPlayer mediaPlayer = playSound("Siren.mp3");
-        bearAttackTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            countdown[0]--;
-            bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
-            if (countdown[0] <= 0) {
-                gridPaneBear.getChildren().remove(bearImageView);
-                gridPaneTime.getChildren().remove(bearAttackTimerLabel);
-                bearAttackTimer.stop();
-                mediaPlayer.stop();
-            }
-        }));
-        bearAttackTimer.setCycleCount(timeInSeconds);
-        bearAttackTimer.play();
     }
 }
