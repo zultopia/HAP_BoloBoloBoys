@@ -492,29 +492,56 @@ public class GameViewController {
                 System.out.println(firstRow + " " + firstCol);
                 System.out.println(row + " " + col);
                 Card selected;
+                // Get selected card
                 if (isFromLadang == 0) {
                     System.out.println("From deck");
                     try {
                         selected = deck.pop(firstCol);
-                        if (selected instanceof Item || selected instanceof Product) {
-                            deck.putToDeck(selected, firstCol);
-                            return;
-                        }
+//                        if (selected instanceof Item || selected instanceof Product) {
+//                            deck.putToDeck(selected, firstCol);
+//                            return;
+//                        }
                     } catch (InventoryException e) {
                         throw new RuntimeException(e);
                     }
                 } else {
+                    if (ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Item || ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                        return;
+                    }
                     System.out.println("From ladang");
                     selected = ladang1.takeCard(firstRow, firstCol);
                 }
-                cardImageView.setImage(db.getImage());
+
+
+                // Plant the card
                 try {
                     if (selected instanceof Plant) {
                         System.out.println(((Plant) selected).getAge());
                     } else if (selected == null) {
                         System.out.println("not plant");
                     }
-                    ladang1.plantKartu(row, col, (Plant) selected);
+                    if ((ladang1.getPetak(row, col).getKartu() instanceof Plant || ladang1.getPetak(row, col).getKartu() instanceof Animal)) {
+                        if (selected instanceof Item) {
+                            Card kartu = ladang1.getPetak(row, col).getKartu();
+                            ((Item) selected).applyEffect((Creature) kartu);
+                            ladang1.plantKartu(row, col, kartu);
+                        } else {
+                            System.out.println("Kartu tidak bisa ditanam");
+                            deck.putToDeck(selected, firstCol);
+                            return;
+                        }
+                    } else if (ladang1.getPetak(row, col).getKartu() == null) {
+                        if (selected instanceof Plant) {
+                            ladang1.plantKartu(row, col, (Plant) selected);
+                        } else if (selected instanceof Animal) {
+                            ladang1.plantKartu(row, col, (Animal) selected);
+                        } else {
+                            System.out.println("Kartu yang ditanam bukan tanaman atau hewan");
+                            deck.putToDeck(selected, firstCol);
+                            return;
+                        }
+                    }
+                    cardImageView.setImage(db.getImage());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
