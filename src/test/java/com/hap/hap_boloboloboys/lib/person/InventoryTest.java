@@ -88,13 +88,8 @@ public class InventoryTest {
     @Test
     void testGetCard() {
         inventory.initiateFromScratch();
-        try {
-            Card card = inventory.getCard(0);
-            assertNotNull(card);
-        } catch (InventoryException e) {
-            fail("Exception should not be thrown");
-        }
-
+        Card card = inventory.getCard(0);
+        assertNotNull(card);
         assertThrows(InventoryException.class, () -> {
             inventory.getCard(-1);
         });
