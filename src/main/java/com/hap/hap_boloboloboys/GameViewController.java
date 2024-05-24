@@ -105,7 +105,8 @@ public class GameViewController {
     public Person player1;
     public Person player2;
     public int currentPlayer = 1;
-    public Ladang ladang;
+    public Ladang ladang1;
+    public Ladang ladang2;
     public Store toko = new Store();
     public Deck deck;
     private List<Image> activeDeck = new ArrayList<>();
@@ -142,7 +143,7 @@ public class GameViewController {
             player1.putToDeck(pl1);
             player1.putToDeck(pr1);
             player1.putToDeck(new Accelerate());
-            player1.ladangku.plantKartu(0, 1, new Trap());
+            player1.ladangku.plantKartu(0, 1, new Product("STROBERI"));
         } catch (Exception e) {
 
         }
@@ -172,15 +173,47 @@ public class GameViewController {
 
         populateLadang();
         deckAktif();
-        
-        Platform.runLater(() -> showShufflePopup());
+
+//        Platform.runLater(() -> showShufflePopup());
     }
 
     @FXML
     public void handleNextButtonClick(ActionEvent event) {
         System.out.println("Button Next Clicked!");
-        currentPlayer = (currentPlayer == 1) ? 2 : 1;
+        if (currentPlayer == 1) {
+            currentPlayer = 2;
+        } else {
+            currentPlayer = 1;
+        }
+        System.out.println("Now is " + currentPlayer);
         currentTurn++;
+        if (currentPlayer == 1) {
+            // Retrieve information before first
+            player1.ladangku = ladang2;
+            player2.ladangku = ladang1;
+            player2.setDeck(deck);
+
+            // Change the main game interface
+            ladang1 = player1.ladangku;
+            ladang2 = player2.ladangku;
+            deck = player1.getDeck();
+            System.out.println("Size " + player1.getDeck().calculateSize());
+            populateLadang();
+            deckAktif();
+        } else {
+            // Retrieve information before first
+            player1.ladangku = ladang1;
+            player2.ladangku = ladang2;
+            player1.setDeck(deck);
+
+            // Change the main game interface
+            ladang1 = player2.ladangku;
+            ladang2 = player1.ladangku;
+            deck = player2.getDeck();
+            System.out.println(player2.getDeck().calculateSize());
+            populateLadang();
+            deckAktif();
+        }
         updateTurnLabel(currentTurn);
 
         if (currentTurn > 20) {
@@ -189,8 +222,8 @@ public class GameViewController {
             disableNextButton();
         }
 
-        popupOpen.set(true); 
-        showShufflePopup();
+//        popupOpen.set(true);
+//        showShufflePopup();
 
         popupOpen.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -265,10 +298,12 @@ public class GameViewController {
     public void populateLadang() {
         gridPane.getChildren().clear();
 
-        if (currentTurn == 1) {
-            ladang = player1.ladangku;
+        if (currentPlayer == 1) {
+            ladang1 = player1.ladangku;
+            ladang2 = player2.ladangku;
         } else {
-            ladang = player2.ladangku;
+            ladang1 = player2.ladangku;
+            ladang2 = player1.ladangku;
         }
 
         Image petakImage = loadImage("/assets/Petak.png");
@@ -282,8 +317,8 @@ public class GameViewController {
                 petakImageView.getStyleClass().add("image-view");
 
                 ImageView cardImageView;
-                if (ladang.getPetak(row, col).getKartu() != null) {
-                    Image cardImage = loadImage(ladang.getPetak(row, col).getKartu().getImgPath());
+                if (ladang1.getPetak(row, col).getKartu() != null) {
+                    Image cardImage = loadImage(ladang1.getPetak(row, col).getKartu().getImgPath());
                     cardImageView = new ImageView(cardImage);
                 } else {
                     cardImageView = new ImageView();
@@ -309,7 +344,7 @@ public class GameViewController {
 
     public void deckAktif() {
         gridPane2.getChildren().clear();
-        deck = (currentTurn == 1) ? player1.getDeck() : player2.getDeck();
+        deck = (currentPlayer == 1) ? player1.getDeck() : player2.getDeck();
 
         Image petakImage = loadImage("/assets/Petak.png");
 
@@ -470,7 +505,7 @@ public class GameViewController {
                     }
                 } else {
                     System.out.println("From ladang");
-                    selected = ladang.takeCard(firstRow, firstCol);
+                    selected = ladang1.takeCard(firstRow, firstCol);
                 }
                 cardImageView.setImage(db.getImage());
                 try {
@@ -479,14 +514,14 @@ public class GameViewController {
                     } else if (selected == null) {
                         System.out.println("not plant");
                     }
-                    ladang.plantKartu(row, col, (Plant) selected);
+                    ladang1.plantKartu(row, col, (Plant) selected);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        if (ladang.getPetak(i, j) != null)
-                            System.out.print(ladang.getPetak(i, j).getKartu() + " ");
+                        if (ladang1.getPetak(i, j) != null)
+                            System.out.print(ladang1.getPetak(i, j).getKartu() + " ");
                     }
                     System.out.println();
                 }
