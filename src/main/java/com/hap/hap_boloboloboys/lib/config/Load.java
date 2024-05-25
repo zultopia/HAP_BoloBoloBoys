@@ -21,7 +21,16 @@ public class Load {
     // game state
     private static int currentTurn; // CURRENT_TURN
     private static Map<String, Integer> shopItems = new HashMap<>(); // <ITEM, JUMLAH>
+    // attribute instance for singleton pattern
+    private static Load instance = null;
 
+    // getInstance method for singleton pattern
+    public static Load getInstance() {
+        if (instance == null) {
+            instance = new Load();
+        }
+        return instance;
+    }
     // player
     private static int wealth; // JUMLAH_GULDEN
     private static int currentSizeInventory; // JUMLAH_DECK
