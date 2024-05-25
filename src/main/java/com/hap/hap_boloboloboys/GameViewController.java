@@ -192,7 +192,7 @@ public class GameViewController {
         deckAktif();
         initializeToko();
 
-        // Platform.runLater(() -> showShufflePopup());
+        Platform.runLater(() -> showShufflePopup());
     }
 
     @FXML
@@ -251,8 +251,8 @@ public class GameViewController {
             disableNextButton();
         }
 
-        // popupOpen.set(true);
-        // showShufflePopup();
+        popupOpen.set(true);
+        showShufflePopup();
 
         popupOpen.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -1580,17 +1580,28 @@ public class GameViewController {
         }
 
         GridPane gridPane = new GridPane();
-        Button reshuffleButton = new Button("Reshuffle");
-        reshuffleButton.setOnAction(e -> {
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        reshuffleCards(gridPane);
+    
+        Image shuffleImage = new Image(getClass().getResource("/assets/Shuffle.png").toString());
+        ImageView shuffleImageView = new ImageView(shuffleImage);
+        shuffleImageView.setFitWidth(120);
+        shuffleImageView.setFitHeight(170);
+        shuffleImageView.setOnMouseClicked(e -> {
             reshuffleCards(gridPane);
-            popupOpen.set(false);
         });
 
-        reshuffleCards(gridPane);
+        shuffleImageView.setOnMouseEntered(e -> shuffleImageView.setOpacity(0.7));
+        shuffleImageView.setOnMouseExited(e -> shuffleImageView.setOpacity(1.0));
 
-        gridPane.add(reshuffleButton, 0, 2, 2, 1);
+        gridPane.add(shuffleImageView, 0, 2, 2, 1);
+        GridPane.setHalignment(shuffleImageView, HPos.CENTER);
+        GridPane.setValignment(shuffleImageView, VPos.TOP);
+        GridPane.setMargin(shuffleImageView, new Insets(10));
 
-        Scene popupScene = new Scene(gridPane, 400, 400);
+        Scene popupScene = new Scene(gridPane, 500, 500);
         popupStage.setScene(popupScene);
         popupStage.show();
 
@@ -1598,8 +1609,9 @@ public class GameViewController {
             if (activeDeck.size() >= 6) {
                 showErrorDialog("Deck aktif anda sudah penuh");
                 event.consume();
+            } else {
+                popupOpen.set(false);
             }
-            popupOpen.set(false);
         });
 
         popupStage.setOnCloseRequest(event -> {
@@ -1608,21 +1620,30 @@ public class GameViewController {
     }
 
     private void reshuffleCards(GridPane gridPane) {
-        gridPane.getChildren().clear();
+        gridPane.getChildren().removeIf(node -> !(node instanceof ImageView && ((ImageView) node).getImage().getUrl().endsWith("Shuffle.png")));
 
         List<Image> images = loadImagesShuffle();
 
-        for (int i = 0; i < 4; i++) {
-            ImageView imageView = new ImageView(images.get(i));
-            imageView.setFitWidth(100);
-            imageView.setFitHeight(120);
-            imageView.setOnMouseClicked(event -> handleCardSelection(imageView.getImage()));
+        int numRows = 2;
+        int numCols = 2;
 
-            GridPane.setHalignment(imageView, HPos.CENTER);
-            GridPane.setValignment(imageView, VPos.CENTER);
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                int index = i * numCols + j;
+                if (index < images.size()) {
+                    ImageView imageView = new ImageView(images.get(index));
+                    imageView.setFitWidth(100);
+                    imageView.setFitHeight(120);
+                    Image image = imageView.getImage(); 
+                    handleCardSelection(imageView, image);
 
-            gridPane.add(imageView, i % 2, i / 2);
-            shuffledImages.add(imageView);
+                    gridPane.add(imageView, j, i);
+                    GridPane.setHalignment(imageView, HPos.CENTER);
+                    GridPane.setValignment(imageView, VPos.CENTER);
+                    GridPane.setMargin(imageView, new Insets(10));
+                    shuffledImages.add(imageView);
+                }
+            }
         }
     }
 
@@ -1657,12 +1678,27 @@ public class GameViewController {
         return images;
     }
 
-    private void handleCardSelection(Image image) {
-        if (activeDeck.size() < 6) {
-            activeDeck.add(image);
-            System.out.println("Card added to active deck.");
-        } else {
-            showErrorDialog("Deck aktif anda sudah penuh");
+    private void handleCardSelection(ImageView selectedImageView, Image selectedImage) {
+        boolean foundEmptySlot = false;
+        for (int col = 0; col < 6; col++) {
+            StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
+            ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
+            if (cardImageView.getImage() == null) {
+                foundEmptySlot = true;
+                cardImageView.setImage(selectedImage);
+                break;
+            }
         }
+    
+        // if (!foundEmptySlot) {
+        //     displayOutput("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.", Color.RED);
+        //     return;
+        // }
+    
+        // if (currentPlayer == 1) {
+        //     player1.getDeck().putToDeck(selectedImage); 
+        // } else {
+        //     player2.getDeck().putToDeck(selectedImage);
+        // }
     }
 }
