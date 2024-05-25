@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Pos?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.hap.hap_boloboloboys.SettingViewController">
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hap.hap_boloboloboys.SettingViewController" style="-fx-padding: 30;">
+    <children>
     <!-- MenuBar at the top -->
-    <MenuBar VBox.vgrow="NEVER">
-        <Menu text="Menu">
-            <MenuItem text="Home" onAction="#onHomeMenuClick"/>
-            <MenuItem text="Settings" onAction="#onSettingMenuClick"/>
-            <MenuItem text="Game" onAction="#onGameMenuClick"/>
-        </Menu>
-    </MenuBar>
-</VBox>
+        <MenuBar layoutX="0" layoutY="0" prefWidth="1500.0" styleClass="menu-bar">
+            <menus>
+                <Menu text="Menu" styleClass="menu">
+                    <items>
+                        <MenuItem text="Home" onAction="#onHomeMenuClick"/>
+                        <MenuItem text="Settings" onAction="#onSettingMenuClick"/>
+                        <MenuItem text="Game" onAction="#onGameMenuClick"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    
+     <!-- Informasi -->
+    <Label text="Tentang Aplikasi" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0.0 , 2 , 2 );" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="80.0"/>
+    <Label text="HAP adalah aplikasi simulasi kelola kerajaan yang kami buat yang memungkinkan dua pemain untuk bertanding dalam memanajemen ladang mereka masing-masing. Setiap pemain memiliki ladang berbentuk matriks yang dapat diisi dengan tanaman dan hewan yang mereka miliki dalam bentuk kartu. Pada setiap giliran, pemain dapat menanam tanaman, merawat hewan, memanen objek-objek tersebut, atau mempersiapkan pertahanan dari serangan beruang yang terjadi secara acak. Serangan ini dapat merusak tanaman atau hewan di ladang, mempengaruhi penghasilan pemain. &#10;&#10;Pemenang ditentukan setelah 20 putaran berdasarkan jumlah uang yang berhasil dikumpulkan oleh masing-masing pemain. Aplikasi ini juga menyediakan fitur save &amp; load yang memungkinkan pengguna untuk menyimpan progress permainan mereka dan melanjutkannya di lain waktu. Aplikasi ini juga memiliki fitur untuk di-customize dengan mudah melalui plugin, sehingga pengguna dapat menambahkan format file lain untuk save &amp; load sesuai kebutuhan mereka. Secara keseluruhan, aplikasi kami menyediakan desain antarmuka grafis yang menarik dan intuitif, sehingga pengguna dapat dengan mudah mengakses dan mengelola ladang mereka, menjadikan simulasi ini menarik dan interaktif bagi para pemainnya." wrapText="true" AnchorPane.topAnchor="150.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="40.0"  style="-fx-font-weight: bold;" />
+    <Label text="Alur Bermain" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0.0 , 2 , 2 );" AnchorPane.topAnchor="400.0" AnchorPane.leftAnchor="80.0"/>
+    <Label text="1. Turn ganjil untuk pemain 1 dan turn genap untuk pemain 2" AnchorPane.topAnchor="440.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="40.0" style="-fx-font-weight: bold;"  wrapText="true"/>
+    <Label text="2. Saat turn pemain, pemain akan diperlihatkan shuffle card yang boleh dipilih oleh pemain maksimal 4 card dan bisa dilakukan reshuffle jika diinginkan" AnchorPane.topAnchor="470.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="40.0" style="-fx-font-weight: bold;"  wrapText="true"/>
+    <Label text="3. Setelah selesai memilih kartu, akan ada peluang apakah akan ada serangan beruang saat itu atau tidak. Jika ada, maka pemain dapat menjaga ladangnya dengan merubah posisi hewan atau tumbuhan miliknya hingga waktu berakhir" AnchorPane.topAnchor="520.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="40.0" style="-fx-font-weight: bold;"  wrapText="true"/>
+    <Label text="4. Setelah serangan beruang selesai, pemain akan memasuki sesi bebas dimana pemain boleh melakukan apa saja seperti meletakkan kartu ke ladang, atau membeli produk di toko atau lainnya" AnchorPane.topAnchor="580.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="40.0" style="-fx-font-weight: bold;"  wrapText="true"/>
+    <Label text="5. Setelah selesai, pemain akan mengklik tombol next untuk berganti turn dan seterusnya hingga turn ke 20. Setelah turn ke 20 akan ditentukan pemenangnya melalui gulden yang siapa yang paling banyak" AnchorPane.topAnchor="630.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="40.0" style="-fx-font-weight: bold;"  wrapText="true"/>
+    <Label text="6. Selama permainan, pemain juga dapat melihat ladang lawan, melakukan save state, load state yang sudah ada, ataupun load plugin" AnchorPane.topAnchor="690.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="40.0" style="-fx-font-weight: bold;"  wrapText="true"/>
+    <Label text="Selamat Bermain!" style="-fx-font-size: 20px; -fx-font-weight: bold;" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="600.0"/>
+    </children>
+</AnchorPane>
