@@ -322,7 +322,7 @@ public class Load {
                         card = new Protect();
                         break;
 
-                    case "Trap":
+                    case "TRAP":
                         card = new Trap();
                         break;
                 }
