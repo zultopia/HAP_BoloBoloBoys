@@ -188,6 +188,8 @@ public class GameViewController {
     public void handleNextButtonClick(ActionEvent event) {
         // swap playernya
         System.out.println("Button Next Clicked!");
+        System.out.println("Is in ladangku: " + isInLadangku);
+        runMethodLadangku();
         if (currentPlayer == 1) {
             currentPlayer = 2;
         } else {
@@ -318,7 +320,7 @@ public class GameViewController {
     public void populateLadang(int requestedPl) {
         gridPane.getChildren().clear(); // RequestedPL represent whose ladang to be displayed, check if it's in ladang
                                         // musuh or not using isInLadangku
-
+        System.out.println("Is in ladangku: " + isInLadangku + "Current Player : " + currentPlayer);
         if (requestedPl == 1) {
             ladang = player1.ladangku;
         } else {
@@ -531,6 +533,7 @@ public class GameViewController {
         });
 
         cardImageView.setOnDragDropped(event -> {
+            System.out.println("Ladangku Card : " + isInLadangku);
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasImage()) {
@@ -553,7 +556,7 @@ public class GameViewController {
                     }
                 } else {
                     if (ladang.getPetak(firstRow, firstCol).getKartu() instanceof Item
-                    || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                            || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product || !isInLadangku) {
                         return;
                     }
                     System.out.println("From ladang");
@@ -564,12 +567,23 @@ public class GameViewController {
                         if (selected instanceof Item) {
                             Card kartu = ladang.getPetak(row, col).getKartu();
                             System.out.println(((Item) selected).getEffect());
-                            if (((Item) selected).getEffect() == Effect.DESTROY) {
-                                ladang.getPetak(row, col).setKartu(null);
-                                cardImageView.setImage(null);
+                            if (!isInLadangku) {
+                                if (((Item) selected).getEffect() == Effect.DESTROY) {
+                                    ladang.getPetak(row, col).setKartu(null);
+                                    cardImageView.setImage(null);
+                                } else if (((Item) selected).getEffect() == Effect.DELAY) {
+                                    ((Item) selected).applyEffect((Creature) kartu);
+                                    ladang.plantKartu(row, col, kartu);
+                                }
                             } else {
-                                ((Item) selected).applyEffect((Creature) kartu);
-                                ladang.plantKartu(row, col, kartu);
+                                if (((Item) selected).getEffect() != Effect.DESTROY && ((Item) selected).getEffect() != Effect.DELAY) {
+                                    ((Item) selected).applyEffect((Creature) kartu);
+                                    ladang.plantKartu(row, col, kartu);
+                                } else {
+                                    System.out.println("Kartu tidak bisa ditanam");
+                                    deck.putToDeck(selected, firstCol);
+                                    return;
+                                }
                             }
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
@@ -580,15 +594,30 @@ public class GameViewController {
                         if (selected instanceof Item) {
                             Card kartu = ladang.getPetak(row, col).getKartu();
                             System.out.println(((Item) selected).getEffect());
-                            if (((Item) selected).getEffect() == Effect.DESTROY) {
-                                Card kartuLadang = ladang.takeCard(row, col);
-                                cardImageView.setImage(null);
+                            if (!isInLadangku) {
+                                if (((Item) selected).getEffect() == Effect.DESTROY) {
+                                    ladang.getPetak(row, col).setKartu(null);
+                                    cardImageView.setImage(null);
+                                } else if (((Item) selected).getEffect() == Effect.DELAY) {
+                                    ((Item) selected).applyEffect((Creature) kartu);
+                                    ladang.plantKartu(row, col, kartu);
+                                } else {
+                                    System.out.println("Kartu tidak bisa ditanam");
+                                    deck.putToDeck(selected, firstCol);
+                                    return;
+                                }
                             } else {
-                                ((Item) selected).applyEffect((Creature) kartu);
-                                ladang.plantKartu(row, col, kartu);
+                                if (((Item) selected).getEffect() != Effect.DESTROY && ((Item) selected).getEffect() != Effect.DELAY) {
+                                    ((Item) selected).applyEffect((Creature) kartu);
+                                    ladang.plantKartu(row, col, kartu);
+                                } else {
+                                    System.out.println("Kartu tidak bisa ditanam");
+                                    deck.putToDeck(selected, firstCol);
+                                    return;
+                                }
                             }
                         } else if (selected instanceof Product) {
-                            if (!((Animal) ladang.getPetak(row, col).getKartu()).canEat((Product) selected)) {
+                            if (!((Animal) ladang.getPetak(row, col).getKartu()).canEat((Product) selected) || !isInLadangku) {
                                 System.out.println("Tidak bisa makan");
                                 deck.putToDeck(selected, firstCol);
                                 return;
@@ -600,7 +629,7 @@ public class GameViewController {
                             else ladang.plantKartu(firstRow, firstCol, selected);
                             return;
                         }
-                    } else if (ladang.getPetak(row, col).getKartu() == null) {
+                    } else if (ladang.getPetak(row, col).getKartu() == null && isInLadangku) {
                         if (selected instanceof Plant) {
                             ladang.plantKartu(row, col, (Plant) selected);
                         } else if (selected instanceof Animal) {
@@ -629,6 +658,7 @@ public class GameViewController {
         });
         
         petakImageView.setOnDragDropped(event -> {
+            System.out.println("Ladangku Petak : " + isInLadangku);
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasImage()) {
@@ -651,14 +681,14 @@ public class GameViewController {
                     }
                 } else {
                     if (ladang.getPetak(firstRow, firstCol).getKartu() instanceof Item
-                    || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                            || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product || !isInLadangku) {
                         return;
                     }
                     System.out.println("From ladang");
                     selected = ladang.takeCard(firstRow, firstCol);
                 }
                 try {
-                    if (ladang.getPetak(row, col).getKartu() == null) {
+                    if (ladang.getPetak(row, col).getKartu() == null && isInLadangku) {
                         if (selected instanceof Plant) {
                             ladang.plantKartu(row, col, (Plant) selected);
                         } else if (selected instanceof Animal) {
@@ -670,6 +700,10 @@ public class GameViewController {
                             return;
                         }
                         cardImageView.setImage(db.getImage());
+                    } else {
+                        System.out.println("Kartu tidak bisa ditanam");
+                        deck.putToDeck(selected, firstCol);
+                        return;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -856,9 +890,9 @@ public class GameViewController {
     public void handleButtonLadangkuClick() {
         toggleButtonState(buttonLadangku);
         if (activeButton == buttonLadangku) {
-            populateLadang(currentPlayer);
+            runMethodLadangku();
         } else {
-
+            stopMethodLadangku();
         }
     }
 
@@ -937,19 +971,37 @@ public class GameViewController {
     }
 
     public void runMethodLadangku() {
-        System.out.println("Button Ladangku clicked and method executed");
+        System.out.println("Button Ladangku clicked and method executed" + isInLadangku);
+        isInLadangku = true;
+        if (currentPlayer == 1) {
+            ladang = player1.ladangku;
+            populateLadang(1);
+        } else {
+            ladang = player2.ladangku;
+            populateLadang(2);
+        }
     }
 
     public void stopMethodLadangku() {
         System.out.println("Stopping method for Button Ladangku");
+        // isInLadangku = false;
     }
 
     public void runMethodLadangmu() {
-        System.out.println("Button Ladangmu clicked and method executed");
+        System.out.println("Button Ladangmu clicked and method executed" + isInLadangku);
+        isInLadangku = false;
+        if (currentPlayer == 1) {
+            ladang = player2.ladangku;
+            populateLadang(2);
+        } else {
+            ladang = player1.ladangku;
+            populateLadang(1);
+        }
     }
 
     public void stopMethodLadangmu() {
         System.out.println("Stopping method for Button Ladangmu");
+        // isInLadangku = true;
     }
 
     @FXML
