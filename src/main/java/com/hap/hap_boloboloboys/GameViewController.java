@@ -51,6 +51,7 @@ import javafx.util.Duration;
 import javafx.stage.WindowEvent;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.card.Item.Effect;
@@ -1317,6 +1318,22 @@ public class GameViewController {
             String folderName = folderTextField.getText().trim();
             if (!folderName.isEmpty()) {
                 // Perform saving action here, you can save to a folder with the provided name
+                Map<String, Integer> shopConfig = new HashMap<>();
+                Map<String, Pair<Product, Integer>> items = toko.getItems();
+                for (Map.Entry<String, Pair<Product, Integer>> entry : items.entrySet()) {
+                    String key = entry.getKey();
+                    int quantity = toko.getItemQuantity(key);
+                    shopConfig.put(key, quantity);
+                }
+                try {
+                    Save.saveGameState(folderName, currentTurn, shopConfig);
+                    Save.savePlayer(folderName, player2);
+                    Save.savePlayer(folderName, player1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InventoryException e) {
+                    e.printStackTrace();
+                }
                 System.out.println("Save to: " + folderName + ", Format: " + selectedFormat);
                 stopMethodSave();
             } else {
