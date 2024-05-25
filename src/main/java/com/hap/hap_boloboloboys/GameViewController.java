@@ -234,10 +234,10 @@ public class GameViewController {
         }
 
         popupOpen.set(true);
-         showShufflePopup();
+        showShufflePopup();
 
         Random random = new Random();
-        if (random.nextInt(1) == 0) {
+        if (random.nextInt(10) == 0) {
             System.out.println("Bear attack!");
             playSound("Rawr.mp3");
             displayPopupImage("Beruang.png");
@@ -251,7 +251,7 @@ public class GameViewController {
                     }
                 }
             }
-            int bearAttackTime = 10;
+            int bearAttackTime = random.nextInt(31) + 30;
             System.out.println("Bear attack in " + bearAttackTime + " seconds.");
             showBearAttackTimer(bearAttackTime);
         }
