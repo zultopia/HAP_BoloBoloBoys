@@ -167,8 +167,9 @@ public class GameViewController {
         populateLadang(currentPlayer);
         deckAktif();
         initializeToko();
+        handleButtonLadangkuClick();
 
-        // Platform.runLater(() -> showShufflePopup());
+        Platform.runLater(() -> showShufflePopup());
     }
 
     @FXML
@@ -224,22 +225,22 @@ public class GameViewController {
             disableNextButton();
         }
 
-        popupOpen.set(true);
+        // popupOpen.set(true);
         // showShufflePopup();
 
-        popupOpen.addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                Random random = new Random();
-                if (random.nextInt(10) == 0) {
-                    System.out.println("Bear attack!");
-                    playSound("Rawr.mp3");
-                    displayPopupImage("Beruang.png");
-                    int bearAttackTime = random.nextInt(31) + 30;
-                    System.out.println("Bear attack in " + bearAttackTime + " seconds.");
-                    showBearAttackTimer(bearAttackTime);
+        // popupOpen.addListener((observable, oldValue, newValue) -> {
+        //     if (!newValue) {
+        Random random = new Random();
+        if (random.nextInt(10) == 0) {
+            System.out.println("Bear attack!");
+            playSound("Rawr.mp3");
+            displayPopupImage("Beruang.png");
+            int bearAttackTime = random.nextInt(31) + 30;
+            System.out.println("Bear attack in " + bearAttackTime + " seconds.");
+            showBearAttackTimer(bearAttackTime);
                 }
-            }
-        });
+        //     }
+        // });
     }
 
     public void setCountDeckPasive() {
@@ -858,6 +859,13 @@ public class GameViewController {
 
     public void runMethodLadangku() {
         System.out.println("Button Ladangku clicked and method executed");
+        if (currentPlayer == 1) {
+            ladang = player1.ladangku;
+            populateLadang(1);
+        } else {
+            ladang = player2.ladangku;
+            populateLadang(2);
+        }
     }
 
     public void stopMethodLadangku() {
@@ -866,6 +874,13 @@ public class GameViewController {
 
     public void runMethodLadangmu() {
         System.out.println("Button Ladangmu clicked and method executed");
+        if (currentPlayer == 1) {
+            ladang = player2.ladangku;
+            populateLadang(2);
+        } else {
+            ladang = player1.ladangku;
+            populateLadang(1);
+        }
     }
 
     public void stopMethodLadangmu() {
@@ -1645,8 +1660,8 @@ public class GameViewController {
                     ImageView imageView = new ImageView(images.get(index));
                     imageView.setFitWidth(100);
                     imageView.setFitHeight(120);
-                    Image image = imageView.getImage(); 
-                    handleCardSelection(imageView, image);
+                    // Image image = imageView.getImage(); 
+                    // handleCardSelection(imageView, image);
 
                     gridPane.add(imageView, j, i);
                     GridPane.setHalignment(imageView, HPos.CENTER);
