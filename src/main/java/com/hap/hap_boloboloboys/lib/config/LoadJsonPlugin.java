@@ -18,12 +18,10 @@ public class LoadJsonPlugin {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        // Game state data
         GameState gameState = new GameState();
         gameState.setCurrentTurn(Load.getCurrentTurn());
         gameState.setShopItems(Load.getShopItems());
 
-        // Serialize game state to JSON
         File file = new File("config/" + folderPath + "/gamestate.json");
         mapper.writeValue(file, gameState);
         System.out.println("Game state saved to JSON successfully: " + file.getAbsolutePath());
@@ -33,7 +31,6 @@ public class LoadJsonPlugin {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        // Player data
         PlayerState playerState = new PlayerState();
         playerState.setWealth(Load.getWealth());
         playerState.setCurrentSizeInventory(Load.getCurrentSizeInventory());
@@ -42,7 +39,6 @@ public class LoadJsonPlugin {
         playerState.setCardLadangCount(Load.getCardLadangCount());
         playerState.setContent(Load.getContent());
 
-        // Serialize player state to JSON
         File file = new File("config/" + folderPath + "/" + player + ".json");
         mapper.writeValue(file, playerState);
         System.out.println("Player state saved to JSON successfully: " + file.getAbsolutePath());
@@ -52,16 +48,13 @@ public class LoadJsonPlugin {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        // Store data
         Store store = Load.getStore();
 
-        // Serialize store to JSON
         File file = new File("config/" + folderPath + "/store.json");
         mapper.writeValue(file, store);
         System.out.println("Store saved to JSON successfully: " + file.getAbsolutePath());
     }
 
-    // Example class for game state serialization
     private static class GameState {
         private int currentTurn;
         private Map<String, Integer> shopItems;
@@ -83,7 +76,6 @@ public class LoadJsonPlugin {
         }
     }
 
-    // Example class for player state serialization
     private static class PlayerState {
         private int wealth;
         private int currentSizeInventory;
