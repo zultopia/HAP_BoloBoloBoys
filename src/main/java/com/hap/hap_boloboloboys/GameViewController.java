@@ -1770,14 +1770,14 @@ public class GameViewController {
         popupStage.setScene(popupScene);
         popupStage.show();
 
-        popupStage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
-            if (activeDeck.size() >= 6) {
-                showErrorDialog("Deck aktif anda sudah penuh");
-                event.consume();
-            } else {
-                popupOpen.set(false);
-            }
-        });
+//        popupStage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+//            if (activeDeck.size() >= 6) {
+//                showErrorDialog("Deck aktif anda sudah penuh");
+//                event.consume();
+//            } else {
+//                popupOpen.set(false);
+//            }
+//        });
 
         popupStage.setOnCloseRequest(event -> {
             popupOpen.set(false);
@@ -1819,8 +1819,7 @@ public class GameViewController {
             ImageView imageView = new ImageView(images.get(i));
             imageView.setFitWidth(100);
             imageView.setFitHeight(120);
-            Image image = imageView.getImage();
-            handleCardSelection(imageView, image);
+            handleCardSelection(imageView, images.get(i));
 
             gridPane.add(imageView, i, 0);
             GridPane.setHalignment(imageView, HPos.CENTER);
@@ -1882,28 +1881,7 @@ public class GameViewController {
 //    }
 
     private void handleCardSelection(ImageView selectedImageView, Image selectedImage) {
-        boolean foundEmptySlot = false;
-        for (int col = 0; col < 6; col++) {
-            StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
-            ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
-            if (cardImageView.getImage() == null) {
-                foundEmptySlot = true;
-                cardImageView.setImage(selectedImage);
-                break;
-            }
-        }
 
-        // if (!foundEmptySlot) {
-        // displayOutput("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.",
-        // Color.RED);
-        // return;
-        // }
-
-        // if (currentPlayer == 1) {
-        // player1.getDeck().putToDeck(selectedImage);
-        // } else {
-        // player2.getDeck().putToDeck(selectedImage);
-        // }
     }
 
     private void markThreatenedCells() {
