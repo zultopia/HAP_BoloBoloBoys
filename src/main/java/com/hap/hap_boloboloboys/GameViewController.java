@@ -128,11 +128,12 @@ public class GameViewController {
     private Label bearAttackTimerLabel;
     private SimpleBooleanProperty popupOpen = new SimpleBooleanProperty(false);
     private List<int[]> threatenedCells = new ArrayList<>();
+    private MediaPlayer mediaPlayer;
 
     private final Object lock = new Object();
 
     @FXML
-    public void initialize() { // Inisialisasi
+    public void initialize() { 
         setButtonStyle(buttonLadangku, false);
         setButtonStyle(buttonLadangmu, false);
         setButtonStyle(buttonToko, false);
@@ -148,7 +149,6 @@ public class GameViewController {
         currentPlayer = 1;
         currentTurn = 1;
 
-        // Load the image for the Next button
         Image nextImage = loadImage("/assets/Next.png");
         ImageView nextImageView = new ImageView(nextImage);
         nextImageView.setFitWidth(100);
@@ -171,6 +171,8 @@ public class GameViewController {
         populateLadang(currentPlayer);
         deckAktif();
         initializeToko();
+        handleButtonLadangkuClick();
+        playSound("Kingdom.mp3");
 
          Platform.runLater(() -> showShufflePopup());
     }
@@ -355,12 +357,10 @@ public class GameViewController {
 
                 StackPane stackPane = new StackPane();
                 stackPane.getChildren().addAll(petakImageView, cardImageView);
-
-                // Tambahkan gaya visual untuk sel yang terancam
+    
                 boolean isThreatened = false;
                 for (int[] cell : threatenedCells) {
                     if (cell[0] == row && cell[1] == col) {
-                        // Efek gelap atau glow
                         petakImageView.setStyle("-fx-effect: dropshadow(gaussian, red, 10, 0.5, 0, 0);");
                         isThreatened = true;
                         break;
@@ -407,7 +407,6 @@ public class GameViewController {
             cardImageView.setFitHeight(90);
             cardImageView.getStyleClass().add("image-view");
 
-            // Setup drag and drop for cardImageView
             setupDragAndDropFromDeckAktif(cardImageView, petakImageView, col);
 
             StackPane stackPane = new StackPane();
@@ -1676,12 +1675,16 @@ public class GameViewController {
         popupStage.show();
     }
 
-    private MediaPlayer playSound(String soundFile) {
-        String soundPath = getClass().getResource("/sounds/" + soundFile).toExternalForm();
+    private void playSound(String soundFile) {
+        String soundPath = getClass().getResource("/sounds/" + soundFile).toString();
+        if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+            mediaPlayer.pause();
+        }
+    
         Media sound = new Media(soundPath);
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
-        return mediaPlayer;
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
     }
 
     private void displayPopupImage(String imageName) {
@@ -1723,8 +1726,8 @@ public class GameViewController {
 
         final int[] countdown = { timeInSeconds };
         bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
-        MediaPlayer mediaPlayer = playSound("Siren.mp3");
-
+        playSound("Siren.mp3");
+    
         markThreatenedCells();
 
         bearAttackTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
