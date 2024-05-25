@@ -40,13 +40,13 @@ public class Inventory extends Storage {
             if (this.cards[i] != null) continue;
             Random rand = new Random();
             /* Random nicely
-            * if 0 : plant
-            * if 1 : carnivore
-            * if 2 : herbivore
-            * if 3 : omnivore
-            * if 4 : items
-            * if 5 : product
-            * */
+             * if 0 : plant
+             * if 1 : carnivore
+             * if 2 : herbivore
+             * if 3 : omnivore
+             * if 4 : items
+             * if 5 : product
+             * */
             switch (i % 6) {
                 case 0:
                     List<String> plant = new ArrayList<>(ListCode.PLANT);
@@ -107,6 +107,7 @@ public class Inventory extends Storage {
         for (int i = 0; i < neededCard; i++) {
             int randomIndex = rand.nextInt(this.getSize());
             shuffledCards[i] = this.getCard(randomIndex);
+            this.cards[randomIndex] = null;
         }
         return shuffledCards;
     }

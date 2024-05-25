@@ -142,7 +142,9 @@ public class GameViewController {
 
         // Inisialisasi pemain
         player1 = new Person("player1");
+        player1.initiateFromScratch();
         player2 = new Person("player2");
+        player2.initiateFromScratch();
         currentPlayer = 1;
         currentTurn = 1;
 
@@ -170,7 +172,7 @@ public class GameViewController {
         deckAktif();
         initializeToko();
 
-        // Platform.runLater(() -> showShufflePopup());
+         Platform.runLater(() -> showShufflePopup());
     }
 
     @FXML
@@ -227,7 +229,7 @@ public class GameViewController {
         }
 
         popupOpen.set(true);
-        // showShufflePopup();
+         showShufflePopup();
 
         // popupOpen.addListener((observable, oldValue, newValue) -> {
         // if (!newValue) {
@@ -1742,14 +1744,18 @@ public class GameViewController {
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        reshuffleCards(gridPane);
+        List<Integer> listPosition;
+        listPosition = reshuffleCards(gridPane);
 
         Image shuffleImage = new Image(getClass().getResource("/assets/Shuffle.png").toString());
         ImageView shuffleImageView = new ImageView(shuffleImage);
         shuffleImageView.setFitWidth(120);
         shuffleImageView.setFitHeight(170);
+        // Only to trick the final in the onmouseclick
         shuffleImageView.setOnMouseClicked(e -> {
-            reshuffleCards(gridPane);
+            List<Integer>finalListPosition = reshuffleCards(gridPane);
+            listPosition.clear();
+            listPosition.addAll(finalListPosition);
         });
 
         shuffleImageView.setOnMouseEntered(e -> shuffleImageView.setOpacity(0.7));
@@ -1778,65 +1784,102 @@ public class GameViewController {
         });
     }
 
-    private void reshuffleCards(GridPane gridPane) {
-        gridPane.getChildren().removeIf(
-                node -> !(node instanceof ImageView && ((ImageView) node).getImage().getUrl().endsWith("Shuffle.png")));
 
-        List<Image> images = loadImagesShuffle();
+    private List<Integer> reshuffleCards(GridPane gridPane) {
+//        gridPane.getChildren().removeIf(node -> !(node instanceof ImageView && ((ImageView) node).getImage().getUrl().endsWith("Shuffle.png")));
 
-        int numRows = 2;
-        int numCols = 2;
-
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                int index = i * numCols + j;
-                if (index < images.size()) {
-                    ImageView imageView = new ImageView(images.get(index));
-                    imageView.setFitWidth(100);
-                    imageView.setFitHeight(120);
-                    Image image = imageView.getImage();
-                    handleCardSelection(imageView, image);
-
-                    gridPane.add(imageView, j, i);
-                    GridPane.setHalignment(imageView, HPos.CENTER);
-                    GridPane.setValignment(imageView, VPos.CENTER);
-                    GridPane.setMargin(imageView, new Insets(10));
-                    shuffledImages.add(imageView);
-                }
-            }
-        }
-    }
-
-    private List<Image> loadImagesShuffle() {
+        // Generate random card directly from the player's inventory
+        List<Integer> listPosition = new ArrayList<>();
         List<Image> images = new ArrayList<>();
-        File dir = new File(getClass().getResource("/card/hewan").getFile());
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                images.add(new Image(file.toURI().toString()));
+        int neededCard;
+        if (currentPlayer == 1) {
+            int size = player1.getInventory().getSize();
+            neededCard = player1.neededCardShuffle();
+            Random random = new Random();
+            for (int i = 0; i < neededCard; i++) {
+                listPosition.add(random.nextInt(size));
+                System.out.println(player1.getInventory().getCard(listPosition.get(i)).getImgPath());
+                images.add(loadImage(player1.getInventory().getCard(listPosition.get(i)).getImgPath()));
+                size = player1.getInventory().getSize();
+            }
+        } else {
+            int size = player2.getInventory().getSize();
+            neededCard = player2.neededCardShuffle();
+            Random random = new Random();
+            for (int i = 0; i < neededCard; i++) {
+                listPosition.add(random.nextInt(size));
+                images.add(new Image(player1.getInventory().getCard(listPosition.get(i)).getImgPath()));
+                size = player2.getInventory().getSize();
             }
         }
 
-        dir = new File(getClass().getResource("/card/item").getFile());
-        files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                images.add(new Image(file.toURI().toString()));
-            }
+        System.out.println("Size image:" + images.size() + " butuh " + neededCard);
+
+        for (int i = 0; i < neededCard; i++) {
+            ImageView imageView = new ImageView(images.get(i));
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(120);
+            Image image = imageView.getImage();
+            handleCardSelection(imageView, image);
+
+            gridPane.add(imageView, i, 0);
+            GridPane.setHalignment(imageView, HPos.CENTER);
+            GridPane.setValignment(imageView, VPos.CENTER);
+            GridPane.setMargin(imageView, new Insets(10));
         }
 
-        dir = new File(getClass().getResource("/card/tumbuhan").getFile());
-        files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                images.add(new Image(file.toURI().toString()));
-            }
-        }
-
-        java.util.Collections.shuffle(images);
-
-        return images;
+//        int numRows = 2;
+//
+//        for (int i = 0; i < numRows; i++) {
+//            for (int j = 0; j < numCols; j++) {
+//                int index = i * numCols + j;
+//                if (index < images.size()) {
+//                    ImageView imageView = new ImageView(images.get(index));
+//                    imageView.setFitWidth(100);
+//                    imageView.setFitHeight(120);
+//                    Image image = imageView.getImage();
+//                    handleCardSelection(imageView, image);
+//
+//                    gridPane.add(imageView, j, i);
+//                    GridPane.setHalignment(imageView, HPos.CENTER);
+//                    GridPane.setValignment(imageView, VPos.CENTER);
+//                    GridPane.setMargin(imageView, new Insets(10));
+//                }
+//            }
+//        }
+        return listPosition;
     }
+
+//    private List<Image> loadImagesShuffle() {
+//        List<Image> images = new ArrayList<>();
+//        File dir = new File(getClass().getResource("/card/hewan").getFile());
+//        File[] files = dir.listFiles();
+//        if (files != null) {
+//            for (File file : files) {
+//                images.add(new Image(file.toURI().toString()));
+//            }
+//        }
+//
+//        dir = new File(getClass().getResource("/card/item").getFile());
+//        files = dir.listFiles();
+//        if (files != null) {
+//            for (File file : files) {
+//                images.add(new Image(file.toURI().toString()));
+//            }
+//        }
+//
+//        dir = new File(getClass().getResource("/card/tumbuhan").getFile());
+//        files = dir.listFiles();
+//        if (files != null) {
+//            for (File file : files) {
+//                images.add(new Image(file.toURI().toString()));
+//            }
+//        }
+//
+//        java.util.Collections.shuffle(images);
+//
+//        return images;
+//    }
 
     private void handleCardSelection(ImageView selectedImageView, Image selectedImage) {
         boolean foundEmptySlot = false;
