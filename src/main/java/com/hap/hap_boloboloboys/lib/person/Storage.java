@@ -59,6 +59,7 @@ public class Storage {
         if (this instanceof Deck) this.currentSize = this.calculateSize();
         else this.currentSize = this.getSize();
     }
+    public void setCard(Card card, int index) {this.cards[index] = card;}
 
     /*CHECKER*/
     public boolean isFull() {return this.calculateSize() == this.capacity;}

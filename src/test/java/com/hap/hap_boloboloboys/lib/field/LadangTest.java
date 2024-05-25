@@ -69,7 +69,7 @@ public class LadangTest {
     @Test
     void testHarvestKartu() {
         Plant plant = new Plant("BIJI_LABU");
-        plant.setAge(5); 
+        plant.setAge(5);
         try {
             ladang.plantKartu(0, 0, plant);
             ladang.harvestKartu(0, 0);
@@ -79,7 +79,7 @@ public class LadangTest {
         }
 
         Animal animal = new Herbivore("DOMBA");
-        animal.setWeight(50); 
+        animal.setWeight(50);
         try {
             ladang.plantKartu(1, 1, animal);
             ladang.harvestKartu(1, 1);
@@ -100,7 +100,7 @@ public class LadangTest {
         try {
             ladang.plantKartu(0, 0, plant);
             ladang.applyItem(0, 0, item);
-      
+
         } catch (Exception e) {
             fail("Exception should not be thrown");
         }
@@ -132,35 +132,38 @@ public class LadangTest {
 
     @Test
     void testCetakInfo() {
-      Animal animal = new Herbivore("DOMBA");
-      animal.setWeight(50); 
-      try {
-          ladang.plantKartu(1, 1, animal);
-          ladang.plantKartu(1, 1, new Accelerate());
-          assertTrue(ladang.getPetak(1, 1).getKartu() instanceof Animal);
-          ladang.plantKartu(2, 1, new Product("SIRIP_HIU"));
-          ladang.plantKartu(2, 1, new Protect());
-      } catch (Exception e) {
-          fail("Exception should not be thrown");
-      }
+        Animal animal = new Herbivore("DOMBA");
+        animal.setWeight(50);
+        try {
+            ladang.plantKartu(1, 1, animal);
+            ladang.plantKartu(1, 1, new Accelerate());
+            assertTrue(ladang.getPetak(1, 1).getKartu() instanceof Animal);
+            ladang.plantKartu(2, 1, new Product("SIRIP_HIU"));
+            ladang.plantKartu(2, 1, new Protect());
+        } catch (Exception e) {
+            fail("Exception should not be thrown");
+        }
+        ladang.addAge();
+        // Plant plant = (Plant) ladang.getPetak(1, 1).getKartu();
+        // assertEquals(3, plant.getAge());
 
-      ladang.cetakInfo();
+        ladang.cetakInfo();
     }
 
     @Test
     void testLoadPlant() {
-      Animal animal = new Herbivore("DOMBA");
-      animal.setWeight(50); 
-      try {
-          ladang.loadplantKartu(1, 1, animal);
-          ladang.loadplantKartu(1, 1, new Accelerate());
-          assertTrue(ladang.getPetak(1, 1).getKartu() instanceof Animal);
-          ladang.loadplantKartu(2, 1, new Product("SIRIP_HIU"));
-          ladang.loadplantKartu(2, 1, new Protect());
-      } catch (Exception e) {
-          fail("Exception should not be thrown");
-      }
+        Animal animal = new Herbivore("DOMBA");
+        animal.setWeight(50);
+        try {
+            ladang.loadplantKartu(1, 1, animal);
+            ladang.loadplantKartu(1, 1, new Accelerate());
+            assertTrue(ladang.getPetak(1, 1).getKartu() instanceof Animal);
+            ladang.loadplantKartu(2, 1, new Product("SIRIP_HIU"));
+            ladang.loadplantKartu(2, 1, new Protect());
+        } catch (Exception e) {
+            fail("Exception should not be thrown");
+        }
 
-      ladang.cetakInfo();
+        ladang.cetakInfo();
     }
 }

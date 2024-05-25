@@ -55,5 +55,6 @@
         <Label fx:id="player1MoneyLabel" layoutX="175" layoutY="370" text=""/>
         <Label fx:id="player2MoneyLabel" layoutX="175" layoutY="580" text=""/>
         <Label fx:id="deckCountLabel" layoutX="1250" layoutY="760" text=""/>
+
     </children>
 </AnchorPane>

@@ -2,8 +2,6 @@ package com.hap.hap_boloboloboys.lib.person;
 
 import com.hap.hap_boloboloboys.lib.card.*;
 import com.hap.hap_boloboloboys.lib.field.*;
-import java.util.ArrayList;
-import java.util.List;
 import static java.lang.Math.min;
 
 public class Person {
@@ -122,11 +120,19 @@ public class Person {
         }
     }
 
+    public void deleteFromInventoryWithoutRefactor (int index) {
+        this.inventory.setCard(null, index);
+    }
+
     public void setToInventory(Card card) {
         try {
             this.inventory.add(card);
         } catch (InventoryException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void refactorInventory() {
+        this.inventory.getSize();
     }
 }

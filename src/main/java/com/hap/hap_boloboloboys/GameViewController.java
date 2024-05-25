@@ -32,10 +32,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -116,6 +113,7 @@ public class GameViewController {
     public int numRows = 4;
     public static int numCols = 5;
     public Ladang ladang;
+    public int shuffledCard = 0;
 
     public Deck deck;
     private List<Image> activeDeck = new ArrayList<>();
@@ -131,11 +129,12 @@ public class GameViewController {
     private Label bearAttackTimerLabel;
     private SimpleBooleanProperty popupOpen = new SimpleBooleanProperty(false);
     private List<int[]> threatenedCells = new ArrayList<>();
+    private MediaPlayer mediaPlayer;
 
     private final Object lock = new Object();
 
     @FXML
-    public void initialize() { // Inisialisasi
+    public void initialize() { 
         setButtonStyle(buttonLadangku, false);
         setButtonStyle(buttonLadangmu, false);
         setButtonStyle(buttonToko, false);
@@ -151,7 +150,6 @@ public class GameViewController {
         currentPlayer = 1;
         currentTurn = 1;
 
-        // Load the image for the Next button
         Image nextImage = loadImage("/assets/Next.png");
         ImageView nextImageView = new ImageView(nextImage);
         nextImageView.setFitWidth(100);
@@ -174,6 +172,8 @@ public class GameViewController {
         populateLadang(currentPlayer);
         deckAktif();
         initializeToko();
+        handleButtonLadangkuClick();
+        playSound("Kingdom.mp3");
 
          Platform.runLater(() -> showShufflePopup());
     }
@@ -358,12 +358,10 @@ public class GameViewController {
 
                 StackPane stackPane = new StackPane();
                 stackPane.getChildren().addAll(petakImageView, cardImageView);
-
-                // Tambahkan gaya visual untuk sel yang terancam
+    
                 boolean isThreatened = false;
                 for (int[] cell : threatenedCells) {
                     if (cell[0] == row && cell[1] == col) {
-                        // Efek gelap atau glow
                         petakImageView.setStyle("-fx-effect: dropshadow(gaussian, red, 10, 0.5, 0, 0);");
                         isThreatened = true;
                         break;
@@ -410,7 +408,6 @@ public class GameViewController {
             cardImageView.setFitHeight(90);
             cardImageView.getStyleClass().add("image-view");
 
-            // Setup drag and drop for cardImageView
             setupDragAndDropFromDeckAktif(cardImageView, petakImageView, col);
 
             StackPane stackPane = new StackPane();
@@ -1691,12 +1688,16 @@ public class GameViewController {
         popupStage.show();
     }
 
-    private MediaPlayer playSound(String soundFile) {
-        String soundPath = getClass().getResource("/sounds/" + soundFile).toExternalForm();
+    private void playSound(String soundFile) {
+        String soundPath = getClass().getResource("/sounds/" + soundFile).toString();
+        if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+            mediaPlayer.pause();
+        }
+    
         Media sound = new Media(soundPath);
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
-        return mediaPlayer;
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
     }
 
     private void displayPopupImage(String imageName) {
@@ -1738,8 +1739,8 @@ public class GameViewController {
 
         final int[] countdown = { timeInSeconds };
         bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
-        MediaPlayer mediaPlayer = playSound("Siren.mp3");
-
+        playSound("Siren.mp3");
+    
         markThreatenedCells();
 
         bearAttackTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
@@ -1760,6 +1761,11 @@ public class GameViewController {
     }
 
     public void showShufflePopup() {
+//        if (currentPlayer == 1) {
+//            if (player1.getDeck().isFull()) return;
+//        } else {
+//            if (player2.getDeck().isFull()) System.out.println("full");return;
+//        }
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         Scene scene = nextButton.getScene();
@@ -1782,10 +1788,16 @@ public class GameViewController {
         shuffleImageView.setFitWidth(120);
         shuffleImageView.setFitHeight(170);
         shuffleImageView.setOnMouseClicked(e -> {
+            gridPane.getChildren().clear();
+            gridPane.add(shuffleImageView, 0, 2, 2, 1);
             List<Integer>finalListPosition = reshuffleCards(gridPane);
             listPosition.clear();
             listPosition.addAll(finalListPosition);
         });
+        if (listPosition.isEmpty()) {
+            System.out.println("Tidak ada kartu yang bisa di shuffle");
+            return;
+        }
 
         shuffleImageView.setOnMouseEntered(e -> shuffleImageView.setOpacity(0.7));
         shuffleImageView.setOnMouseExited(e -> shuffleImageView.setOpacity(1.0));
@@ -1801,6 +1813,13 @@ public class GameViewController {
 
         popupStage.setOnCloseRequest(event -> {
             popupOpen.set(false);
+            if (currentPlayer == 1) {
+                player1.refactorInventory();
+            } else {
+                player2.refactorInventory();
+            }
+            shuffledCard = 0;
+            listPosition.clear();
         });
     }
 
@@ -1811,7 +1830,9 @@ public class GameViewController {
         int neededCard;
         if (currentPlayer == 1) {
             int size = player1.getInventory().getSize();
-            neededCard = player1.neededCardShuffle();
+            neededCard = player1.neededCardShuffle() - shuffledCard;
+            if (neededCard <= 0) return null;
+
             Random random = new Random();
             for (int i = 0; i < neededCard; i++) {
                 listPosition.add(random.nextInt(size));
@@ -1821,7 +1842,8 @@ public class GameViewController {
             }
         } else {
             int size = player2.getInventory().getSize();
-            neededCard = player2.neededCardShuffle();
+            neededCard = player1.neededCardShuffle() - shuffledCard;
+            if (neededCard <= 0) return null;
             Random random = new Random();
             for (int i = 0; i < neededCard; i++) {
                 listPosition.add(random.nextInt(size));
@@ -1836,7 +1858,7 @@ public class GameViewController {
             ImageView imageView = new ImageView(images.get(i));
             imageView.setFitWidth(100);
             imageView.setFitHeight(120);
-            handleCardSelection(gridPane, imageView, i, listPosition);
+            handleCardSelection(imageView, i, listPosition);
 
             gridPane.add(imageView, i, 0);
             GridPane.setHalignment(imageView, HPos.CENTER);
@@ -1846,49 +1868,27 @@ public class GameViewController {
         return listPosition;
     }
 
-    private void handleCardSelection(GridPane grid, ImageView selectedImageView, Integer index, List<Integer> listPosition) {
-        if (deck.isFull()) {
-            for (int i = 0; i < deck.getCapacity(); i++) {
-                System.out.println(deck.getCard(i).getCardName());
-            }
-            System.out.println("Deck sudah penuh!");
-            // displayOutput("Deck kau sudah penuh!", Color.RED);
-        } else {
+    private void handleCardSelection(ImageView selectedImageView, Integer index, List<Integer> listPosition) {
+        selectedImageView.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            System.out.println("Clicked!");
             if (currentPlayer == 1) {
-                Card card = player1.getFromInventory(index);
-                player1.deleteFromInventory(index);
-                deck.putToDeck(card);
+                Card selected = player1.getInventory().getCard(listPosition.get(index));
+                System.out.println(selected.getCardName());
+                player1.putToDeck(selected);
+                player1.deleteFromInventoryWithoutRefactor(listPosition.get(index));
             } else {
-                Card card = player1.getFromInventory(index);
-                player1.deleteFromInventory(index);
-                deck.putToDeck(card);
+                Card selected = player2.getInventory().getCard(listPosition.get(index));
+                System.out.println(selected.getCardName());
+                player2.putToDeck(selected);
+                player2.deleteFromInventoryWithoutRefactor(listPosition.get(index));
             }
-            updateShuffleDisplay(grid, listPosition);
-        }
+            deckAktif();
+            shuffledCard++;
+            ((GridPane) selectedImageView.getParent()).getChildren().remove(selectedImageView);
+            event.consume();
+        });
     }
 
-    private void updateShuffleDisplay(GridPane gridPane, List<Integer> listPosition) {
-        gridPane.getChildren().clear();
-        reshuffleCards(gridPane);
-    
-        Image shuffleImage = new Image(getClass().getResource("/assets/Shuffle.png").toString());
-        ImageView shuffleImageView = new ImageView(shuffleImage);
-        shuffleImageView.setFitWidth(120);
-        shuffleImageView.setFitHeight(170);
-        shuffleImageView.setOnMouseClicked(e -> {
-            List<Integer> finalListPosition = reshuffleCards(gridPane);
-            listPosition.clear();
-            listPosition.addAll(finalListPosition);
-        });
-    
-        shuffleImageView.setOnMouseEntered(e -> shuffleImageView.setOpacity(0.7));
-        shuffleImageView.setOnMouseExited(e -> shuffleImageView.setOpacity(1.0));
-    
-        gridPane.add(shuffleImageView, 0, 2, 2, 1);
-        GridPane.setHalignment(shuffleImageView, HPos.CENTER);
-        GridPane.setValignment(shuffleImageView, VPos.TOP);
-        GridPane.setMargin(shuffleImageView, new Insets(10));
-    }
 
     private synchronized void markThreatenedCells() {
         threatenedCells.clear();
