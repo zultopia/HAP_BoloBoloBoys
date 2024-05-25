@@ -32,10 +32,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -1748,6 +1745,11 @@ public class GameViewController {
     }
 
     public void showShufflePopup() {
+//        if (currentPlayer == 1) {
+//            if (player1.getDeck().isFull()) return;
+//        } else {
+//            if (player2.getDeck().isFull()) System.out.println("full");return;
+//        }
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         Scene scene = nextButton.getScene();
@@ -1774,6 +1776,10 @@ public class GameViewController {
             listPosition.clear();
             listPosition.addAll(finalListPosition);
         });
+        if (listPosition.isEmpty()) {
+            System.out.println("Tidak ada kartu yang bisa di shuffle");
+            return;
+        }
 
         shuffleImageView.setOnMouseEntered(e -> shuffleImageView.setOpacity(0.7));
         shuffleImageView.setOnMouseExited(e -> shuffleImageView.setOpacity(1.0));
@@ -1824,7 +1830,7 @@ public class GameViewController {
             ImageView imageView = new ImageView(images.get(i));
             imageView.setFitWidth(100);
             imageView.setFitHeight(120);
-            handleCardSelection(gridPane, imageView, i, listPosition);
+            handleCardSelection(imageView, i, listPosition);
 
             gridPane.add(imageView, i, 0);
             GridPane.setHalignment(imageView, HPos.CENTER);
@@ -1834,49 +1840,26 @@ public class GameViewController {
         return listPosition;
     }
 
-    private void handleCardSelection(GridPane grid, ImageView selectedImageView, Integer index, List<Integer> listPosition) {
-        if (deck.isFull()) {
-            for (int i = 0; i < deck.getCapacity(); i++) {
-                System.out.println(deck.getCard(i).getCardName());
-            }
-            System.out.println("Deck sudah penuh!");
-            // displayOutput("Deck kau sudah penuh!", Color.RED);
-        } else {
+    private void handleCardSelection(ImageView selectedImageView, Integer index, List<Integer> listPosition) {
+        selectedImageView.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            System.out.println("Clicked!");
             if (currentPlayer == 1) {
-                Card card = player1.getFromInventory(index);
-                player1.deleteFromInventory(index);
-                deck.putToDeck(card);
+                Card selected = player1.getInventory().getCard(listPosition.get(index));
+                System.out.println(selected.getCardName());
+                player1.putToDeck(selected);
+                player1.deleteFromInventoryWithoutRefactor(listPosition.get(index));
             } else {
-                Card card = player1.getFromInventory(index);
-                player1.deleteFromInventory(index);
-                deck.putToDeck(card);
+                Card selected = player2.getInventory().getCard(listPosition.get(index));
+                System.out.println(selected.getCardName());
+                player2.putToDeck(selected);
+                player2.deleteFromInventoryWithoutRefactor(listPosition.get(index));
             }
-            updateShuffleDisplay(grid, listPosition);
-        }
+            deckAktif();
+            ((GridPane) selectedImageView.getParent()).getChildren().remove(selectedImageView);
+            event.consume();
+        });
     }
 
-    private void updateShuffleDisplay(GridPane gridPane, List<Integer> listPosition) {
-        gridPane.getChildren().clear();
-        reshuffleCards(gridPane);
-    
-        Image shuffleImage = new Image(getClass().getResource("/assets/Shuffle.png").toString());
-        ImageView shuffleImageView = new ImageView(shuffleImage);
-        shuffleImageView.setFitWidth(120);
-        shuffleImageView.setFitHeight(170);
-        shuffleImageView.setOnMouseClicked(e -> {
-            List<Integer> finalListPosition = reshuffleCards(gridPane);
-            listPosition.clear();
-            listPosition.addAll(finalListPosition);
-        });
-    
-        shuffleImageView.setOnMouseEntered(e -> shuffleImageView.setOpacity(0.7));
-        shuffleImageView.setOnMouseExited(e -> shuffleImageView.setOpacity(1.0));
-    
-        gridPane.add(shuffleImageView, 0, 2, 2, 1);
-        GridPane.setHalignment(shuffleImageView, HPos.CENTER);
-        GridPane.setValignment(shuffleImageView, VPos.TOP);
-        GridPane.setMargin(shuffleImageView, new Insets(10));
-    }
 
     private synchronized void markThreatenedCells() {
         threatenedCells.clear();

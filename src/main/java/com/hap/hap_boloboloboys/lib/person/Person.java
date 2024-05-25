@@ -120,6 +120,10 @@ public class Person {
         }
     }
 
+    public void deleteFromInventoryWithoutRefactor (int index) {
+        this.inventory.setCard(null, index);
+    }
+
     public void setToInventory(Card card) {
         try {
             this.inventory.add(card);
