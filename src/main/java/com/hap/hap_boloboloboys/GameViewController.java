@@ -96,23 +96,26 @@ public class GameViewController {
     public Label player2MoneyLabel;
     @FXML
     public Label deckCountLabel;
+
     private Label outputLabel;
 
-    public int numRows = 4;
-    public static int numCols = 5;
+    public Stage popupStage;
+
+    public Store toko = new Store();
     public static int[] prices = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     public static int[] amounts = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    public int playerMoney = 100000;
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
-    public Stage popupStage;
 
     public Person player1;
     public Person player2;
     public int currentPlayer = 1;
+
+    public int numRows = 4;
+    public static int numCols = 5;
     public Ladang ladang1;
     public Ladang ladang2;
-    public Store toko = new Store();
+
     public Deck deck;
     private List<Image> activeDeck = new ArrayList<>();
     private List<ImageView> shuffledImages = new ArrayList<>();
@@ -138,33 +141,6 @@ public class GameViewController {
         // Inisialisasi pemain
         player1 = new Person("player1");
         player2 = new Person("player2");
-        Plant pl1 = new Plant("BIJI_STROBERI");
-        pl1.setAge(10);
-        Item item = new Accelerate();
-        item.applyEffect(pl1);
-        item.applyEffect(pl1);
-        Product pr1 = new Product("STROBERI");
-        Product pr2 = new Product("JAGUNG");
-        pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
-        pr1.setImgPath("/card/produk/Produk7.png");
-        pr2.setImgPath("/card/produk/Produk4.png");
-        try {
-            player1.ladangku.plantKartu(0, 0, pl1);
-            player1.ladangku.plantKartu(0, 1, pr1);
-            player1.ladangku.plantKartu(0, 2, pr2);
-            player1.putToDeck(pl1);
-            player1.putToDeck(pr1);
-            player1.putToDeck(pr1);
-            player1.putToDeck(pr1);
-            player1.putToDeck(pr1);
-            // player1.putToDeck(pr1);
-            player1.putToDeck(new Accelerate());
-            player1.ladangku.plantKartu(0, 1, new Product("STROBERI"));
-            player1.putToDeck(pr2);
-        } catch (Exception e) {
-
-        }
-
         currentPlayer = 1;
         currentTurn = 1;
 
@@ -179,20 +155,20 @@ public class GameViewController {
         updateTurnLabel(currentPlayer);
         turnLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20px;");
 
-        updatePlayer1MoneyLabel(0);
+        updatePlayer1MoneyLabel(player1.getWealth());
         player1MoneyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 32px;");
 
-        updatePlayer2MoneyLabel(0);
+        updatePlayer2MoneyLabel(player2.getWealth());
         player2MoneyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 32px;");
 
-        updateDeckCountLabel(0, 40);
+        setCountDeckPasive();
         deckCountLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
 
         populateLadang();
         deckAktif();
         initializeToko();
 
-        Platform.runLater(() -> showShufflePopup());
+        // Platform.runLater(() -> showShufflePopup());
     }
 
     @FXML
@@ -244,6 +220,7 @@ public class GameViewController {
             deckAktif();
         }
         updateTurnLabel(currentTurn);
+        setCountDeckPasive();
 
         if (currentTurn > 20) {
             turnLabel.setText("-");
@@ -252,7 +229,7 @@ public class GameViewController {
         }
 
         popupOpen.set(true);
-        showShufflePopup();
+        // showShufflePopup();
 
         popupOpen.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -267,6 +244,16 @@ public class GameViewController {
                 }
             }
         });
+    }
+
+    public void setCountDeckPasive() {
+        int deckCount = 0;
+        if (currentPlayer == 1) {
+            deckCount = player1.getInventory().getSize();
+        } else {
+            deckCount = player2.getInventory().getSize();
+        }
+        updateDeckCountLabel(deckCount, 40);
     }
 
     public void determineWinner() {
@@ -544,18 +531,13 @@ public class GameViewController {
                     selected = ladang1.takeCard(firstRow, firstCol);
                 }
                 try {
-                    if (selected instanceof Plant) {
-                        System.out.println(((Plant) selected).getAge());
-                    } else if (selected == null) {
-                        System.out.println("not plant");
-                    }
                     if ((ladang1.getPetak(row, col).getKartu() instanceof Plant
                             || ladang1.getPetak(row, col).getKartu() instanceof Animal)) {
                         if (selected instanceof Item) {
                             Card kartu = ladang1.getPetak(row, col).getKartu();
                             ((Item) selected).applyEffect((Creature) kartu);
                             ladang1.plantKartu(row, col, kartu);
-                            
+
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
                             deck.putToDeck(selected, firstCol);
@@ -618,18 +600,13 @@ public class GameViewController {
                     selected = ladang1.takeCard(firstRow, firstCol);
                 }
                 try {
-                    if (selected instanceof Plant) {
-                        System.out.println(((Plant) selected).getAge());
-                    } else if (selected == null) {
-                        System.out.println("not plant");
-                    }
                     if ((ladang1.getPetak(row, col).getKartu() instanceof Plant
                             || ladang1.getPetak(row, col).getKartu() instanceof Animal)) {
                         if (selected instanceof Item) {
                             Card kartu = ladang1.getPetak(row, col).getKartu();
                             ((Item) selected).applyEffect((Creature) kartu);
                             ladang1.plantKartu(row, col, kartu);
-                            
+
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
                             deck.putToDeck(selected, firstCol);
@@ -795,8 +772,8 @@ public class GameViewController {
         populateLadang();
     }
 
-    public void setNumCols(int numCols) {
-        this.numCols = numCols;
+    public void setNumCols(int col) {
+        numCols = col;
         populateLadang();
     }
 
@@ -992,6 +969,12 @@ public class GameViewController {
     public void buyProduct(String productName, ImageView productImageView) {
         Pair<Product, Integer> item = toko.getItems().get(productName);
 
+        int playerMoney = 0;
+        if (currentPlayer == 1) {
+            playerMoney = player1.getWealth();
+        } else {
+            playerMoney = player2.getWealth();
+        }
         // Cek apakah item ada di toko dan uang pemain cukup
         if (item == null || playerMoney < item.getKey().getPrice() || item.getValue() <= 0) {
             if (item == null || item.getValue() <= 0) {
@@ -1045,10 +1028,23 @@ public class GameViewController {
         }
 
         updateStoreDisplay();
+
+        if (currentPlayer == 1) {
+            updatePlayer1MoneyLabel(player1.getWealth());
+        } else {
+            updatePlayer2MoneyLabel(player2.getWealth());
+        }
     }
 
     public void sellProduct(int index) {
         if (deck.getCard(index) != null && deck.getCard(index) instanceof Product) {
+            int playerMoney = 0;
+            if (currentPlayer == 1) {
+                playerMoney = player1.getWealth();
+            } else {
+                playerMoney = player2.getWealth();
+            }
+
             Product product = (Product) deck.getCard(index);
             int sellPrice = product.getPrice();
             playerMoney += sellPrice;
@@ -1079,7 +1075,6 @@ public class GameViewController {
         }
     }
 
-    
     public void updateStoreDisplay() {
         storeGridPane.getChildren().clear(); // Clear the storeGridPane before updating it
         int index = 0;
@@ -1239,9 +1234,30 @@ public class GameViewController {
             String selectedFormat = formatComboBox.getValue();
             String folderName = folderTextField.getText().trim();
             if (!folderName.isEmpty()) {
-                // Perform loading action here, you can load from a folder with the provided
-                // name
+                try {
+                    // load game state
+                    Load.loadGameState(folderName);
+                    currentTurn = Load.getCurrentTurn();
+                    toko = Load.getStore();
+
+                    // load player
+                    Load.loadPlayer(folderName, "player1");
+                    player1 = Load.getPerson("player1");
+                    Load.loadPlayer(folderName, "player2");
+                    player2 = Load.getPerson("player2");
+
+                    updatePlayer1MoneyLabel(player1.getWealth());
+                    updatePlayer2MoneyLabel(player2.getWealth());
+                    setCountDeckPasive();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 System.out.println("Load from: " + folderName + ", Format: " + selectedFormat);
+                populateLadang();
+                deckAktif();
+                initializeToko();
                 stopMethodLoad();
             } else {
                 System.out.println("Folder name cannot be empty!");
