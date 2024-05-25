@@ -132,6 +132,8 @@ public class GameViewController {
     private SimpleBooleanProperty popupOpen = new SimpleBooleanProperty(false);
     private List<int[]> threatenedCells = new ArrayList<>();
 
+    private final Object lock = new Object();
+
     @FXML
     public void initialize() { // Inisialisasi
         setButtonStyle(buttonLadangku, false);
@@ -189,59 +191,59 @@ public class GameViewController {
 
     @FXML
     public void handleNextButtonClick(ActionEvent event) {
-        // swap playernya
+        // Swap players
         System.out.println("Button Next Clicked!");
         System.out.println("Is in ladangku: " + isInLadangku);
         runMethodLadangku();
-        if (currentPlayer == 1) {
-            currentPlayer = 2;
-        } else {
-            currentPlayer = 1;
-        }
-        System.out.println("Now is " + currentPlayer);
-        currentTurn++;
-        if (currentPlayer == 1) {
-            player2.ladangku = ladang;
-            player2.setDeck(deck);
-            ladang = player1.ladangku;
-            deck = player1.getDeck();
-            System.out.println("Size " + player1.getDeck().calculateSize());
-        } else {
-            player1.ladangku = ladang;
-            player1.setDeck(deck);
-            ladang = player2.ladangku;
-            deck = player2.getDeck();
-            System.out.println("Size " + player2.getDeck().calculateSize());
-        }
+        synchronized (lock) {
+            if (currentPlayer == 1) {
+                currentPlayer = 2;
+            } else {
+                currentPlayer = 1;
+            }
+            System.out.println("Now is " + currentPlayer);
+            currentTurn++;
+            if (currentPlayer == 1) {
+                player2.ladangku = ladang;
+                player2.setDeck(deck);
+                ladang = player1.ladangku;
+                deck = player1.getDeck();
+                System.out.println("Size " + player1.getDeck().calculateSize());
+            } else {
+                player1.ladangku = ladang;
+                player1.setDeck(deck);
+                ladang = player2.ladangku;
+                deck = player2.getDeck();
+                System.out.println("Size " + player2.getDeck().calculateSize());
+            }
 
-        // tambah usia tanaman di ladangnya brou!
-        player1.ladangku.addAge();
-        player2.ladangku.addAge();
+            // Increment the age of plants
+            player1.ladangku.addAge();
+            player2.ladangku.addAge();
 
-        populateLadang(currentPlayer);
-        deckAktif();
-        updateTurnLabel(currentTurn);
-        setCountDeckPasive();
+            populateLadang(currentPlayer);
+            deckAktif();
+            updateTurnLabel(currentTurn);
+            setCountDeckPasive();
 
-        if (currentTurn > 20) {
-            turnLabel.setText("-");
-            determineWinner();
-            disableNextButton();
+            if (currentTurn > 20) {
+                turnLabel.setText("-");
+                determineWinner();
+                disableNextButton();
+            }
         }
 
         popupOpen.set(true);
          showShufflePopup();
 
-        // popupOpen.addListener((observable, oldValue, newValue) -> {
-        // if (!newValue) {
         Random random = new Random();
-        if (random.nextInt(10) == 0) {
+        if (random.nextInt(1) == 0) {
             System.out.println("Bear attack!");
             playSound("Rawr.mp3");
             displayPopupImage("Beruang.png");
 
             threatenedCells.clear();
-            // Tentukan sel-sel yang terancam diserang beruang
+            // Determine the cells threatened by the bear attack
             for (int i = 0; i < numRows; i++) {
                 for (int j = 0; j < numCols; j++) {
                     if (random.nextBoolean()) {
@@ -249,7 +251,7 @@ public class GameViewController {
                     }
                 }
             }
-            int bearAttackTime = random.nextInt(31) + 30;
+            int bearAttackTime = 10;
             System.out.println("Bear attack in " + bearAttackTime + " seconds.");
             showBearAttackTimer(bearAttackTime);
         }
@@ -580,7 +582,8 @@ public class GameViewController {
                                     ladang.plantKartu(row, col, kartu);
                                 }
                             } else {
-                                if (((Item) selected).getEffect() != Effect.DESTROY && ((Item) selected).getEffect() != Effect.DELAY) {
+                                if (((Item) selected).getEffect() != Effect.DESTROY
+                                        && ((Item) selected).getEffect() != Effect.DELAY) {
                                     ((Item) selected).applyEffect((Creature) kartu);
                                     ladang.plantKartu(row, col, kartu);
                                 } else {
@@ -614,7 +617,8 @@ public class GameViewController {
                                     return;
                                 }
                             } else {
-                                if (((Item) selected).getEffect() != Effect.DESTROY && ((Item) selected).getEffect() != Effect.DELAY) {
+                                if (((Item) selected).getEffect() != Effect.DESTROY
+                                        && ((Item) selected).getEffect() != Effect.DELAY) {
                                     ((Item) selected).applyEffect((Creature) kartu);
                                     ladang.plantKartu(row, col, kartu);
                                 } else {
@@ -624,7 +628,8 @@ public class GameViewController {
                                 }
                             }
                         } else if (selected instanceof Product) {
-                            if (!((Animal) ladang.getPetak(row, col).getKartu()).canEat((Product) selected) || !isInLadangku) {
+                            if (!((Animal) ladang.getPetak(row, col).getKartu()).canEat((Product) selected)
+                                    || !isInLadangku) {
                                 System.out.println("Tidak bisa makan");
                                 deck.putToDeck(selected, firstCol);
                                 return;
@@ -1707,7 +1712,7 @@ public class GameViewController {
         delay.play();
     }
 
-    private void showBearAttackTimer(int timeInSeconds) {
+    private synchronized void showBearAttackTimer(int timeInSeconds) {
         ImageView bearImageView = new ImageView(
                 new Image(getClass().getResource("/assets/Beruang.png").toExternalForm()));
         bearImageView.setFitWidth(130);
@@ -1726,15 +1731,16 @@ public class GameViewController {
         markThreatenedCells();
 
         bearAttackTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            countdown[0]--;
-            bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
-            if (countdown[0] <= 0) {
-                gridPaneBear.getChildren().remove(bearImageView);
-                gridPaneTime.getChildren().remove(bearAttackTimerLabel);
-                bearAttackTimer.stop();
-                mediaPlayer.stop();
-            } else if (countdown[0] % 6 == 0) {
-                damageThreatenedCells();
+            synchronized (lock) {
+                countdown[0]--;
+                bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
+                if (countdown[0] == 0) {
+                    gridPaneBear.getChildren().remove(bearImageView);
+                    gridPaneTime.getChildren().remove(bearAttackTimerLabel);
+                    bearAttackTimer.stop();
+                    mediaPlayer.stop();
+                    damageThreatenedCells();
+                }
             }
         }));
         bearAttackTimer.setCycleCount(timeInSeconds);
@@ -1872,11 +1878,11 @@ public class GameViewController {
         GridPane.setMargin(shuffleImageView, new Insets(10));
     }
 
-    private void markThreatenedCells() {
+    private synchronized void markThreatenedCells() {
         threatenedCells.clear();
         Random random = new Random();
 
-        int[] possibleSizes = { 2, 3, 4 };
+        int[] possibleSizes = { 1, 2, 3, 4 };
         int rowsSize = possibleSizes[random.nextInt(possibleSizes.length)];
         int colsSize = possibleSizes[random.nextInt(possibleSizes.length)];
         int startRow = random.nextInt(numRows - rowsSize + 1);
@@ -1898,19 +1904,71 @@ public class GameViewController {
         populateLadang(currentPlayer);
     }
 
-    private void damageThreatenedCells() {
+    private synchronized void damageThreatenedCells() {
         if (!threatenedCells.isEmpty()) {
-            Random random = new Random();
-            int index = random.nextInt(threatenedCells.size());
-            int[] cell = threatenedCells.remove(index);
-            int row = cell[0];
-            int col = cell[1];
+            // Logic to apply effects to the threatened cells
+            for (int[] cell : threatenedCells) {
+                int row = cell[0];
+                int col = cell[1];
 
-            // Logic efek ke petaknya
+                // Apply effects to the cell
+                // For example, bear attack
+                Card card = ladang.getPetak(row, col).getKartu();
+                // Trap
+                if (card == null)
+                    continue;
+                if (((Creature) card).getEffectValue(5) > 0) {
+                    Omnivore beruang = new Omnivore("BERUANG");
+                    // Check if there is an empty slot in the active deck
+                    boolean foundEmptySlot = false;
+                    for (int c = 0; c < 6; c++) {
+                        StackPane stackPane = (StackPane) gridPane2.getChildren().get(c);
+                        ImageView petakImageView = (ImageView) stackPane.getChildren().get(0);
+                        ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
+                        if (cardImageView.getImage() == null) {
+                            foundEmptySlot = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundEmptySlot) {
+                        // Error message if the active deck is full
+                        System.out.println("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.");
+                        return;
+                    } else {
+                        // Add the item to the active deck
+                        for (int c = 0; c < 6; c++) {
+                            StackPane stackPane = (StackPane) gridPane2.getChildren().get(c);
+                            ImageView petakImageView = (ImageView) stackPane.getChildren().get(0);
+                            ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
+                            String imagePath = "/card/hewan/Beruang.png";
+                            Image image = new Image(getClass().getResource(imagePath).toExternalForm());
+                            if (cardImageView.getImage() == null) {
+                                cardImageView.setImage(image);
+                                break;
+                            }
+                        }
+
+                        if (currentPlayer == 1) {
+                            player1.getDeck().putToDeck(beruang);
+                        } else {
+                            player2.getDeck().putToDeck(beruang);
+                        }
+                        return;
+                    }
+
+                } else if (((Creature) card).getEffectValue(4) > 0) { // Protect
+                    continue;
+                } else {
+                    // Destroy the card
+                    ladang.getPetak(row, col).setKartu(null);
+                    System.out.println("Kartu di petak [" + row + "][" + col + "] telah dihancurkan.");
+                }
+            }
 
             // Debug
-            System.out.println("Cell yang terkena serangan beruang:");
-            System.out.println("Baris: " + row + ", Kolom: " + col);
+            // System.out.println("Cell yang terkena serangan beruang:");
+            // System.out.println("Baris: " + row + ", Kolom: " + col);
 
             populateLadang(currentPlayer);
         }
