@@ -128,6 +128,7 @@ public class GameViewController {
     private Timeline bearAttackTimer;
     private Label bearAttackTimerLabel;
     private SimpleBooleanProperty popupOpen = new SimpleBooleanProperty(false);
+    private List<int[]> threatenedCells = new ArrayList<>();
 
     @FXML
     public void initialize() { // Inisialisasi
@@ -169,7 +170,7 @@ public class GameViewController {
         initializeToko();
         handleButtonLadangkuClick();
 
-        Platform.runLater(() -> showShufflePopup());
+        // Platform.runLater(() -> showShufflePopup());
     }
 
     @FXML
@@ -235,6 +236,16 @@ public class GameViewController {
             System.out.println("Bear attack!");
             playSound("Rawr.mp3");
             displayPopupImage("Beruang.png");
+
+            threatenedCells.clear();
+            // Tentukan sel-sel yang terancam diserang beruang
+            for (int i = 0; i < numRows; i++) {
+                for (int j = 0; j < numCols; j++) {
+                    if (random.nextBoolean()) {
+                        threatenedCells.add(new int[]{i, j});
+                    }
+                }
+            }
             int bearAttackTime = random.nextInt(31) + 30;
             System.out.println("Bear attack in " + bearAttackTime + " seconds.");
             showBearAttackTimer(bearAttackTime);
@@ -309,28 +320,27 @@ public class GameViewController {
     }
 
     public void populateLadang(int requestedPl) {
-        gridPane.getChildren().clear(); // RequestedPL represent whose ladang to be displayed, check i it's in ladang musuh or not using
-        // isInLadangku
-
+        gridPane.getChildren().clear(); // RequestedPL represent whose ladang to be displayed, check if it's in ladang musuh or not using isInLadangku
+    
         if (requestedPl == 1) {
             ladang = player1.ladangku;
         } else {
             ladang = player2.ladangku;
         }
-
+    
         Image petakImage = loadImage("/assets/Petak.png");
-
+    
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 final int finalRow = row;
                 final int finalCol = col;
-
+    
                 ImageView petakImageView = new ImageView(petakImage);
                 petakImageView.getProperties().put("ladang", true);
                 petakImageView.setFitWidth(95);
                 petakImageView.setFitHeight(110);
                 petakImageView.getStyleClass().add("image-view");
-
+    
                 ImageView cardImageView;
                 if (ladang.getPetak(row, col).getKartu() != null) {
                     Image cardImage = loadImage(ladang.getPetak(row, col).getKartu().getImgPath());
@@ -341,21 +351,36 @@ public class GameViewController {
                 cardImageView.setFitWidth(75);
                 cardImageView.setFitHeight(90);
                 cardImageView.getStyleClass().add("image-view");
-
+    
                 StackPane stackPane = new StackPane();
                 stackPane.getChildren().addAll(petakImageView, cardImageView);
-
+    
+                // Tambahkan gaya visual untuk sel yang terancam
+                boolean isThreatened = false;
+                for (int[] cell : threatenedCells) {
+                    if (cell[0] == row && cell[1] == col) {
+                        // Efek gelap atau glow
+                        petakImageView.setStyle("-fx-effect: dropshadow(gaussian, red, 10, 0.5, 0, 0);");
+                        isThreatened = true;
+                        break;
+                    }
+                }
+    
+                if (!isThreatened) {
+                    petakImageView.setStyle("");
+                }
+    
                 cardImageView.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.SECONDARY) {
                         showCardDetails(cardImageView, finalRow, finalCol);
                     }
                 });
-
+    
                 gridPane.add(stackPane, col, row);
                 setupDragAndDropInLadang(cardImageView, petakImageView, row, col);
             }
         }
-    }
+    }    
 
     public void deckAktif() {
         gridPane2.getChildren().clear();
@@ -1312,17 +1337,14 @@ public class GameViewController {
     public void runMethodPlugin() {
         System.out.println("Button Plugin clicked and method executed");
 
-        // Create label for file plugin
         Label nameLabel = new Label("Plugin");
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
         Label fileLabel = new Label("File Plugin: ");
         fileLabel.setStyle("-fx-font-weight: bold;");
 
-        // Create label to display selected file name
         Label fileNameLabel = new Label("");
         fileNameLabel.setStyle("-fx-font-weight: bold;");
 
-        // Create Choose File button
         Button chooseFileButton = new Button("Choose File");
         chooseFileButton.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
@@ -1333,12 +1355,10 @@ public class GameViewController {
             }
         });
 
-        // Create Upload button
         Button uploadButton = new Button("Upload");
         uploadButton.setOnAction(event -> {
             String fileName = fileNameLabel.getText();
             if (!fileName.isEmpty()) {
-                // Perform plugin loading action here
                 boolean isSuccess = runPlugin(fileName);
                 if (isSuccess) {
                     displayPluginStatus("Plugin Loaded Successfully", true);
@@ -1350,7 +1370,6 @@ public class GameViewController {
             }
         });
 
-        // Create Back Button
         Button backButton = new Button("Kembali");
         backButton.setOnAction(event -> {
             popupStage.close();
@@ -1358,31 +1377,25 @@ public class GameViewController {
             stopMethodPlugin();
         });
 
-        // Create an HBox to hold file label and file name label horizontally
         HBox fileBox = new HBox(5, fileLabel, fileNameLabel);
         fileBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Create an HBox to hold buttons horizontally
         HBox buttonBox = new HBox(10, chooseFileButton, uploadButton, backButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // Create VBox to hold all components vertically
         VBox vbox = new VBox(10, nameLabel, fileBox, buttonBox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
         vbox.setStyle("-fx-background-color: white; -fx-border-width: 1px;");
 
-        // Create a label for displaying the status message
         Label statusLabel = new Label();
         statusLabel.setStyle("-fx-font-weight: bold;");
 
-        // Create another VBox to hold the vbox and status label
         VBox mainVBox = new VBox(10, vbox, statusLabel);
         mainVBox.setAlignment(Pos.CENTER);
         mainVBox.setPadding(new Insets(20));
         mainVBox.setStyle("-fx-background-color: white; -fx-border-width: 1px;");
 
-        // Create the scene and stage for the popup
         Scene scene = new Scene(mainVBox, 400, 250);
         popupStage = new Stage();
         popupStage.initModality(Modality.WINDOW_MODAL);
@@ -1566,20 +1579,22 @@ public class GameViewController {
     }
 
     private void showBearAttackTimer(int timeInSeconds) {
-        ImageView bearImageView = new ImageView(
-                new Image(getClass().getResource("/assets/Beruang.png").toExternalForm()));
+        ImageView bearImageView = new ImageView(new Image(getClass().getResource("/assets/Beruang.png").toExternalForm()));
         bearImageView.setFitWidth(130);
         bearImageView.setFitHeight(130);
-
+    
         bearAttackTimerLabel = new Label();
         bearAttackTimerLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
-
+    
         gridPaneBear.getChildren().add(bearImageView);
         gridPaneTime.getChildren().add(bearAttackTimerLabel);
-
+    
         final int[] countdown = { timeInSeconds };
         bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
         MediaPlayer mediaPlayer = playSound("Siren.mp3");
+    
+        markThreatenedCells();
+    
         bearAttackTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             countdown[0]--;
             bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
@@ -1588,11 +1603,13 @@ public class GameViewController {
                 gridPaneTime.getChildren().remove(bearAttackTimerLabel);
                 bearAttackTimer.stop();
                 mediaPlayer.stop();
+            } else if (countdown[0] % 6 == 0) { 
+                damageThreatenedCells();
             }
         }));
         bearAttackTimer.setCycleCount(timeInSeconds);
         bearAttackTimer.play();
-    }
+    }    
 
     private void showShufflePopup() {
         Stage popupStage = new Stage();
@@ -1727,4 +1744,48 @@ public class GameViewController {
         //     player2.getDeck().putToDeck(selectedImage);
         // }
     }
+
+    private void markThreatenedCells() {
+        threatenedCells.clear();
+        Random random = new Random();
+        
+        int[] possibleSizes = {2, 3, 4}; 
+        int rowsSize = possibleSizes[random.nextInt(possibleSizes.length)];
+        int colsSize = possibleSizes[random.nextInt(possibleSizes.length)];
+        int startRow = random.nextInt(numRows - rowsSize + 1);
+        int startCol = random.nextInt(numCols - colsSize + 1);
+    
+        // Mark the area
+        for (int row = startRow; row < startRow + rowsSize; row++) {
+            for (int col = startCol; col < startCol + colsSize; col++) {
+                threatenedCells.add(new int[]{row, col});
+            }
+        }
+    
+        // Debug
+        System.out.println("Sel yang terancam:");
+        for (int[] cell : threatenedCells) {
+            System.out.println("Baris: " + cell[0] + ", Kolom: " + cell[1]);
+        }
+    
+        populateLadang(currentPlayer); 
+    }    
+    
+    private void damageThreatenedCells() {
+        if (!threatenedCells.isEmpty()) {
+            Random random = new Random();
+            int index = random.nextInt(threatenedCells.size());
+            int[] cell = threatenedCells.remove(index);
+            int row = cell[0];
+            int col = cell[1];
+    
+            // Logic efek ke petaknya
+    
+            // Debug
+            System.out.println("Cell yang terkena serangan beruang:");
+            System.out.println("Baris: " + row + ", Kolom: " + col);
+    
+            populateLadang(currentPlayer);
+        }
+    }    
 }
