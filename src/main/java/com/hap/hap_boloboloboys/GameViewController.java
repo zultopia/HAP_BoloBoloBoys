@@ -113,12 +113,12 @@ public class GameViewController {
 
     public int numRows = 4;
     public static int numCols = 5;
-    public Ladang ladang1;
-    public Ladang ladang2;
+    public Ladang ladang;
 
     public Deck deck;
     private List<Image> activeDeck = new ArrayList<>();
     private List<ImageView> shuffledImages = new ArrayList<>();
+    public boolean isInLadangku = true;
 
     @FXML
     private GridPane gridPaneBear;
@@ -164,7 +164,7 @@ public class GameViewController {
         setCountDeckPasive();
         deckCountLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
 
-        populateLadang();
+        populateLadang(currentPlayer);
         deckAktif();
         initializeToko();
 
@@ -194,29 +194,25 @@ public class GameViewController {
         currentTurn++;
         if (currentPlayer == 1) {
             // Retrieve information before first
-            player1.ladangku = ladang2;
-            player2.ladangku = ladang1;
+            player2.ladangku = ladang;
             player2.setDeck(deck);
 
             // Change the main game interface
-            ladang1 = player1.ladangku;
-            ladang2 = player2.ladangku;
+            ladang = player1.ladangku;
             deck = player1.getDeck();
             System.out.println("Size " + player1.getDeck().calculateSize());
-            populateLadang();
+            populateLadang(currentPlayer);
             deckAktif();
         } else {
             // Retrieve information before first
-            player1.ladangku = ladang1;
-            player2.ladangku = ladang2;
+            player1.ladangku = ladang;
             player1.setDeck(deck);
 
             // Change the main game interface
-            ladang1 = player2.ladangku;
-            ladang2 = player1.ladangku;
+            ladang = player2.ladangku;
             deck = player2.getDeck();
             System.out.println(player2.getDeck().calculateSize());
-            populateLadang();
+            populateLadang(currentPlayer);
             deckAktif();
         }
         updateTurnLabel(currentTurn);
@@ -311,15 +307,14 @@ public class GameViewController {
         nextButton.setDisable(true);
     }
 
-    public void populateLadang() {
-        gridPane.getChildren().clear();
+    public void populateLadang(int requestedPl) {
+        gridPane.getChildren().clear(); // RequestedPL represent whose ladang to be displayed, check i it's in ladang musuh or not using
+        // isInLadangku
 
-        if (currentPlayer == 1) {
-            ladang1 = player1.ladangku;
-            ladang2 = player2.ladangku;
+        if (requestedPl == 1) {
+            ladang = player1.ladangku;
         } else {
-            ladang1 = player2.ladangku;
-            ladang2 = player1.ladangku;
+            ladang = player2.ladangku;
         }
 
         Image petakImage = loadImage("/assets/Petak.png");
@@ -336,8 +331,8 @@ public class GameViewController {
                 petakImageView.getStyleClass().add("image-view");
 
                 ImageView cardImageView;
-                if (ladang1.getPetak(row, col).getKartu() != null) {
-                    Image cardImage = loadImage(ladang1.getPetak(row, col).getKartu().getImgPath());
+                if (ladang.getPetak(row, col).getKartu() != null) {
+                    Image cardImage = loadImage(ladang.getPetak(row, col).getKartu().getImgPath());
                     cardImageView = new ImageView(cardImage);
                 } else {
                     cardImageView = new ImageView();
@@ -523,31 +518,31 @@ public class GameViewController {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    if (ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Item
-                            || ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                    if (ladang.getPetak(firstRow, firstCol).getKartu() instanceof Item
+                            || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
                         return;
                     }
                     System.out.println("From ladang");
-                    selected = ladang1.takeCard(firstRow, firstCol);
+                    selected = ladang.takeCard(firstRow, firstCol);
                 }
                 try {
-                    if ((ladang1.getPetak(row, col).getKartu() instanceof Plant
-                            || ladang1.getPetak(row, col).getKartu() instanceof Animal)) {
+                    if ((ladang.getPetak(row, col).getKartu() instanceof Plant
+                            || ladang.getPetak(row, col).getKartu() instanceof Animal)) {
                         if (selected instanceof Item) {
-                            Card kartu = ladang1.getPetak(row, col).getKartu();
+                            Card kartu = ladang.getPetak(row, col).getKartu();
                             ((Item) selected).applyEffect((Creature) kartu);
-                            ladang1.plantKartu(row, col, kartu);
+                            ladang.plantKartu(row, col, kartu);
 
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
                             deck.putToDeck(selected, firstCol);
                             return;
                         }
-                    } else if (ladang1.getPetak(row, col).getKartu() == null) {
+                    } else if (ladang.getPetak(row, col).getKartu() == null) {
                         if (selected instanceof Plant) {
-                            ladang1.plantKartu(row, col, (Plant) selected);
+                            ladang.plantKartu(row, col, (Plant) selected);
                         } else if (selected instanceof Animal) {
-                            ladang1.plantKartu(row, col, (Animal) selected);
+                            ladang.plantKartu(row, col, (Animal) selected);
                         } else {
                             System.out.println("Kartu yang ditanam bukan tanaman atau hewan");
                             deck.putToDeck(selected, firstCol);
@@ -560,8 +555,8 @@ public class GameViewController {
                 }
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        if (ladang1.getPetak(i, j) != null)
-                            System.out.print(ladang1.getPetak(i, j).getKartu() + " ");
+                        if (ladang.getPetak(i, j) != null)
+                            System.out.print(ladang.getPetak(i, j).getKartu() + " ");
                     }
                     System.out.println();
                 }
@@ -592,31 +587,31 @@ public class GameViewController {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    if (ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Item
-                            || ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                    if (ladang.getPetak(firstRow, firstCol).getKartu() instanceof Item
+                            || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
                         return;
                     }
                     System.out.println("From ladang");
-                    selected = ladang1.takeCard(firstRow, firstCol);
+                    selected = ladang.takeCard(firstRow, firstCol);
                 }
                 try {
-                    if ((ladang1.getPetak(row, col).getKartu() instanceof Plant
-                            || ladang1.getPetak(row, col).getKartu() instanceof Animal)) {
+                    if ((ladang.getPetak(row, col).getKartu() instanceof Plant
+                            || ladang.getPetak(row, col).getKartu() instanceof Animal)) {
                         if (selected instanceof Item) {
-                            Card kartu = ladang1.getPetak(row, col).getKartu();
+                            Card kartu = ladang.getPetak(row, col).getKartu();
                             ((Item) selected).applyEffect((Creature) kartu);
-                            ladang1.plantKartu(row, col, kartu);
+                            ladang.plantKartu(row, col, kartu);
 
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
                             deck.putToDeck(selected, firstCol);
                             return;
                         }
-                    } else if (ladang1.getPetak(row, col).getKartu() == null) {
+                    } else if (ladang.getPetak(row, col).getKartu() == null) {
                         if (selected instanceof Plant) {
-                            ladang1.plantKartu(row, col, (Plant) selected);
+                            ladang.plantKartu(row, col, (Plant) selected);
                         } else if (selected instanceof Animal) {
-                            ladang1.plantKartu(row, col, (Animal) selected);
+                            ladang.plantKartu(row, col, (Animal) selected);
                         } else {
                             System.out.println("Kartu yang ditanam bukan tanaman atau hewan");
                             deck.putToDeck(selected, firstCol);
@@ -629,8 +624,8 @@ public class GameViewController {
                 }
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        if (ladang1.getPetak(i, j) != null)
-                            System.out.print(ladang1.getPetak(i, j).getKartu() + " ");
+                        if (ladang.getPetak(i, j) != null)
+                            System.out.print(ladang.getPetak(i, j).getKartu() + " ");
                     }
                     System.out.println();
                 }
@@ -660,7 +655,7 @@ public class GameViewController {
         // String cardName = getCardNameFromImagePath(cardImageView.getImage());
 
         // Create Labels
-        Card card = ladang1.getPetak(row, col).getKartu();
+        Card card = ladang.getPetak(row, col).getKartu();
         Label nameLabel = new Label(card.getCardName());
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
         Label infoLabel;
@@ -736,7 +731,7 @@ public class GameViewController {
     public boolean checkHarvestConditions(int row, int col) {
         // Implement the conditions to check if the card can be harvested
         // return true if can harvest
-        Card card = ladang1.getPetak(row, col).getKartu();
+        Card card = ladang.getPetak(row, col).getKartu();
         if (((Creature) card).canHarvest()) {
             return true;
         }
@@ -747,10 +742,10 @@ public class GameViewController {
         if (deck.isFull()) {
             System.out.println("Deck sudah penuh!");
         } else {
-            Creature card = (Creature) ladang1.takeCard(row, col);
+            Creature card = (Creature) ladang.takeCard(row, col);
             Product product = card.harvest();
             deck.putToDeck(product);
-            populateLadang();
+            populateLadang(currentPlayer);
             deckAktif();
             System.out.println("Harvesting " + card.getCardName() + ": sucessed!");
             ((Stage) nameLabel.getScene().getWindow()).close();
@@ -769,21 +764,21 @@ public class GameViewController {
 
     public void setNumRows(int numRows) {
         this.numRows = numRows;
-        populateLadang();
+        populateLadang(currentPlayer);
     }
 
     public void setNumCols(int col) {
         numCols = col;
-        populateLadang();
+        populateLadang(currentPlayer);
     }
 
     @FXML
     public void handleButtonLadangkuClick() {
         toggleButtonState(buttonLadangku);
         if (activeButton == buttonLadangku) {
-            runMethodLadangku();
+            populateLadang(currentPlayer);
         } else {
-            stopMethodLadangku();
+
         }
     }
 
@@ -1283,7 +1278,7 @@ public class GameViewController {
                 }
 
                 System.out.println("Load from: " + folderName + ", Format: " + selectedFormat);
-                populateLadang();
+                populateLadang(currentPlayer);
                 deckAktif();
                 initializeToko();
                 stopMethodLoad();
