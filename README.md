@@ -106,7 +106,6 @@ Pemenang ditentukan setelah 20 putaran berdasarkan jumlah uang yang berhasil dik
 
 1. Unit Testing
 Implementasi unit testing dilakukan dengan menggunakan library JUnit5, Jacoco, dan Surefire untuk membuat coverage report. Unit testing yang dilakukan telah menunjukkan coverage di atas 60% untuk setiap kelas yang ada unit test. Pada coverage report di bawah ini menunjukkan bahwa untuk instructions memiliki coverage 84% dan untuk setiap percabangan (branches) memiliki coverage 74%. Untuk menjalankan unit testing pada proyek ini dapat dilakukan dengan memberikan command `mvn test` pada root directory project.
-![Screenshot 3](images/UnitTesting.jpg)
 
 2. Memperindah UI
 Pada GUI yang diimplementasikan, kami menambahkan beberapa komponen tambahan yang membuat pemain tidak merasa bosan dan merasa excited untuk memainkannya. Komponen yang kami tambahkan pertama adalah membuat page program sebanyak 3 yang terdiri dari tampilan awal saat menjalankan program atau Home dari program ini. Pada page Home kami menambahkan komponen berupa jam dan tanggal saat ini dan juga di bagian bawahnya terdapat informasi tim pembuat program yaitu kami. Lalu untuk memilih menunya berada di paling atas. Selain menu Home, terdapat menu Setting dan menu Game. Menu setting ini menampilkan informasi mengenai aplikasi program dan alur permainan dari program ini. Menu utama pada program ini adalah menu Game. Pada menu game kami membuat tampilan gambar dari background dan elemen-elemen lainnya terlihat lebih menarik. Selain itu juga kami menambahkan sound untuk menemani pemain saat bermain agar tidak terlalu sunyi. Button yang terdapat pada tampilannya juga dibuat hover agar lebih memperjelas saat pemain menggunakannya. 
@@ -179,9 +178,6 @@ Code dalam projek ini berada di bawah lisensi MIT.
 
 <br>
 <h3 align="center"> TERIMA KASIH! </h3>
-
-# Cara Run
-Instal maven lalu ke root folder dan mvn clean javafx:run 
 
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [license-url]: https://github.com/zultopia/HAP_BoloBoloBoys/blob/main/LICENSE
