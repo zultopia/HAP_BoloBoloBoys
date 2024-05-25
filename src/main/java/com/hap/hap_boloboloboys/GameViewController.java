@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.hap.hap_boloboloboys.lib.card.*;
+import com.hap.hap_boloboloboys.lib.card.Item.Effect;
 import com.hap.hap_boloboloboys.lib.config.*;
 import com.hap.hap_boloboloboys.lib.field.*;
 import com.hap.hap_boloboloboys.lib.person.*;
@@ -527,13 +528,40 @@ public class GameViewController {
                     selected = ladang.takeCard(firstRow, firstCol);
                 }
                 try {
-                    if ((ladang.getPetak(row, col).getKartu() instanceof Plant
-                            || ladang.getPetak(row, col).getKartu() instanceof Animal)) {
+                    if (ladang.getPetak(row, col).getKartu() instanceof Plant) {
                         if (selected instanceof Item) {
                             Card kartu = ladang.getPetak(row, col).getKartu();
-                            ((Item) selected).applyEffect((Creature) kartu);
-                            ladang.plantKartu(row, col, kartu);
-
+                            System.out.println(((Item) selected).getEffect());
+                            if (((Item) selected).getEffect() == Effect.DESTROY) {
+                                ladang.getPetak(row, col).setKartu(null);
+                                cardImageView.setImage(null);
+                            } else {
+                                ((Item) selected).applyEffect((Creature) kartu);
+                                ladang.plantKartu(row, col, kartu);
+                            }
+                        } else {
+                            System.out.println("Kartu tidak bisa ditanam");
+                            deck.putToDeck(selected, firstCol);
+                            return;
+                        }
+                    } else if (ladang.getPetak(row, col).getKartu() instanceof Animal) {
+                        if (selected instanceof Item) {
+                            Card kartu = ladang.getPetak(row, col).getKartu();
+                            System.out.println(((Item) selected).getEffect());
+                            if (((Item) selected).getEffect() == Effect.DESTROY) {
+                                Card kartuLadang = ladang.takeCard(row, col);
+                                cardImageView.setImage(null);
+                            } else {
+                                ((Item) selected).applyEffect((Creature) kartu);
+                                ladang.plantKartu(row, col, kartu);
+                            }
+                        } else if (selected instanceof Product) {
+                            if (!((Animal) ladang.getPetak(row, col).getKartu()).canEat((Product) selected)) {
+                                System.out.println("Tidak bisa makan");
+                                deck.putToDeck(selected, firstCol);
+                                return;
+                            }
+                            ((Animal) ladang.getPetak(row, col).getKartu()).feed((Product) selected);
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
                             deck.putToDeck(selected, firstCol);
@@ -596,19 +624,7 @@ public class GameViewController {
                     selected = ladang.takeCard(firstRow, firstCol);
                 }
                 try {
-                    if ((ladang.getPetak(row, col).getKartu() instanceof Plant
-                            || ladang.getPetak(row, col).getKartu() instanceof Animal)) {
-                        if (selected instanceof Item) {
-                            Card kartu = ladang.getPetak(row, col).getKartu();
-                            ((Item) selected).applyEffect((Creature) kartu);
-                            ladang.plantKartu(row, col, kartu);
-
-                        } else {
-                            System.out.println("Kartu tidak bisa ditanam");
-                            deck.putToDeck(selected, firstCol);
-                            return;
-                        }
-                    } else if (ladang.getPetak(row, col).getKartu() == null) {
+                    if (ladang.getPetak(row, col).getKartu() == null) {
                         if (selected instanceof Plant) {
                             ladang.plantKartu(row, col, (Plant) selected);
                         } else if (selected instanceof Animal) {
@@ -867,11 +883,11 @@ public class GameViewController {
             populateLadang(2);
         }
     }
-
+    
     public void stopMethodLadangku() {
         System.out.println("Stopping method for Button Ladangku");
     }
-
+    
     public void runMethodLadangmu() {
         System.out.println("Button Ladangmu clicked and method executed");
         if (currentPlayer == 1) {
@@ -882,7 +898,7 @@ public class GameViewController {
             populateLadang(1);
         }
     }
-
+    
     public void stopMethodLadangmu() {
         System.out.println("Stopping method for Button Ladangmu");
     }
@@ -1064,6 +1080,11 @@ public class GameViewController {
                 updatePlayer2MoneyLabel(playerMoney);
             }
 
+            // Add the product to toko
+            toko.addItem(product.getCode(), product, 1);
+            updateHargaProduk(index, sellPrice);
+            updateJumlahProduk(index, 1);
+
             // Remove the product from deck aktif
             try {
                 deck.pop(index);
@@ -1072,16 +1093,11 @@ public class GameViewController {
                 return;
             }
 
-            // Add the product to toko
-            toko.addItem(product.getCode(), product, 1);
-            updateHargaProduk(index, sellPrice);
-            updateJumlahProduk(index, 1);
-
             // Update deck aktif display
             deckAktif();
 
             // Update toko display
-            // updateStoreDisplay();
+            updateStoreDisplay();
         }
     }
 
@@ -1111,8 +1127,8 @@ public class GameViewController {
                 System.err.println("Error loading image for product: " + productName);
             }
 
-            hargaLabels[index].setText("Harga: Rp " + price);
-            jumlahLabels[index].setText("Jumlah: " + quantity);
+            hargaLabels[index] = new Label("Harga: Rp " + price);
+            jumlahLabels[index] = new Label("Jumlah: " + quantity);
 
             VBox productBox = new VBox(10);
             productBox.setAlignment(Pos.CENTER);
