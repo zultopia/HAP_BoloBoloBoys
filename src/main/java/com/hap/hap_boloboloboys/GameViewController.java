@@ -495,37 +495,38 @@ public class GameViewController {
             db.setContent(content);
             event.consume();
         });
-        
+
         cardImageView.setOnDragOver(event -> {
             // Dragboard db = event.getDragboard();
             // int rowDrag = Integer.parseInt(db.getString().split(",")[0].split("=")[1]);
             // int colDrag = Integer.parseInt(db.getString().split(",")[1].split("=")[1]);
-            // int isFromLadang = Integer.parseInt(db.getString().split(",")[2].split("=")[1]);
+            // int isFromLadang =
+            // Integer.parseInt(db.getString().split(",")[2].split("=")[1]);
             // Card card = null;
             // if (isFromLadang == 0) {
-            //     Card card = deck.getCard(rowDrag);
+            // Card card = deck.getCard(rowDrag);
             // } else {
-                //     Card card = ladang.getPetak(rowDrag, colDrag).getKartu();
-                // }
-                if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
-                    event.acceptTransferModes(TransferMode.MOVE);
-                }
-                event.consume();
-            });
-            
-            petakImageView.setOnDragOver(event -> {
+            // Card card = ladang.getPetak(rowDrag, colDrag).getKartu();
+            // }
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-        
+
+        petakImageView.setOnDragOver(event -> {
+            if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
         petakImageView.setOnDragEntered(event -> {
             if (event.getGestureSource() != petakImageView && event.getDragboard().hasImage()) {
                 petakImageView.setOpacity(0.3);
             }
         });
-        
+
         petakImageView.setOnDragExited(event -> {
             petakImageView.setOpacity(1);
         });
@@ -553,7 +554,7 @@ public class GameViewController {
                     }
                 } else {
                     if (ladang.getPetak(firstRow, firstCol).getKartu() instanceof Item
-                    || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                            || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
                         return;
                     }
                     System.out.println("From ladang");
@@ -573,7 +574,10 @@ public class GameViewController {
                             }
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
-                            deck.putToDeck(selected, firstCol);
+                            if (isFromLadang == 0)
+                                deck.putToDeck(selected, firstCol);
+                            else
+                                ladang.plantKartu(firstRow, firstCol, selected);
                             return;
                         }
                     } else if (ladang.getPetak(row, col).getKartu() instanceof Animal) {
@@ -596,8 +600,10 @@ public class GameViewController {
                             ((Animal) ladang.getPetak(row, col).getKartu()).feed((Product) selected);
                         } else {
                             System.out.println("Kartu tidak bisa ditanam");
-                            if (isFromLadang == 0) deck.putToDeck(selected, firstCol);
-                            else ladang.plantKartu(firstRow, firstCol, selected);
+                            if (isFromLadang == 0)
+                                deck.putToDeck(selected, firstCol);
+                            else
+                                ladang.plantKartu(firstRow, firstCol, selected);
                             return;
                         }
                     } else if (ladang.getPetak(row, col).getKartu() == null) {
@@ -607,8 +613,10 @@ public class GameViewController {
                             ladang.plantKartu(row, col, (Animal) selected);
                         } else {
                             System.out.println("Kartu yang ditanam bukan tanaman atau hewan");
-                            if (isFromLadang == 0) deck.putToDeck(selected, firstCol);
-                            else ladang.plantKartu(firstRow, firstCol, selected);
+                            if (isFromLadang == 0)
+                                deck.putToDeck(selected, firstCol);
+                            else
+                                ladang.plantKartu(firstRow, firstCol, selected);
                             return;
                         }
                         cardImageView.setImage(db.getImage());
@@ -618,8 +626,10 @@ public class GameViewController {
                 }
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        if (ladang.getPetak(i, j).getKartu() != null) System.out.print(ladang.getPetak(i, j).getKartu().getCardName() + " ");
-                        else System.out.print("0000");
+                        if (ladang.getPetak(i, j).getKartu() != null)
+                            System.out.print(ladang.getPetak(i, j).getKartu().getCardName() + " ");
+                        else
+                            System.out.print("0000");
                     }
                     System.out.println();
                 }
@@ -627,7 +637,7 @@ public class GameViewController {
             event.setDropCompleted(success);
             event.consume();
         });
-        
+
         petakImageView.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
@@ -651,7 +661,7 @@ public class GameViewController {
                     }
                 } else {
                     if (ladang.getPetak(firstRow, firstCol).getKartu() instanceof Item
-                    || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                            || ladang.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
                         return;
                     }
                     System.out.println("From ladang");
@@ -665,19 +675,36 @@ public class GameViewController {
                             ladang.plantKartu(row, col, (Animal) selected);
                         } else {
                             System.out.println("Kartu yang ditanam bukan tanaman atau hewan");
-                            if (isFromLadang == 0) deck.putToDeck(selected, firstCol);
-                            else ladang.plantKartu(firstRow, firstCol, selected);
+                            if (isFromLadang == 0)
+                                deck.putToDeck(selected, firstCol);
+                            else
+                                ladang.plantKartu(firstRow, firstCol, selected);
                             return;
                         }
                         cardImageView.setImage(db.getImage());
+                    } else {
+                        if (selected instanceof Item) {
+                            Card kartu = ladang.getPetak(row, col).getKartu();
+                            ((Item) selected).applyEffect((Creature) kartu);
+                            ladang.plantKartu(row, col, kartu);
+                        } else {
+                            System.out.println("Kartu tidak bisa ditanam");
+                            if (isFromLadang == 0)
+                                deck.putToDeck(selected, firstCol);
+                            else
+                                ladang.plantKartu(firstRow, firstCol, selected);
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        if (ladang.getPetak(i, j).getKartu() != null) System.out.print(ladang.getPetak(i, j).getKartu().getCardName() + " ");
-                        else System.out.print("0000 ");
+                        if (ladang.getPetak(i, j).getKartu() != null)
+                            System.out.print(ladang.getPetak(i, j).getKartu().getCardName() + " ");
+                        else
+                            System.out.print("0000 ");
                     }
                     System.out.println();
                 }
@@ -702,7 +729,7 @@ public class GameViewController {
             }
             event.consume();
         });
-        
+
         cardImageView.setOnDragDone(event -> {
             Dragboard db = event.getDragboard();
             int rowDrag = Integer.parseInt(db.getString().split(",")[0].split("=")[1]);
