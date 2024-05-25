@@ -887,17 +887,45 @@ public class GameViewController {
     public void runMethodLadangku() {
         System.out.println("Button Ladangku clicked and method executed");
     }
-
+    
     public void stopMethodLadangku() {
         System.out.println("Stopping method for Button Ladangku");
     }
-
+    
     public void runMethodLadangmu() {
         System.out.println("Button Ladangmu clicked and method executed");
-    }
+        if (currentPlayer == 1) {
+            player1.ladangku = ladang2;
+            player2.ladangku = ladang1;
 
+            ladang1 = player1.ladangku;
+            ladang2 = player2.ladangku;
+        } else {
+            player1.ladangku = ladang1;
+            player2.ladangku = ladang2;
+
+            ladang1 = player2.ladangku;
+            ladang2 = player1.ladangku;
+        }
+        populateLadang();
+    }
+    
     public void stopMethodLadangmu() {
         System.out.println("Stopping method for Button Ladangmu");
+        if (currentPlayer == 1) {
+            player1.ladangku = ladang2;
+            player2.ladangku = ladang1;
+
+            ladang1 = player1.ladangku;
+            ladang2 = player2.ladangku;
+        } else {
+            player1.ladangku = ladang1;
+            player2.ladangku = ladang2;
+
+            ladang1 = player2.ladangku;
+            ladang2 = player1.ladangku;
+        }
+        populateLadang();
     }
 
     @FXML
@@ -1075,7 +1103,7 @@ public class GameViewController {
             deckAktif();
 
             // Update toko display
-            // updateStoreDisplay();
+            updateStoreDisplay();
         }
     }
 
