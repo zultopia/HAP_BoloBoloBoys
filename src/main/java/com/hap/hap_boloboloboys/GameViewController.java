@@ -97,8 +97,8 @@ public class GameViewController {
 
     public int numRows = 4;
     public static int numCols = 5;
-    public static int[] prices = { 50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000 };
-    public static int[] amounts = { 3, 3, 3, 3, 3, 3, 3, 3, 3 };
+    public static int[] prices = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    public static int[] amounts = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     public int playerMoney = 100000;
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
@@ -141,16 +141,17 @@ public class GameViewController {
         item.applyEffect(pl1);
         item.applyEffect(pl1);
         Product pr1 = new Product("STROBERI");
-        
+        Product pr2 = new Product("JAGUNG");
         pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
         pr1.setImgPath("/card/produk/Produk7.png");
-
+        pr2.setImgPath("/card/produk/Produk4.png");
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
             player1.putToDeck(pl1);
             player1.putToDeck(pr1);
             player1.putToDeck(new Accelerate());
             player1.ladangku.plantKartu(0, 1, new Product("STROBERI"));
+            player1.putToDeck(pr2);
         } catch (Exception e) {
 
         }
@@ -180,8 +181,19 @@ public class GameViewController {
 
         populateLadang();
         deckAktif();
+        initializeToko();
 
         // Platform.runLater(() -> showShufflePopup());
+    }
+    @FXML
+    public void initializeToko() {
+        // Iterate product in store
+        int i = 0;
+        for (String key : toko.getItems().keySet()) {
+            prices[i] = toko.getItemPrice(key);
+            amounts[i] = toko.getItemQuantity(key);
+            i++;
+        }
     }
 
     @FXML
@@ -368,13 +380,7 @@ public class GameViewController {
             ImageView cardImageView;
             if (deck.getCard(col) != null) {
                 Image cardImage = loadImage(deck.getCard(col).getImgPath());
-                cardImageView = new ImageView(cardImage);
-                int finalCol = col; // declare effectively final variable
-                cardImageView.setOnMouseClicked(event -> {
-                    if (event.getButton() == MouseButton.SECONDARY) {
-                        showSellOption(finalCol); // use finalCol instead of col
-                    }
-                });
+                cardImageView = new ImageView(cardImage);                
             } else {
                 cardImageView = new ImageView();
             }
@@ -400,6 +406,12 @@ public class GameViewController {
             content.putString("row=" + 0 + ",col=" + col + ",isFromLadang=0"); // is from ladang set to false
             db.setContent(content);
             event.consume();
+        });
+
+        cardImageView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                showSellOption(col);
+            }
         });
 
         petakImageView.setOnDragOver(event -> {
@@ -823,41 +835,43 @@ public class GameViewController {
         gridPane.setAlignment(Pos.CENTER);
 
         // Create ImageViews for the products
-        ImageView[] productImageViews = new ImageView[9];
-        for (int i = 0; i < 9; i++) {
-            final int index = i;
-            productImageViews[i] = new ImageView();
-            productImageViews[i].setFitWidth(100);
-            productImageViews[i].setFitHeight(100);
-            Image productImage = loadImage("/card/produk/Produk" + (i + 1) + ".png");
+        int index = 0;
+        for (Map.Entry<String, Pair<Product, Integer>> entry : toko.getItems().entrySet()) {
+            final String productName = entry.getKey();
+            Product product = entry.getValue().getKey();
+            int quantity = entry.getValue().getValue();
+            int price = product.getPrice();
+
+            if (quantity <= 0) {
+                continue;
+            }
+
+            ImageView productImageView = new ImageView();
+            productImageView.setFitWidth(100);
+            productImageView.setFitHeight(100);
+            Image productImage = loadImage(product.getImgPath());
             if (productImage != null) {
-                productImageViews[i].setImage(productImage);
-                productImageViews[i].setOnMouseClicked(event -> {
-                    buyProduct(index, productImageViews[index]);
+                productImageView.setImage(productImage);
+                productImageView.setOnMouseClicked(event -> {
+                    buyProduct(productName, productImageView);
                 });
             } else {
-                System.err.println("Error loading product image: Produk" + (i + 1) + ".png");
+                System.err.println("Error loading image for product: " + productName);
             }
-        }
 
-        for (int i = 0; i < 9; i++) {
-            hargaLabels[i] = new Label("Harga: Rp " + prices[i]);
-            hargaLabels[i].setFont(Font.font(14));
-            jumlahLabels[i] = new Label("Jumlah: " + amounts[i]);
-            jumlahLabels[i].setFont(Font.font(14));
-        }
+            hargaLabels[index] = new Label("Harga: Rp " + price);
+            hargaLabels[index].setFont(Font.font(14));
+            jumlahLabels[index] = new Label("Jumlah: " + quantity);
+            jumlahLabels[index].setFont(Font.font(14));
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                VBox productBox = new VBox(10);
-                productBox.setAlignment(Pos.CENTER);
-                productBox.setStyle(
-                        "-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
-                productBox.setPadding(new Insets(5));
-                productBox.getChildren().addAll(productImageViews[i * 3 + j], hargaLabels[i * 3 + j],
-                        jumlahLabels[i * 3 + j]);
-                gridPane.add(productBox, j, i);
-            }
+            VBox productBox = new VBox(10);
+            productBox.setAlignment(Pos.CENTER);
+            productBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
+            productBox.setPadding(new Insets(5));
+            productBox.getChildren().addAll(productImageView, hargaLabels[index], jumlahLabels[index]);
+
+            gridPane.add(productBox, index % 3, index / 3);
+            index++;
         }
 
         // Layouts
@@ -886,91 +900,123 @@ public class GameViewController {
         });
     }
 
-    public void buyProduct(int index, ImageView productImageView) {
-        if (amounts[index] > 0 && playerMoney >= prices[index]) {
-            boolean foundEmptySlot = false;
-            for (int col = 0; col < 6; col++) {
-                StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
-                ImageView petakImageView = (ImageView) stackPane.getChildren().get(0);
-                ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
-                if (cardImageView.getImage() == null) {
-                    cardImageView.setImage(productImageView.getImage());
-                    foundEmptySlot = true;
-                    // Buat kartu produk yang sesuai berdasarkan indeks
-                    Product newProduct;
-                    switch (index) {
-                        case 0:
-                            newProduct = new Product("DAGING_BERUANG");
-                            newProduct.setImgPath("/card/produk/Produk1.png");
-                            break;
-                        case 1:
-                            newProduct = new Product("DAGING_DOMBA");
-                            newProduct.setImgPath("/card/produk/Produk2.png");
-                            break;
-                        case 2:
-                            newProduct = new Product("DAGING_KUDA");
-                            newProduct.setImgPath("/card/produk/Produk3.png");
-                            break;
-                        case 3:
-                            newProduct = new Product("JAGUNG");
-                            newProduct.setImgPath("/card/produk/Produk4.png");
-                            break;
-                        case 4:
-                            newProduct = new Product("LABU");
-                            newProduct.setImgPath("/card/produk/Produk5.png");
-                            break;
-                        case 5:
-                            newProduct = new Product("SIRIP_HIU");
-                            newProduct.setImgPath("/card/produk/Produk6.png");
-                            break;
-                        case 6:
-                            newProduct = new Product("STROBERI");
-                            newProduct.setImgPath("/card/produk/Produk7.png");
-                            break;
-                        case 7:
-                            newProduct = new Product("SUSU");
-                            newProduct.setImgPath("/card/produk/Produk8.png");
-                            break;
-                        case 8:
-                            newProduct = new Product("TELUR");
-                            newProduct.setImgPath("/card/produk/Produk9.png");
-                            break;
-                        default:
-                            newProduct = null;
-                            break;
-                    }
-
-                    if (newProduct != null) {
-                        // Tambahkan produk ke deck pemain yang aktif berdasarkan giliran
-                        if (currentPlayer == 1) {
-                            player1.getDeck().putToDeck(newProduct);
-                        } else {
-                            player2.getDeck().putToDeck(newProduct);
-                        }
-                        playerMoney -= prices[index];
-                        amounts[index]--;
-                        updateHargaProduk(index, prices[index]);
-                        updateJumlahProduk(index, amounts[index]);
-                        displayOutput(
-                                "Anda baru saja membeli Produk " + (index + 1) + "\nSisa uang Anda: Rp " + playerMoney,
-                                Color.GREEN);
-
-                        hargaLabels[index].setText("Harga: Rp " + prices[index]);
-                        jumlahLabels[index].setText("Jumlah: " + amounts[index]);
-                    }
-                    break;
-                }
+    public void buyProduct(String productName, ImageView productImageView) {
+        Pair<Product, Integer> item = toko.getItems().get(productName);
+    
+        // Cek apakah item ada di toko dan uang pemain cukup
+        if (item == null || playerMoney < item.getKey().getPrice() || item.getValue() <= 0) {
+            if (item == null || item.getValue() <= 0) {
+                displayOutput("Produk " + productName + " sudah habis.", Color.RED);
+            } else {
+                displayOutput("Uang Anda tidak cukup untuk membeli Produk " + productName, Color.RED);
             }
-
-            if (!foundEmptySlot) {
-                // Pesan error jika deck aktif sudah penuh
-                displayOutput("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.", Color.RED);
+            return;
+        }
+    
+        // Cek apakah ada slot kosong di deck aktif
+        boolean foundEmptySlot = false;
+        for (int col = 0; col < 6; col++) {
+            StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
+            ImageView petakImageView = (ImageView) stackPane.getChildren().get(0);
+            ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
+            if (cardImageView.getImage() == null) {
+                foundEmptySlot = true;
+                break;
             }
-
-        } else if (amounts[index] == 0) {
-            displayOutput("Produk " + (index + 1) + " sudah habis.", Color.RED);
+        }
+    
+        if (!foundEmptySlot) {
+            // Pesan error jika deck aktif sudah penuh
+            displayOutput("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.", Color.RED);
+            return;
+        }
+    
+        // Jika semua kondisi terpenuhi, lakukan pengurangan uang dan penghapusan item dari toko
+        playerMoney -= item.getKey().getPrice();
+        toko.removeItem(productName, 1);
+        displayOutput("Anda baru saja membeli Produk " + productName + "\nSisa uang Anda: Rp " + playerMoney, Color.GREEN);
+    
+        // Tambahkan item ke deck aktif
+        for (int col = 0; col < 6; col++) {
+            StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
+            ImageView petakImageView = (ImageView) stackPane.getChildren().get(0);
+            ImageView cardImageView = (ImageView) stackPane.getChildren().get(1);
+            if (cardImageView.getImage() == null) {
+                cardImageView.setImage(productImageView.getImage());
+                break;
+            }
+        }
+    
+        if (currentPlayer == 1) {
+            player1.getDeck().putToDeck(item.getKey());
         } else {
-            displayOutput("Uang Anda tidak cukup untuk membeli Produk " + (index + 1), Color.RED);
+            player2.getDeck().putToDeck(item.getKey());
+        }
+    
+        // Update jumlah item di toko secara realtime
+        updateStoreDisplay();
+    } 
+
+    public void sellProduct(int index) {
+        if (deck.getCard(index) != null && deck.getCard(index) instanceof Product) {
+            Product product = (Product) deck.getCard(index);
+            int sellPrice = product.getPrice();
+            playerMoney += sellPrice;
+            if (currentPlayer == 1) {
+                updatePlayer1MoneyLabel(playerMoney);
+            } else {
+                updatePlayer2MoneyLabel(playerMoney);
+            }
+
+            // Remove the product from deck aktif
+            try {
+                deck.pop(index);
+            } catch (InventoryException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+
+            // Add the product to toko
+            toko.addItem(product.getCode(), product, 1);
+            updateHargaProduk(index, sellPrice);
+            updateJumlahProduk(index, 1);
+    
+            // Update deck aktif display
+            deckAktif();
+
+            // Update toko display
+            updateStoreDisplay();
+        }
+    }
+
+    public void updateStoreDisplay() {
+        int i = 0;
+        for (Map.Entry<String, Pair<Product, Integer>> entry : toko.getItems().entrySet()) {
+            final String productName = entry.getKey();
+            Product product = entry.getValue().getKey();
+            int quantity = entry.getValue().getValue();
+            int price = product.getPrice();
+
+            if (quantity <= 0) {
+                continue;
+            }
+
+            hargaLabels[i].setText("Harga: Rp " + price);
+            jumlahLabels[i].setText("Jumlah: " + quantity);
+            i++;
+        }
+    }
+
+    public void showSellOption(int index) {
+        // Tampilkan dialog konfirmasi untuk menjual produk
+        Alert sellConfirmation = new Alert(AlertType.CONFIRMATION);
+        sellConfirmation.setTitle("Konfirmasi Penjualan");
+        sellConfirmation.setHeaderText("Anda akan menjual produk ini.");
+        sellConfirmation.setContentText("Apakah Anda yakin ingin menjual produk ini?");
+
+        Optional<ButtonType> result = sellConfirmation.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            sellProduct(index);
         }
     }
 
@@ -1406,60 +1452,6 @@ public class GameViewController {
         }));
         bearAttackTimer.setCycleCount(timeInSeconds);
         bearAttackTimer.play();
-    }
-
-    public void sellProduct(int index) {
-        if (deck.getCard(index) != null && deck.getCard(index) instanceof Product) {
-            Product product = (Product) deck.getCard(index);
-            int sellPrice = product.getPrice();
-            playerMoney += sellPrice;
-            if (currentPlayer == 1) {
-                updatePlayer1MoneyLabel(playerMoney);
-            } else {
-                updatePlayer2MoneyLabel(playerMoney);
-            }
-
-            // Remove the product from deck aktif
-            try {
-                deck.pop(index);
-            } catch (InventoryException e) {
-                System.out.println(e.getMessage());
-                return;
-            }
-
-            // Add the product to toko
-            toko.addItem(product.getCode(), product, 1);
-
-            // Update deck aktif display
-            deckAktif();
-
-            // Update toko display
-            updateStoreDisplay();
-        }
-    }
-
-    public void updateStoreDisplay() {
-        Map<String, Pair<Product, Integer>> items = toko.getItems();
-        for (int i = 0; i < 9; i++) {
-            Product product = toko.getItems().get(i).getKey();
-            if (product != null) {
-                amounts[i] = items.get(product.getCode()).getValue(); // Get the quantity from toko
-                jumlahLabels[i].setText("Jumlah: " + amounts[i]);
-            }
-        }
-    }
-
-    public void showSellOption(int index) {
-        // Tampilkan dialog konfirmasi untuk menjual produk
-        Alert sellConfirmation = new Alert(AlertType.CONFIRMATION);
-        sellConfirmation.setTitle("Konfirmasi Penjualan");
-        sellConfirmation.setHeaderText("Anda akan menjual produk ini.");
-        sellConfirmation.setContentText("Apakah Anda yakin ingin menjual produk ini?");
-
-        Optional<ButtonType> result = sellConfirmation.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            sellProduct(index);
-        }
     }
 
     private void showShufflePopup() {
