@@ -22,6 +22,10 @@ public class SettingViewController {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Game Page");
+
+            stage.setWidth(1445);
+            stage.setHeight(900);
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,6 +45,10 @@ public class SettingViewController {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Home Page");
+
+            stage.setWidth(1445);
+            stage.setHeight(900);
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,6 +68,10 @@ public class SettingViewController {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Setting Page");
+
+            stage.setWidth(1445);
+            stage.setHeight(900);
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

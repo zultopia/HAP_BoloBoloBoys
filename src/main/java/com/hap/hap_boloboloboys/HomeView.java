@@ -13,15 +13,15 @@ public class HomeView extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HomeView.class.getResource("/com/hap/hap_boloboloboys/HomeView.fxml"));
         Parent root = fxmlLoader.load();
 
-        Scene scene = new Scene(root, 1000, 800);
+        Scene scene = new Scene(root, 1445, 900);
         scene.getStylesheets().add(getClass().getResource("/css/main-styles.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/colors.css").toExternalForm());
 
         stage.setTitle("Hap App");
         stage.setScene(scene);
 
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setWidth(1445);
+        stage.setHeight(900);
 
         stage.show();
     }

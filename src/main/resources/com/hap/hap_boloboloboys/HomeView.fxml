@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hap.hap_boloboloboys.HomeViewController"
-            prefHeight="720.0" prefWidth="1080.0">
+            prefHeight="900.0" prefWidth="1445.0">
     <!-- MenuBar at the top -->
     <MenuBar layoutX="0.0" layoutY="0.0" prefWidth="1500.0">
         <menus>
