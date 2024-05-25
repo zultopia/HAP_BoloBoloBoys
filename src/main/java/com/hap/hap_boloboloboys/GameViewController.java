@@ -94,6 +94,7 @@ public class GameViewController {
     @FXML
     public Label deckCountLabel;
     private Label outputLabel;
+
     public int numRows = 4;
     public static int numCols = 5;
     public static int[] prices = { 50000, 60000, 70000, 55000, 65000, 75000, 52000, 63000, 74000 };
@@ -102,6 +103,7 @@ public class GameViewController {
     Label[] hargaLabels = new Label[9];
     Label[] jumlahLabels = new Label[9];
     public Stage popupStage;
+
     public Person player1;
     public Person player2;
     public int currentPlayer = 1;
@@ -131,8 +133,8 @@ public class GameViewController {
         setButtonStyle(buttonPlugin, false);
 
         // Inisialisasi pemain
-        player1 = new Person("Player 1");
-        player2 = new Person("Player 2");
+        player1 = new Person("player1");
+        player2 = new Person("player2");
         Plant pl1 = new Plant("BIJI_STROBERI");
         Product pr1 = new Product("STROBERI");
         pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
@@ -174,7 +176,7 @@ public class GameViewController {
         populateLadang();
         deckAktif();
 
-//        Platform.runLater(() -> showShufflePopup());
+        // Platform.runLater(() -> showShufflePopup());
     }
 
     @FXML
@@ -222,8 +224,8 @@ public class GameViewController {
             disableNextButton();
         }
 
-//        popupOpen.set(true);
-//        showShufflePopup();
+        // popupOpen.set(true);
+        // showShufflePopup();
 
         popupOpen.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -310,6 +312,9 @@ public class GameViewController {
 
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
+                final int finalRow = row;  
+                final int finalCol = col; 
+                
                 ImageView petakImageView = new ImageView(petakImage);
                 petakImageView.getProperties().put("ladang", true);
                 petakImageView.setFitWidth(95);
@@ -332,7 +337,7 @@ public class GameViewController {
 
                 cardImageView.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        showCardDetails(cardImageView);
+                        showCardDetails(cardImageView, finalRow, finalCol);
                     }
                 });
 
@@ -448,18 +453,15 @@ public class GameViewController {
 
     public void setupDragAndDropInLadang(ImageView cardImageView, ImageView petakImageView, int row, int col) {
         cardImageView.setOnDragDetected(event -> {
-            // boolean isInLadang = (boolean)
-            // cardImageView.getProperties().getOrDefault("isInLadang", false);
-            // if (isInLadang) {
             System.out.println(row + " " + col);
             Dragboard db = cardImageView.startDragAndDrop(TransferMode.MOVE);
-            String id = "row=" + row + ",col=" + col + ",isFromLadang=1"; // Send the ID instead, is from ladang set to true
+            String id = "row=" + row + ",col=" + col + ",isFromLadang=1"; // Send the ID instead, is from ladang set to
+                                                                          // true
             ClipboardContent content = new ClipboardContent();
             content.putImage(cardImageView.getImage());
             content.putString(id);
             db.setContent(content);
             event.consume();
-            // }
         });
 
         petakImageView.setOnDragOver(event -> {
@@ -497,21 +499,21 @@ public class GameViewController {
                     System.out.println("From deck");
                     try {
                         selected = deck.pop(firstCol);
-//                        if (selected instanceof Item || selected instanceof Product) {
-//                            deck.putToDeck(selected, firstCol);
-//                            return;
-//                        }
+                        // if (selected instanceof Item || selected instanceof Product) {
+                        // deck.putToDeck(selected, firstCol);
+                        // return;
+                        // }
                     } catch (InventoryException e) {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    if (ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Item || ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
+                    if (ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Item
+                            || ladang1.getPetak(firstRow, firstCol).getKartu() instanceof Product) {
                         return;
                     }
                     System.out.println("From ladang");
                     selected = ladang1.takeCard(firstRow, firstCol);
                 }
-
 
                 // Plant the card
                 try {
@@ -520,7 +522,8 @@ public class GameViewController {
                     } else if (selected == null) {
                         System.out.println("not plant");
                     }
-                    if ((ladang1.getPetak(row, col).getKartu() instanceof Plant || ladang1.getPetak(row, col).getKartu() instanceof Animal)) {
+                    if ((ladang1.getPetak(row, col).getKartu() instanceof Plant
+                            || ladang1.getPetak(row, col).getKartu() instanceof Animal)) {
                         if (selected instanceof Item) {
                             Card kartu = ladang1.getPetak(row, col).getKartu();
                             ((Item) selected).applyEffect((Creature) kartu);
@@ -574,22 +577,38 @@ public class GameViewController {
         }
     }
 
-    public void showCardDetails(ImageView cardImageView) {
-        String cardName = getCardNameFromImagePath(cardImageView.getImage());
+    public void showCardDetails(ImageView cardImageView, int row, int col) {
+        // String cardName = getCardNameFromImagePath(cardImageView.getImage());
 
         // Create Labels
-        Label nameLabel = new Label(cardName);
+        Card card = ladang1.getPetak(row, col).getKartu();
+        Label nameLabel = new Label(card.getCardName());
         nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 24px;");
-        Label infoLabel = new Label("Berat: 5 (8)");
-        Label activeItemsLabel = new Label("Item aktif: Accelerate (1), Delay (1), Protect (1)");
+        Label infoLabel;
+        if (card instanceof Plant) {
+            Plant plant = (Plant) card;
+            infoLabel = new Label("Umur: " + plant.getAge() + " (" + plant.getHarvestTarget() + ")");
+        } else {
+            Animal animal = (Animal) card;
+            infoLabel = new Label("Berat: " + animal.getWeight() + " (" + animal.getHarvestTarget() + ")");
+        }
+        String item = "";
+        Creature creature = (Creature) card;
+        for (int i = 0; i < 6; i++) {
+            if (creature.getEffectValue(i) != 0) {
+                item += "- " + creature.getEffectName(i) + "(" + creature.getEffectValue(i) + ")\n";
+            }
+        }
+        Label activeItemsLabel = new Label("Item aktif: \n" + item);
 
         // Create Buttons
         Button closeButton = new Button("Kembali");
         closeButton.setOnAction(event -> ((Stage) nameLabel.getScene().getWindow()).close());
 
         Button harvestButton = new Button("Panen");
+        harvestButton.setDisable(!checkHarvestConditions(row, col));
         harvestButton.setOnAction(event -> {
-            if (checkHarvestConditions(cardImageView)) {
+            if (checkHarvestConditions(row, col)) {
                 handleHarvestAction(cardImageView);
                 ((Stage) nameLabel.getScene().getWindow()).close();
             } else {
@@ -635,11 +654,14 @@ public class GameViewController {
         popupStage.show();
     }
 
-    public boolean checkHarvestConditions(ImageView cardImageView) {
+    public boolean checkHarvestConditions(int row, int col) {
         // Implement the conditions to check if the card can be harvested
-        // For example:
-        // return cardImageView.getImage() != null && someOtherCondition;
-        return true; // Replace with actual condition
+        // return true if can harvest
+        Card card = ladang1.getPetak(row, col).getKartu();
+        if (((Creature) card).canHarvest()) {
+            return true;
+        }
+        return false;
     }
 
     public void handleHarvestAction(ImageView cardImageView) {
@@ -816,9 +838,11 @@ public class GameViewController {
             for (int j = 0; j < 3; j++) {
                 VBox productBox = new VBox(10);
                 productBox.setAlignment(Pos.CENTER);
-                productBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
+                productBox.setStyle(
+                        "-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
                 productBox.setPadding(new Insets(5));
-                productBox.getChildren().addAll(productImageViews[i * 3 + j], hargaLabels[i * 3 + j], jumlahLabels[i * 3 + j]);
+                productBox.getChildren().addAll(productImageViews[i * 3 + j], hargaLabels[i * 3 + j],
+                        jumlahLabels[i * 3 + j]);
                 gridPane.add(productBox, j, i);
             }
         }
@@ -1315,22 +1339,22 @@ public class GameViewController {
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
         return mediaPlayer;
-    }    
+    }
 
     private void displayPopupImage(String imageName) {
         String imagePath = "/assets/" + imageName;
         Image image = new Image(getClass().getResource(imagePath).toExternalForm());
         ImageView imageView = new ImageView(image);
-    
-        imageView.setFitWidth(300); 
-        imageView.setFitHeight(300); 
-    
+
+        imageView.setFitWidth(300);
+        imageView.setFitHeight(300);
+
         StackPane stackPane = new StackPane();
         stackPane.getChildren().add(imageView);
-    
+
         Scene scene = new Scene(stackPane);
-        scene.setFill(Color.TRANSPARENT); 
-    
+        scene.setFill(Color.TRANSPARENT);
+
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.initOwner(nextButton.getScene().getWindow());
@@ -1343,7 +1367,8 @@ public class GameViewController {
     }
 
     private void showBearAttackTimer(int timeInSeconds) {
-        ImageView bearImageView = new ImageView(new Image(getClass().getResource("/assets/Beruang.png").toExternalForm()));
+        ImageView bearImageView = new ImageView(
+                new Image(getClass().getResource("/assets/Beruang.png").toExternalForm()));
         bearImageView.setFitWidth(130);
         bearImageView.setFitHeight(130);
 
@@ -1353,7 +1378,7 @@ public class GameViewController {
         gridPaneBear.getChildren().add(bearImageView);
         gridPaneTime.getChildren().add(bearAttackTimerLabel);
 
-        final int[] countdown = {timeInSeconds};
+        final int[] countdown = { timeInSeconds };
         bearAttackTimerLabel.setText("Waktu Serangan Beruang: " + countdown[0]);
         MediaPlayer mediaPlayer = playSound("Siren.mp3");
         bearAttackTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
@@ -1380,7 +1405,7 @@ public class GameViewController {
             } else {
                 updatePlayer2MoneyLabel(playerMoney);
             }
-    
+
             // Remove the product from deck aktif
             try {
                 deck.pop(index);
@@ -1388,18 +1413,18 @@ public class GameViewController {
                 System.out.println(e.getMessage());
                 return;
             }
-    
+
             // Add the product to toko
             toko.addItem(product.getCode(), product, 1);
-    
+
             // Update deck aktif display
             deckAktif();
-    
+
             // Update toko display
             updateStoreDisplay();
         }
     }
-    
+
     public void updateStoreDisplay() {
         Map<String, Pair<Product, Integer>> items = toko.getItems();
         for (int i = 0; i < 9; i++) {
@@ -1409,7 +1434,7 @@ public class GameViewController {
                 jumlahLabels[i].setText("Jumlah: " + amounts[i]);
             }
         }
-    }    
+    }
 
     public void showSellOption(int index) {
         // Tampilkan dialog konfirmasi untuk menjual produk
@@ -1434,22 +1459,22 @@ public class GameViewController {
             System.err.println("Scene or nextButton is null. Cannot initialize popup.");
             return;
         }
-    
+
         GridPane gridPane = new GridPane();
         Button reshuffleButton = new Button("Reshuffle");
         reshuffleButton.setOnAction(e -> {
             reshuffleCards(gridPane);
             popupOpen.set(false);
         });
-    
+
         reshuffleCards(gridPane);
-    
+
         gridPane.add(reshuffleButton, 0, 2, 2, 1);
-    
+
         Scene popupScene = new Scene(gridPane, 400, 400);
         popupStage.setScene(popupScene);
         popupStage.show();
-    
+
         popupStage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
             if (activeDeck.size() >= 6) {
                 showErrorDialog("Deck aktif anda sudah penuh");
@@ -1457,7 +1482,7 @@ public class GameViewController {
             }
             popupOpen.set(false);
         });
-    
+
         popupStage.setOnCloseRequest(event -> {
             popupOpen.set(false);
         });
