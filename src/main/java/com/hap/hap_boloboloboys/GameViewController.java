@@ -68,6 +68,8 @@ public class GameViewController {
     @FXML
     public GridPane gridPane2;
     @FXML
+    public GridPane storeGridPane = new GridPane();
+    @FXML
     public Button nextButton;
 
     public Button activeButton = null;
@@ -837,14 +839,10 @@ public class GameViewController {
         outputLabel.setTextFill(Color.RED);
 
         // Create GridPane to arrange the products and their info
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(20);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(10));
-        gridPane.setAlignment(Pos.CENTER);
-
-        // Save a reference to the gridPane for later updates
-        this.gridPane = gridPane;
+        storeGridPane.setHgap(20);
+        storeGridPane.setVgap(10);
+        storeGridPane.setPadding(new Insets(10));
+        storeGridPane.setAlignment(Pos.CENTER);
 
         // Create ImageViews for the products
         int index = 0;
@@ -883,12 +881,12 @@ public class GameViewController {
             productBox.setPadding(new Insets(5));
             productBox.getChildren().addAll(productImageView, hargaLabels[index], jumlahLabels[index]);
 
-            gridPane.add(productBox, index % 3, index / 3);
+            storeGridPane.add(productBox, index % 3, index / 3);
             index++;
         }
 
         // Layouts
-        VBox mainBox = new VBox(20, nameLabel, outputLabel, gridPane, new Button("Kembali"));
+        VBox mainBox = new VBox(20, nameLabel, outputLabel, storeGridPane, new Button("Kembali"));
         mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setPadding(new Insets(20));
         mainBox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
@@ -1006,8 +1004,9 @@ public class GameViewController {
         }
     }
 
+    
     public void updateStoreDisplay() {
-        gridPane.getChildren().clear(); // Clear the gridPane before updating it
+        storeGridPane.getChildren().clear(); // Clear the storeGridPane before updating it
         int index = 0;
         for (Map.Entry<String, Pair<Product, Integer>> entry : toko.getItems().entrySet()) {
             final String productName = entry.getKey();
@@ -1042,7 +1041,7 @@ public class GameViewController {
             productBox.setPadding(new Insets(5));
             productBox.getChildren().addAll(productImageView, hargaLabels[index], jumlahLabels[index]);
 
-            gridPane.add(productBox, index % 3, index / 3);
+            storeGridPane.add(productBox, index % 3, index / 3);
             index++;
         }
     }
