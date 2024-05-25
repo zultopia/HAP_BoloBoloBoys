@@ -18,6 +18,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -66,6 +67,8 @@ public class GameViewController {
     public GridPane gridPane;
     @FXML
     public GridPane gridPane2;
+    @FXML
+    public GridPane storeGridPane = new GridPane();
     @FXML
     public Button nextButton;
 
@@ -147,6 +150,8 @@ public class GameViewController {
         pr2.setImgPath("/card/produk/Produk4.png");
         try {
             player1.ladangku.plantKartu(0, 0, pl1);
+            player1.ladangku.plantKartu(0, 1, pr1);
+            player1.ladangku.plantKartu(0, 2, pr2);
             player1.putToDeck(pl1);
             player1.putToDeck(pr1);
             player1.putToDeck(pr1);
@@ -189,6 +194,7 @@ public class GameViewController {
 
         // Platform.runLater(() -> showShufflePopup());
     }
+
     @FXML
     public void initializeToko() {
         // Iterate product in store
@@ -333,9 +339,9 @@ public class GameViewController {
 
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
-                final int finalRow = row;  
-                final int finalCol = col; 
-                
+                final int finalRow = row;
+                final int finalCol = col;
+
                 ImageView petakImageView = new ImageView(petakImage);
                 petakImageView.getProperties().put("ladang", true);
                 petakImageView.setFitWidth(95);
@@ -384,7 +390,7 @@ public class GameViewController {
             ImageView cardImageView;
             if (deck.getCard(col) != null) {
                 Image cardImage = loadImage(deck.getCard(col).getImgPath());
-                cardImageView = new ImageView(cardImage);                
+                cardImageView = new ImageView(cardImage);
             } else {
                 cardImageView = new ImageView();
             }
@@ -833,11 +839,10 @@ public class GameViewController {
         outputLabel.setTextFill(Color.RED);
 
         // Create GridPane to arrange the products and their info
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(20);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(10));
-        gridPane.setAlignment(Pos.CENTER);
+        storeGridPane.setHgap(20);
+        storeGridPane.setVgap(10);
+        storeGridPane.setPadding(new Insets(10));
+        storeGridPane.setAlignment(Pos.CENTER);
 
         // Create ImageViews for the products
         int index = 0;
@@ -871,16 +876,17 @@ public class GameViewController {
 
             VBox productBox = new VBox(10);
             productBox.setAlignment(Pos.CENTER);
-            productBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
+            productBox.setStyle(
+                    "-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
             productBox.setPadding(new Insets(5));
             productBox.getChildren().addAll(productImageView, hargaLabels[index], jumlahLabels[index]);
 
-            gridPane.add(productBox, index % 3, index / 3);
+            storeGridPane.add(productBox, index % 3, index / 3);
             index++;
         }
 
         // Layouts
-        VBox mainBox = new VBox(20, nameLabel, outputLabel, gridPane, new Button("Kembali"));
+        VBox mainBox = new VBox(20, nameLabel, outputLabel, storeGridPane, new Button("Kembali"));
         mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setPadding(new Insets(20));
         mainBox.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 1px;");
@@ -903,11 +909,14 @@ public class GameViewController {
             toggleButtonState(buttonToko); // Reset button state
             stopMethodToko(); // Stop method toko
         });
+
+        // Save a reference to the popupStage for later use
+        this.popupStage = popupStage;
     }
 
     public void buyProduct(String productName, ImageView productImageView) {
         Pair<Product, Integer> item = toko.getItems().get(productName);
-    
+
         // Cek apakah item ada di toko dan uang pemain cukup
         if (item == null || playerMoney < item.getKey().getPrice() || item.getValue() <= 0) {
             if (item == null || item.getValue() <= 0) {
@@ -917,7 +926,7 @@ public class GameViewController {
             }
             return;
         }
-    
+
         // Cek apakah ada slot kosong di deck aktif
         boolean foundEmptySlot = false;
         for (int col = 0; col < 6; col++) {
@@ -929,18 +938,20 @@ public class GameViewController {
                 break;
             }
         }
-    
+
         if (!foundEmptySlot) {
             // Pesan error jika deck aktif sudah penuh
             displayOutput("Deck Aktif sudah penuh. Tidak dapat menambahkan produk.", Color.RED);
             return;
         }
-    
-        // Jika semua kondisi terpenuhi, lakukan pengurangan uang dan penghapusan item dari toko
+
+        // Jika semua kondisi terpenuhi, lakukan pengurangan uang dan penghapusan item
+        // dari toko
         playerMoney -= item.getKey().getPrice();
         toko.removeItem(productName, 1);
-        displayOutput("Anda baru saja membeli Produk " + productName + "\nSisa uang Anda: Rp " + playerMoney, Color.GREEN);
-    
+        displayOutput("Anda baru saja membeli Produk " + productName + "\nSisa uang Anda: Rp " + playerMoney,
+                Color.GREEN);
+
         // Tambahkan item ke deck aktif
         for (int col = 0; col < 6; col++) {
             StackPane stackPane = (StackPane) gridPane2.getChildren().get(col);
@@ -951,16 +962,15 @@ public class GameViewController {
                 break;
             }
         }
-    
+
         if (currentPlayer == 1) {
             player1.getDeck().putToDeck(item.getKey());
         } else {
             player2.getDeck().putToDeck(item.getKey());
         }
-    
-        // Update jumlah item di toko secara realtime
+
         updateStoreDisplay();
-    } 
+    }
 
     public void sellProduct(int index) {
         if (deck.getCard(index) != null && deck.getCard(index) instanceof Product) {
@@ -985,17 +995,19 @@ public class GameViewController {
             toko.addItem(product.getCode(), product, 1);
             updateHargaProduk(index, sellPrice);
             updateJumlahProduk(index, 1);
-    
+
             // Update deck aktif display
             deckAktif();
 
             // Update toko display
-            updateStoreDisplay();
+            // updateStoreDisplay();
         }
     }
 
+    
     public void updateStoreDisplay() {
-        int i = 0;
+        storeGridPane.getChildren().clear(); // Clear the storeGridPane before updating it
+        int index = 0;
         for (Map.Entry<String, Pair<Product, Integer>> entry : toko.getItems().entrySet()) {
             final String productName = entry.getKey();
             Product product = entry.getValue().getKey();
@@ -1006,9 +1018,31 @@ public class GameViewController {
                 continue;
             }
 
-            hargaLabels[i].setText("Harga: Rp " + price);
-            jumlahLabels[i].setText("Jumlah: " + quantity);
-            i++;
+            ImageView productImageView = new ImageView();
+            productImageView.setFitWidth(100);
+            productImageView.setFitHeight(100);
+            Image productImage = loadImage(product.getImgPath());
+            if (productImage != null) {
+                productImageView.setImage(productImage);
+                productImageView.setOnMouseClicked(event -> {
+                    buyProduct(productName, productImageView);
+                });
+            } else {
+                System.err.println("Error loading image for product: " + productName);
+            }
+
+            hargaLabels[index].setText("Harga: Rp " + price);
+            jumlahLabels[index].setText("Jumlah: " + quantity);
+
+            VBox productBox = new VBox(10);
+            productBox.setAlignment(Pos.CENTER);
+            productBox.setStyle(
+                    "-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: black; -fx-border-width: 1px;");
+            productBox.setPadding(new Insets(5));
+            productBox.getChildren().addAll(productImageView, hargaLabels[index], jumlahLabels[index]);
+
+            storeGridPane.add(productBox, index % 3, index / 3);
+            index++;
         }
     }
 
