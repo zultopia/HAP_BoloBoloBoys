@@ -91,6 +91,9 @@ Code dalam projek ini berada di bawah lisensi MIT.
 <br>
 <h3 align="center"> TERIMA KASIH! </h3>
 
+# Cara Run
+Instal maven lalu ke root folder dan mvn clean javafx:run 
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
