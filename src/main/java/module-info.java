@@ -5,8 +5,10 @@ module com.hap.hap_boloboloboys {
     requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
     requires javafx.media;
+    requires com.fasterxml.jackson.databind;
 
     opens com.hap.hap_boloboloboys to javafx.fxml;
+
     exports com.hap.hap_boloboloboys;
 
     exports com.hap.hap_boloboloboys.lib.card;
