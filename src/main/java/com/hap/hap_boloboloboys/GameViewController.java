@@ -136,7 +136,12 @@ public class GameViewController {
         player1 = new Person("player1");
         player2 = new Person("player2");
         Plant pl1 = new Plant("BIJI_STROBERI");
+        pl1.setAge(10);
+        Item item = new Accelerate();
+        item.applyEffect(pl1);
+        item.applyEffect(pl1);
         Product pr1 = new Product("STROBERI");
+        
         pl1.setImgPath("/card/tumbuhan/BijiStroberi.png");
         pr1.setImgPath("/card/produk/Produk7.png");
 
@@ -609,7 +614,7 @@ public class GameViewController {
         harvestButton.setDisable(!checkHarvestConditions(row, col));
         harvestButton.setOnAction(event -> {
             if (checkHarvestConditions(row, col)) {
-                handleHarvestAction(cardImageView);
+                handleHarvestAction(cardImageView, row, col);
                 ((Stage) nameLabel.getScene().getWindow()).close();
             } else {
                 System.out.println("Harvest conditions not met!");
@@ -664,9 +669,17 @@ public class GameViewController {
         return false;
     }
 
-    public void handleHarvestAction(ImageView cardImageView) {
-        // Implement the logic for harvesting the card
-        System.out.println("Harvesting card: " + cardImageView.getImage());
+    public void handleHarvestAction(ImageView cardImageView, int row, int col) {
+        Creature card = (Creature) ladang1.takeCard(row, col);
+        Product product = card.harvest();
+        if (deck.isFull()) {
+            displayOutput("Deck sudah penuh!", Color.RED);
+        } else {
+            deck.putToDeck(product);
+        }
+        populateLadang();
+        deckAktif();
+        System.out.println("Harvesting " + card.getCardName() + ": sucessed!");
     }
 
     public String getCardNameFromImagePath(Image image) {
