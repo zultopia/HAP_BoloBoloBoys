@@ -149,6 +149,10 @@ public class GameViewController {
             player1.ladangku.plantKartu(0, 0, pl1);
             player1.putToDeck(pl1);
             player1.putToDeck(pr1);
+            player1.putToDeck(pr1);
+            player1.putToDeck(pr1);
+            player1.putToDeck(pr1);
+            player1.putToDeck(pr1);
             player1.putToDeck(new Accelerate());
             player1.ladangku.plantKartu(0, 1, new Product("STROBERI"));
         } catch (Exception e) {
@@ -614,8 +618,8 @@ public class GameViewController {
         harvestButton.setDisable(!checkHarvestConditions(row, col));
         harvestButton.setOnAction(event -> {
             if (checkHarvestConditions(row, col)) {
-                handleHarvestAction(cardImageView, row, col);
-                ((Stage) nameLabel.getScene().getWindow()).close();
+                handleHarvestAction(nameLabel, row, col);
+                // ((Stage) nameLabel.getScene().getWindow()).close();
             } else {
                 System.out.println("Harvest conditions not met!");
             }
@@ -669,17 +673,18 @@ public class GameViewController {
         return false;
     }
 
-    public void handleHarvestAction(ImageView cardImageView, int row, int col) {
-        Creature card = (Creature) ladang1.takeCard(row, col);
-        Product product = card.harvest();
+    public void handleHarvestAction(Label nameLabel, int row, int col) {
         if (deck.isFull()) {
-            displayOutput("Deck sudah penuh!", Color.RED);
+            System.out.println("Deck sudah penuh!");
         } else {
+            Creature card = (Creature) ladang1.takeCard(row, col);
+            Product product = card.harvest();
             deck.putToDeck(product);
+            populateLadang();
+            deckAktif();
+            System.out.println("Harvesting " + card.getCardName() + ": sucessed!");
+            ((Stage) nameLabel.getScene().getWindow()).close();
         }
-        populateLadang();
-        deckAktif();
-        System.out.println("Harvesting " + card.getCardName() + ": sucessed!");
     }
 
     public String getCardNameFromImagePath(Image image) {
