@@ -15,7 +15,17 @@ import com.hap.hap_boloboloboys.lib.field.*;
 import com.hap.hap_boloboloboys.lib.person.*;
 
 public class Save {
+    // attribute instance for singleton pattern
+    private static Save instance = null;
 
+    // getInstance method for singleton pattern
+    public static Save getInstance() {
+        if (instance == null) {
+            instance = new Save();
+        }
+        return instance;
+    }
+    
     // save game state
     public static void saveGameState(String folderPath, int currentTurn, Map<String, Integer> shopItems)
             throws IOException {

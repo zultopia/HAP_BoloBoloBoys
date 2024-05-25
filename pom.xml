@@ -128,11 +128,11 @@
                         </goals>
                     </execution>
                 </executions>
-            <!-- <configuration>
+            <configuration>
                 <includes>
-                    <include>**/Load.class</include>
+                    <include>**/lib/**</include>
                 </includes>
-            </configuration> -->
+            </configuration>
         </plugin>
         </plugins>
     </build>

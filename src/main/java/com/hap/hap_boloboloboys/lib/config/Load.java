@@ -21,7 +21,6 @@ public class Load {
     // game state
     private static int currentTurn; // CURRENT_TURN
     private static Map<String, Integer> shopItems = new HashMap<>(); // <ITEM, JUMLAH>
-
     // player
     private static int wealth; // JUMLAH_GULDEN
     private static int currentSizeInventory; // JUMLAH_DECK
@@ -30,8 +29,16 @@ public class Load {
     private static int cardLadangCount; // JUMLAH_KARTU_LADANG
     private static Map<String, List<String>> content = new HashMap<>(); // <LOKASI, [KARTU, UMUR/BERAT,
                                                                         // JUMLAH_ITEM_AKTIF(J), ITEM_1, .., ITEM_J]>
-
+    // attribute instance for singleton pattern
+    private static Load instance = null;                                                    
     // getter
+    public static Load getInstance() {
+        if (instance == null) {
+            instance = new Load();
+        }
+        return instance;
+    }
+
     public static int getCurrentTurn() {
         return currentTurn;
     }
@@ -315,7 +322,7 @@ public class Load {
                         card = new Protect();
                         break;
 
-                    case "Trap":
+                    case "TRAP":
                         card = new Trap();
                         break;
                 }
