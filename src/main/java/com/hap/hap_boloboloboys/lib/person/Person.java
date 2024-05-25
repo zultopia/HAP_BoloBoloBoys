@@ -131,4 +131,8 @@ public class Person {
             throw new RuntimeException(e);
         }
     }
+
+    public void refactorInventory() {
+        this.inventory.getSize();
+    }
 }

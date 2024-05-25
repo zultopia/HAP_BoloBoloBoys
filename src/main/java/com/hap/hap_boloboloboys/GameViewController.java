@@ -113,6 +113,7 @@ public class GameViewController {
     public int numRows = 4;
     public static int numCols = 5;
     public Ladang ladang;
+    public int shuffledCard = 0;
 
     public Deck deck;
     private List<Image> activeDeck = new ArrayList<>();
@@ -1775,6 +1776,8 @@ public class GameViewController {
         shuffleImageView.setFitWidth(120);
         shuffleImageView.setFitHeight(170);
         shuffleImageView.setOnMouseClicked(e -> {
+            gridPane.getChildren().clear();
+            gridPane.add(shuffleImageView, 0, 2, 2, 1);
             List<Integer>finalListPosition = reshuffleCards(gridPane);
             listPosition.clear();
             listPosition.addAll(finalListPosition);
@@ -1798,6 +1801,13 @@ public class GameViewController {
 
         popupStage.setOnCloseRequest(event -> {
             popupOpen.set(false);
+            if (currentPlayer == 1) {
+                player1.refactorInventory();
+            } else {
+                player2.refactorInventory();
+            }
+            shuffledCard = 0;
+            listPosition.clear();
         });
     }
 
@@ -1808,7 +1818,9 @@ public class GameViewController {
         int neededCard;
         if (currentPlayer == 1) {
             int size = player1.getInventory().getSize();
-            neededCard = player1.neededCardShuffle();
+            neededCard = player1.neededCardShuffle() - shuffledCard;
+            if (neededCard <= 0) return null;
+
             Random random = new Random();
             for (int i = 0; i < neededCard; i++) {
                 listPosition.add(random.nextInt(size));
@@ -1818,7 +1830,8 @@ public class GameViewController {
             }
         } else {
             int size = player2.getInventory().getSize();
-            neededCard = player2.neededCardShuffle();
+            neededCard = player1.neededCardShuffle() - shuffledCard;
+            if (neededCard <= 0) return null;
             Random random = new Random();
             for (int i = 0; i < neededCard; i++) {
                 listPosition.add(random.nextInt(size));
@@ -1858,6 +1871,7 @@ public class GameViewController {
                 player2.deleteFromInventoryWithoutRefactor(listPosition.get(index));
             }
             deckAktif();
+            shuffledCard++;
             ((GridPane) selectedImageView.getParent()).getChildren().remove(selectedImageView);
             event.consume();
         });
