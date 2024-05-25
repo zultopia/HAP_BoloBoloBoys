@@ -225,6 +225,17 @@ public class Ladang {
         return count;
     }
 
+    public void addAge() {
+        for (int i = 0; i < getLadangRow(); i++) {
+            for (int j = 0; j < getLadangColumn(); j++) {
+                Card card = getPetak(i, j).getKartu();
+                if (card instanceof Plant) {
+                    ((Plant) card).grow();
+                }
+            }
+        }
+    }
+
     public void cetakInfo() {
         System.out.println("   ==========[ Ladang ]===========");
 
