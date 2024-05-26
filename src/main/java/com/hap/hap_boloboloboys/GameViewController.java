@@ -1186,8 +1186,10 @@ public class GameViewController {
 
         if (currentPlayer == 1) {
             updatePlayer1MoneyLabel(player1.getWealth());
+            player1.setWealth(playerMoney);
         } else {
             updatePlayer2MoneyLabel(player2.getWealth());
+            player2.setWealth(playerMoney);
         }
     }
 
@@ -1205,8 +1207,10 @@ public class GameViewController {
             playerMoney += sellPrice;
             if (currentPlayer == 1) {
                 updatePlayer1MoneyLabel(playerMoney);
+                player1.setWealth(playerMoney);
             } else {
                 updatePlayer2MoneyLabel(playerMoney);
+                player2.setWealth(playerMoney);
             }
 
             // Add the product to toko
